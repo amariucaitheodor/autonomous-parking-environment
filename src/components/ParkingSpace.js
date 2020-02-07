@@ -23,8 +23,8 @@ function ParkingSpace(props) {
                 strokeWidth={3}
             />
             <Text
-                x={props.x + props.width / 2 + 3}
-                y={props.y + props.height / 2 + 3}
+                x={props.x + props.width / 2 - 5}
+                y={props.y + props.height / 2 - 10}
                 text={props.id}
                 fontSize={20}
             />

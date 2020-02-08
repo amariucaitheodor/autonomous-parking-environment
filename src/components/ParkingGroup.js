@@ -2,18 +2,24 @@ import React from "react";
 import ParkingSpace from './ParkingSpace';
 
 function ParkingGroup(props) {
+    var width = props.horizontal ? 150 : 80, height = props.horizontal ? 80 : 150;
+    var groupSpaceIndex = props.slice[0];
+
     return (
         <>
-            {props.spacesAvailable.map((spaceIsAvailable, index) =>
-                <ParkingSpace
-                    key={index}
-                    id={index}
+            {props.spaces.slice(props.slice[0], props.slice[1]).map((spaceIsAvailable, index) => {
+                groupSpaceIndex++;
+                return <ParkingSpace
+                    key={groupSpaceIndex}
+                    id={groupSpaceIndex}
+                    horizontal={props.horizontal}
                     available={spaceIsAvailable}
-                    x={props.offset.x + 115 * (index % 5)}
-                    y={props.offset.y + 65 * Math.floor(index / 5)}
-                    width={110}
-                    height={60}
+                    x={props.offset.x + (width + 3) * (index % props.columns)}
+                    y={props.offset.y + (height + 3) * Math.floor(index / props.columns)}
+                    width={width}
+                    height={height}
                 />
+            }
             )}
         </>
     );

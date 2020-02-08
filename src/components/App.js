@@ -2,7 +2,7 @@ import React from 'react';
 import ParkingGroup from './ParkingGroup';
 import './App.css';
 import { Stage, Layer, Shape } from "react-konva";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -77,20 +77,27 @@ class App extends React.Component {
 
   Cameras() {
     return <div className="App" >
-    <header className="App-header">
-      <h3> Live stream from all cameras to be placed here </h3>
-    </header>
-  </div>
+      <header className="App-header">
+        <h3> Live stream from all cameras to be placed here </h3>
+      </header>
+    </div>
   }
 
   render() {
     return (
       <Router>
         <Navbar bg="primary" variant="dark">
+          {/* <img
+            src={window.location.origin + "/favicon.ico"}
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+            alt="Finitech logo"
+          /> */}
           <Navbar.Brand>Finitech Operations Monitor</Navbar.Brand>
           <Nav className="mr-auto">
-            <Nav.Link href="/">Parking Lot</Nav.Link>
-            <Nav.Link href="/cameras">Cameras</Nav.Link>
+            <Nav.Link href="#/">Parking Lot</Nav.Link>
+            <Nav.Link href="#/cameras">Cameras</Nav.Link>
           </Nav>
         </Navbar>
 

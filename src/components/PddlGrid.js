@@ -2,35 +2,48 @@ import React from "react";
 import { Rect } from "react-konva";
 
 function PddlGrid(props) {
-    if (!props.enabled)
-        return (<></>);
+    const pddlGridCellSize = {
+        height: props.parkingLotSize.height / props.gridDimentions.rows,
+        width: props.parkingLotSize.width / props.gridDimentions.columns
+    }
 
-    const pddlGridCellSize = { height: 150, width: 150 }
-    const rows = Math.floor(props.parkingLotSize.width / pddlGridCellSize.width) + 1;
-    const columns = Math.floor(props.parkingLotSize.height / pddlGridCellSize.height) + 1;
+    function generateProblem() {
+
+    }
 
     let pddlCells = [], i, j;
-    for (i = 0; i < rows; i++)
-        for (j = 0; j < columns; j++) {
+    for (i = 0; i < props.gridDimentions.columns; i++)
+        for (j = 0; j < props.gridDimentions.rows; j++) {
+            let uniqueId = j + props.gridDimentions.rows * i;
+
+            let xCoord = props.parkingLotOffset.x + i * pddlGridCellSize.width;
+            let yCoord = props.parkingLotOffset.y + j * pddlGridCellSize.height;
+
+            let cellType;
+            if (xCoord < props.parkingLotOffset.x + props.upperLeftSquareSide &&
+                props.parkingLotOffset.y + yCoord < props.upperLeftSquareSide)
+                cellType = props.stringColors.red;
+
+            if (i === 5 && j === props.gridDimentions.rows - 2)
+                cellType = props.stringColors.black;
+
+            if (i === props.gridDimentions.columns - 4 && j === props.gridDimentions.rows - 1)
+                cellType = props.stringColors.orange;
+
+            if (i >= props.gridDimentions.columns - 3 && j === props.gridDimentions.rows - 1)
+                cellType = props.stringColors.blue;
+
+            if (i <= 2 && j >= 2)
+                cellType = props.stringColors.green;
+
             pddlCells.push(
                 <Rect
-                    key={j + columns * i}
-                    x={props.parkingLotOffset.x + i * pddlGridCellSize.width}
-                    y={props.parkingLotOffset.y + j * pddlGridCellSize.height}
+                    key={uniqueId}
+                    x={xCoord}
+                    y={yCoord}
                     width={pddlGridCellSize.width}
                     height={pddlGridCellSize.height}
-                    fillRadialGradientStartPoint={{ x: pddlGridCellSize.width / 2, y: pddlGridCellSize.height / 2 }}
-                    fillRadialGradientEndPoint={{ x: pddlGridCellSize.width / 2, y: pddlGridCellSize.height / 2 }}
-                    fillRadialGradientStartRadius={
-                        pddlGridCellSize.width > pddlGridCellSize.height ?
-                            pddlGridCellSize.height :
-                            pddlGridCellSize.width
-                    }
-                    fillRadialGradientColorStops={
-                        true ?
-                            [0, "rgba(239, 14, 241, 0.1)", 1, "rgba(242, 62, 244, 0.1)"] :
-                            [0, "rgba(141,38,38)", 1, "rgba(230,67,67)"]
-                    }
+                    fill={cellType}
                     shadowBlur={3}
                     stroke={"black"}
                     strokeWidth={0.5}

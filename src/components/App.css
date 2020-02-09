@@ -4,7 +4,7 @@
 
 .navbar,
 .navbar-default {
-    background-image: linear-gradient(to bottom,hsl(220, 13%, 58%) 0,hsl(220, 13%, 20%) 100%);
+    background-image: linear-gradient(to bottom,hsl(220, 13%, 50%) 0,hsl(220, 13%, 21%) 100%);
 }
 
 /* .navbar,
@@ -16,11 +16,10 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 95vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: white;
 }

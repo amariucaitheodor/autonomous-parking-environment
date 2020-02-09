@@ -11,11 +11,11 @@ function ParkingSpace(props) {
                 height={props.height}
                 fillRadialGradientStartPoint={{ x: props.width / 2, y: props.height / 2 }}
                 fillRadialGradientEndPoint={{ x: props.width / 2, y: props.height / 2 }}
-                fillRadialGradientStartRadius={props.horizontal? props.height : props.width}
+                fillRadialGradientStartRadius={props.width > props.height ? props.height : props.width}
                 fillRadialGradientColorStops={
-                    props.available?
-                    [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"] : 
-                    [0, "rgba(141,38,38)", 1, "rgba(230,67,67)"]
+                    props.available ?
+                        [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"] :
+                        [0, "rgba(141,38,38)", 1, "rgba(230,67,67)"]
                 }
                 shadowBlur={5}
                 stroke={"black"}

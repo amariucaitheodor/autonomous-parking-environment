@@ -12,7 +12,6 @@ function ParkingGroup(props) {
                 return <ParkingSpace
                     key={groupSpaceIndex}
                     id={groupSpaceIndex}
-                    horizontal={props.horizontal}
                     available={spaceIsAvailable}
                     x={props.offset.x + (width + 3) * (index % props.columns)}
                     y={props.offset.y + (height + 3) * Math.floor(index / props.columns)}

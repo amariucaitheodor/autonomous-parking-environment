@@ -7,8 +7,8 @@ import { Navbar, Nav } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = { spacesAvailable: new Array(16).fill(true) };
   }
 
@@ -22,11 +22,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this.toggleSpaceAvailable(4);
-    setInterval(() => {
-      this.setState({
-        curTime: new Date().toLocaleString()
-      })
-    }, 1000)
   }
 
   render() {
@@ -52,8 +47,8 @@ class App extends React.Component {
             <Cameras />
           </Route>
           <Route path="/">
-            <ParkingLot 
-            spacesAvailable={this.state.spacesAvailable}
+            <ParkingLot
+              spacesAvailable={this.state.spacesAvailable}
             />
           </Route>
         </Switch>

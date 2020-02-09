@@ -2,10 +2,12 @@ import React from "react";
 import { Rect } from "react-konva";
 
 function PddlGrid(props) {
+    if (!props.enabled)
+        return (<></>);
+
     const pddlGridCellSize = { height: 150, width: 150 }
-    const rows = Math.floor(props.parkingLotSize.width / pddlGridCellSize.width);
-    const columns = Math.floor(props.parkingLotSize.height / pddlGridCellSize.height);
-    console.log("Rendered grid with rows, cols:", rows, columns);
+    const rows = Math.floor(props.parkingLotSize.width / pddlGridCellSize.width) + 1;
+    const columns = Math.floor(props.parkingLotSize.height / pddlGridCellSize.height) + 1;
 
     let pddlCells = [], i, j;
     for (i = 0; i < rows; i++)

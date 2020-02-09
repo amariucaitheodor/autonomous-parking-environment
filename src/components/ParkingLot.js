@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import ParkingGroup from './ParkingGroup';
 import PddlGrid from './PddlGrid';
+import DateTime from './DateTime';
+import { Button, ButtonToolbar } from "react-bootstrap";
 import { Stage, Layer, Shape } from "react-konva";
 
 function ParkingLot(props) {
     const upperLeftSquareSide = 275;
     const size = { height: 720, width: 1300 + upperLeftSquareSide };
-    const offset = { x: 200, y: 10 };
+    const offset = { x: 150, y: 10 };
+    const [debugModeActivated, setDebugModeActivated] = useState(false);
 
     return (
         <div className="App" >
             <header className="App-header">
-                <h3> {new Date().toLocaleString()} </h3>
+                <ButtonToolbar className="mb-3">
+                    <DateTime />
+                    <Button
+                        className="ml-3"
+                        variant="warning"
+                        onClick={() => { setDebugModeActivated(!debugModeActivated) }}
+                    >
+                        Debug Mode
+                    </Button>
+                </ButtonToolbar>
                 <Stage width={1900} height={800}>
                     <Layer>
                         <Shape
@@ -48,8 +60,9 @@ function ParkingLot(props) {
                             slice={[10, 17]}
                         />
                         <PddlGrid
-                        parkingLotSize={size}
-                        parkingLotOffset={offset}
+                            enabled={debugModeActivated}
+                            parkingLotSize={size}
+                            parkingLotOffset={offset}
                         />
                     </Layer>
                 </Stage>

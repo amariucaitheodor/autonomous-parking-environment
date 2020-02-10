@@ -1,9 +1,10 @@
 # Finitech Operations Monitor ![](https://github.com/Finitech-SDP/operations-monitor/workflows/Node.js%20CI/badge.svg)
 
 ## Features
-- Autonomous parking solution using ![The Standford Research Institute Problem Solver](http://ai.stanford.edu/users/nilsson/OnlinePubs-Nils/PublishedPapers/strips.pdf), an artificial intelligence system for automated planning
-- Open-loop parking lot real-time visual updates (closed-loop camera feedback system coming soon!)
-- Live stream from Raspberry Pi cameras onboard the robot
+- Autonomous parking solution using [The Standford Research Institute Problem Solver](http://ai.stanford.edu/users/nilsson/OnlinePubs-Nils/PublishedPapers/strips.pdf), an artificial intelligence system for automated planning
+- Open-loop parking lot real-time visual updates (closed-loop camera feedback system **coming soon!**)
+- Live stream from Raspberry Pi cameras onboard the robot (**coming soon!**)
+- Live stream from parking lot CCTV cameras (**coming soon!**)
 
 ## Available Scripts
 

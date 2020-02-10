@@ -21,7 +21,8 @@ class App extends React.Component {
     red: "rgba(228, 27, 65, 0.22)",
     blue: "rgba(34, 81, 221, 0.22)",
     orange: "rgba(236, 140, 19, 0.22)",
-    black: "rgba(50, 50, 50, 0.22)"
+    black: "rgba(50, 50, 50, 0.22)",
+    purple: "rgba(94, 0, 255, 0.22)"
   }
 
   toggleSpaceAvailable(spaceIndex) {

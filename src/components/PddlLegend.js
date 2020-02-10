@@ -6,7 +6,7 @@ function PddlLegend(props) {
     const popover = <Popover id="popover-basic">
         <Popover.Title as="h3">Legend</Popover.Title>
         <Popover.Content>
-            <Stage width={240} height={240}>
+            <Stage width={240} height={280}>
                 <Layer>
                     <Group>
                         <Rect
@@ -22,7 +22,7 @@ function PddlLegend(props) {
                         <Text
                             x={45}
                             y={10}
-                            text={"Blocked space"}
+                            text={"Blocking Space"}
                             fontSize={20}
                         />
                     </Group>
@@ -32,7 +32,6 @@ function PddlLegend(props) {
                             y={45}
                             width={30}
                             height={30}
-                            fill={props.stringColors.blue}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -40,7 +39,7 @@ function PddlLegend(props) {
                         <Text
                             x={45}
                             y={50}
-                            text={"Pickup/Dropoff Space"}
+                            text={"Road"}
                             fontSize={20}
                         />
                     </Group>
@@ -58,7 +57,7 @@ function PddlLegend(props) {
                         <Text
                             x={45}
                             y={90}
-                            text={"Available Space"}
+                            text={"Available Parking"}
                             fontSize={20}
                         />
                     </Group>
@@ -68,6 +67,7 @@ function PddlLegend(props) {
                             y={125}
                             width={30}
                             height={30}
+                            fill={props.stringColors.blue}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -75,7 +75,7 @@ function PddlLegend(props) {
                         <Text
                             x={45}
                             y={130}
-                            text={"Road"}
+                            text={"Available Dropoff"}
                             fontSize={20}
                         />
                     </Group>
@@ -93,7 +93,7 @@ function PddlLegend(props) {
                         <Text
                             x={45}
                             y={170}
-                            text={"Car waiting"}
+                            text={"Car Awaiting Pickup"}
                             fontSize={20}
                         />
                     </Group>
@@ -103,7 +103,7 @@ function PddlLegend(props) {
                             y={205}
                             width={30}
                             height={30}
-                            fill={props.stringColors.black}
+                            fill={props.stringColors.purple}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -111,7 +111,25 @@ function PddlLegend(props) {
                         <Text
                             x={45}
                             y={210}
-                            text={"Robot location"}
+                            text={"Car Awaiting Owner"}
+                            fontSize={20}
+                        />
+                    </Group>
+                    <Group>
+                        <Rect
+                            x={5}
+                            y={245}
+                            width={30}
+                            height={30}
+                            fill={props.stringColors.black}
+                            shadowBlur={3}
+                            stroke={"black"}
+                            strokeWidth={0.5}
+                        />
+                        <Text
+                            x={45}
+                            y={250}
+                            text={"Robot Location"}
                             fontSize={20}
                         />
                     </Group>

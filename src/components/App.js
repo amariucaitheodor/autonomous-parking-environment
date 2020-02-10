@@ -1,6 +1,6 @@
 import React from 'react';
-import ParkingLot from './ParkingLot';
-import PddlLegend from './PddlLegend';
+import ParkingLot from './parking/ParkingLot';
+import PddlLegend from './pddl/PddlLegend';
 import Cameras from './Cameras';
 import './App.css';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";

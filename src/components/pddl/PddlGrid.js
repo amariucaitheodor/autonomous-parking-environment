@@ -7,6 +7,16 @@ function PddlGrid(props) {
         width: props.parkingLotSize.width / props.gridDimentions.columns
     }
 
+    const cellTypes = Object.freeze({
+        "blocking-space":1, 
+        "road":2, 
+        "available-parking":3, 
+        "available-dropoff":3, 
+        "car-awaiting-pickup":3, 
+        "car-awaiting-owner":3, 
+        "robot-location":3, 
+    })
+
     function generateProblem() {
 
     }

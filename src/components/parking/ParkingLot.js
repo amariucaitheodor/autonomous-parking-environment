@@ -1,7 +1,7 @@
 import React from "react";
 import ParkingGroup from './ParkingGroup';
-import PddlGrid from './PddlGrid';
-import DateTime from './DateTime';
+import PddlGrid from '../pddl/PddlGrid';
+import DateTime from '../DateTime';
 import { ButtonToolbar } from "react-bootstrap";
 import { Stage, Layer, Shape } from "react-konva";
 

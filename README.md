@@ -1,9 +1,9 @@
-# Finitech Operations Monitor
+# Finitech Operations Monitor ![](https://github.com/Finitech-SDP/operations-monitor/workflows/Node.js%20CI/badge.svg)
 
 ## Features
-- Autonomous parking using PDDL
-- Open-loop parking lot visual updates
-- Live stream from Raspberry Pi cameras on the robot
+- Autonomous parking solution using ![The Standford Research Institute Problem Solver](http://ai.stanford.edu/users/nilsson/OnlinePubs-Nils/PublishedPapers/strips.pdf), an artificial intelligence system for automated planning
+- Open-Loop parking lot visual updates (Closed-Loop camera feedback system coming soon!)
+- Live stream from Raspberry Pi cameras onboard the robot
 
 ## Available Scripts
 

@@ -2,7 +2,7 @@
 
 ## Features
 - Autonomous parking solution using ![The Standford Research Institute Problem Solver](http://ai.stanford.edu/users/nilsson/OnlinePubs-Nils/PublishedPapers/strips.pdf), an artificial intelligence system for automated planning
-- Open-Loop parking lot visual updates (Closed-Loop camera feedback system coming soon!)
+- Open-loop parking lot real-time visual updates (closed-loop camera feedback system coming soon!)
 - Live stream from Raspberry Pi cameras onboard the robot
 
 ## Available Scripts

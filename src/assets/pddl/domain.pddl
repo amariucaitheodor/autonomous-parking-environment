@@ -1,11 +1,17 @@
 (define (domain parking)
-    ;remove requirements that are not needed
-    (:requirements :adl )
-    ;(:requirements :strips :fluents :durative-actions :timed-initial-literals :typing :conditional-effects :negative-preconditions :duration-inequalities :equality)
+
+    (:requirements :adl :typing :strips )
+    ; :strips
+    ;     The most basic subset of PDDL, consisting of STRIPS only. 
+    ; :typing
+    ;     This requirement means that the domain uses types (see Typing below). 
+    ; :adl
+    ;     Means that the domain uses some or all of ADL (i.e. disjunctions and quantifiers in preconditions and goals, quantified and conditional effects). 
+    ;MAYBE?: (:requirements :fluents :durative-actions :timed-initial-literals :conditional-effects :negative-preconditions :duration-inequalities :equality)
 
     (:types
         robot - mover
-        car - mover
+        car - movable
 
         ;; kind of tiles
         road - tile

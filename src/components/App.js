@@ -1,8 +1,11 @@
 import React from 'react';
 import ParkingLot from './parking/ParkingLot';
 import PddlLegend from './pddl/PddlLegend';
-import Cameras from './Cameras';
+import Overhead from './cameras/Overhead';
+import Onboard from './cameras/Onboard';
 import './App.css';
+// import writeProblem from '../actions/writeProblem';
+// import solveProblem from '../actions/solveProblem';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -41,6 +44,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this.toggleSpaceAvailable(4);
+    // solveProblem(writeProblem());
   }
 
   render() {
@@ -66,13 +70,19 @@ class App extends React.Component {
                 stringColors={this.stringColors}
               />
             </NavDropdown>
-            <Nav.Link href="#/cameras">Cameras</Nav.Link>
+            <NavDropdown title="Cameras" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="#/overhead">Overhead</NavDropdown.Item>
+              <NavDropdown.Item href="#/onboard">Onboard</NavDropdown.Item>
+            </NavDropdown>
           </Nav>
         </Navbar>
 
         <Switch>
-          <Route path="/cameras">
-            <Cameras />
+          <Route path="/overhead">
+            <Overhead />
+          </Route>
+          <Route path="/onboard">
+            <Onboard />
           </Route>
           <Route path="/">
             <ParkingLot

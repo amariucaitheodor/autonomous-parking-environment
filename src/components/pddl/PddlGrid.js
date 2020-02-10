@@ -17,10 +17,6 @@ function PddlGrid(props) {
         "robot-location":3, 
     })
 
-    function generateProblem() {
-
-    }
-
     let pddlCells = [], i, j;
     for (i = 0; i < props.gridDimentions.columns; i++)
         for (j = 0; j < props.gridDimentions.rows; j++) {

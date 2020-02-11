@@ -31,9 +31,6 @@ function DebugGrid(props) {
             if (i === 0 && (j === 2 || j === 3))
                 cellType = props.debugCellTypes.availableDropoff;
 
-            if (i === 4 && j === 2)
-                cellType = props.debugCellTypes.robotLocation;
-
             pddlCells.push(
                 <Rect
                     key={uniqueId}

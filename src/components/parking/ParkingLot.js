@@ -1,9 +1,11 @@
 import React from "react";
 import ParkingGroup from './ParkingGroup';
 import DebugGrid from '../debug/DebugGrid';
+import DebugPath from '../status/RobotPath';
 import DateTime from '../DateTime';
 import { ButtonToolbar } from "react-bootstrap";
-import { Stage, Layer, Shape } from "react-konva";
+import { Stage, Layer, Shape, Rect } from "react-konva";
+// import carImage from '../../assets/car.svg';
 
 function ParkingLot(props) {
     const HEIGHT = 750;
@@ -29,6 +31,18 @@ function ParkingLot(props) {
         { i: 3, j: 3 },
         { i: 2, j: 4 },
         { i: 3, j: 4 }
+    ]
+    let carsWaiting = [
+        { i: 5, j: 0 }
+    ]
+    let robotPath = [
+        { i: 0, j: 5 },
+        { i: 1, j: 5 },
+        { i: 1, j: 4 },
+        { i: 1, j: 3 },
+        { i: 1, j: 2 },
+        { i: 1, j: 1 },
+        { i: 2, j: 1 },
     ]
 
     return (
@@ -58,6 +72,17 @@ function ParkingLot(props) {
                             stroke={"black"}
                             strokeWidth={5}
                         />
+                        {carsWaiting.map((car, index) => {
+                            return (
+                                <Rect
+                                    key={index}
+                                    fill={ "black" } // carImage soon
+                                    x={offset.x + car.j * debugGridCellSize.width}
+                                    y={offset.y + car.i * debugGridCellSize.height}
+                                    width={debugGridCellSize.width}
+                                    height={debugGridCellSize.height}
+                                />)
+                        })}
                         <ParkingGroup
                             cellSize={debugGridCellSize}
                             parkingPointers={parkingPointers}
@@ -72,12 +97,18 @@ function ParkingLot(props) {
                                 debugGridDimensions={debugGridDimensions}
                                 parkingPointers={parkingPointers}
                                 debugCellTypes={props.debugCellTypes}
-                                upperLeftSquareSide={upperLeftSquareSide} // for pddl grid automatic generation
+                                upperLeftSquareSide={upperLeftSquareSide}
                                 parkingLotSize={size}
                                 parkingLotOffset={offset}
-                            /> :
+                            />
+                            :
                             null
                         }
+                        <DebugPath
+                            debugGridCellSize={debugGridCellSize}
+                            robotPath={robotPath}
+                            parkingLotOffset={offset}
+                        />
                     </Layer>
                 </Stage>
             </header>

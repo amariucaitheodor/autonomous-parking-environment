@@ -26,7 +26,6 @@ class App extends React.Component {
       "availableDropoff": "rgba(34, 81, 221, 0.2)", // blue
       "carAwaitingPickup": "rgba(236, 140, 19, 0.2)", // orange
       "carAwaitingOwner": "rgba(94, 0, 255, 0.2)", // purple
-      "robotLocation": "rgba(50, 50, 50, 0.2)" // robot location
   })
 
   toggleSpaceAvailable(spaceIndex) {
@@ -44,7 +43,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.toggleSpaceAvailable(4);
+    // this.toggleSpaceAvailable(4);
   }
 
   render() {

@@ -6,7 +6,7 @@ function PddlLegend(props) {
     const popover = <Popover id="popover-basic">
         <Popover.Title as="h3">Legend</Popover.Title>
         <Popover.Content>
-            <Stage width={240} height={280}>
+            <Stage width={240} height={240}>
                 <Layer>
                     <Group>
                         <Rect
@@ -113,24 +113,6 @@ function PddlLegend(props) {
                             x={45}
                             y={210}
                             text={"Car Awaiting Owner"}
-                            fontSize={20}
-                        />
-                    </Group>
-                    <Group>
-                        <Rect
-                            x={5}
-                            y={245}
-                            width={30}
-                            height={30}
-                            fill={props.debugCellTypes.robotLocation}
-                            shadowBlur={3}
-                            stroke={"black"}
-                            strokeWidth={0.5}
-                        />
-                        <Text
-                            x={45}
-                            y={250}
-                            text={"Robot Location"}
                             fontSize={20}
                         />
                     </Group>

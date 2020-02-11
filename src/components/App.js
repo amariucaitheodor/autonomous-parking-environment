@@ -1,6 +1,6 @@
 import React from 'react';
 import ParkingLot from './parking/ParkingLot';
-import PddlLegend from './pddl/PddlLegend';
+import DebugLegend from './debug/DebugLegend';
 import Overhead from './cameras/Overhead';
 import Onboard from './cameras/Onboard';
 import './App.css';
@@ -14,19 +14,20 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      spacesAvailable: new Array(25).fill(true),
+      spacesAvailable: new Array(8).fill(true),
       debugMode: false
     };
   }
 
-  stringColors = {
-    green: "rgba(103, 233, 98, 0.22)",
-    red: "rgba(228, 27, 65, 0.22)",
-    blue: "rgba(34, 81, 221, 0.22)",
-    orange: "rgba(236, 140, 19, 0.22)",
-    black: "rgba(50, 50, 50, 0.22)",
-    purple: "rgba(94, 0, 255, 0.22)"
-  }
+  debugCellTypes = Object.freeze({
+      "blockingSpace": "rgba(228, 27, 65, 0.2)", // red
+      "road": "rgba(255, 255, 255, 0.2)", // white
+      "availableParking": "rgba(103, 233, 98, 0.2)", // green
+      "availableDropoff": "rgba(34, 81, 221, 0.2)", // blue
+      "carAwaitingPickup": "rgba(236, 140, 19, 0.2)", // orange
+      "carAwaitingOwner": "rgba(94, 0, 255, 0.2)", // purple
+      "robotLocation": "rgba(50, 50, 50, 0.2)" // robot location
+  })
 
   toggleSpaceAvailable(spaceIndex) {
     let toModifySpacesAvailable = [...this.state.spacesAvailable];
@@ -44,7 +45,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this.toggleSpaceAvailable(4);
-    // solveProblem(writeProblem());
   }
 
   render() {
@@ -66,12 +66,12 @@ class App extends React.Component {
               <NavDropdown.Item
                 onClick={() => { this.toggleDebugMode() }}
               >Debug Mode</NavDropdown.Item>
-              <PddlLegend
-                stringColors={this.stringColors}
+              <DebugLegend
+                debugCellTypes={this.debugCellTypes}
               />
             </NavDropdown>
             <NavDropdown title="Cameras" id="collasible-nav-dropdown">
-              <NavDropdown.Item href="#/overhead">Overhead</NavDropdown.Item>
+              <NavDropdown.Item href="#/overhead">CCTV</NavDropdown.Item>
               <NavDropdown.Item href="#/onboard">Onboard</NavDropdown.Item>
             </NavDropdown>
           </Nav>
@@ -87,7 +87,7 @@ class App extends React.Component {
           <Route path="/">
             <ParkingLot
               debugMode={this.state.debugMode}
-              stringColors={this.stringColors}
+              debugCellTypes={this.debugCellTypes}
               spacesAvailable={this.state.spacesAvailable}
             />
           </Route>

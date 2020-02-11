@@ -14,7 +14,7 @@ function PddlLegend(props) {
                             y={5}
                             width={30}
                             height={30}
-                            fill={props.stringColors.red}
+                            fill={props.debugCellTypes.blockingSpace}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -32,6 +32,7 @@ function PddlLegend(props) {
                             y={45}
                             width={30}
                             height={30}
+                            fill={props.debugCellTypes.road}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -49,7 +50,7 @@ function PddlLegend(props) {
                             y={85}
                             width={30}
                             height={30}
-                            fill={props.stringColors.green}
+                            fill={props.debugCellTypes.availableParking}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -67,7 +68,7 @@ function PddlLegend(props) {
                             y={125}
                             width={30}
                             height={30}
-                            fill={props.stringColors.blue}
+                            fill={props.debugCellTypes.availableDropoff}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -85,7 +86,7 @@ function PddlLegend(props) {
                             y={165}
                             width={30}
                             height={30}
-                            fill={props.stringColors.orange}
+                            fill={props.debugCellTypes.carAwaitingPickup}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -103,7 +104,7 @@ function PddlLegend(props) {
                             y={205}
                             width={30}
                             height={30}
-                            fill={props.stringColors.purple}
+                            fill={props.debugCellTypes.carAwaitingOwner}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -121,7 +122,7 @@ function PddlLegend(props) {
                             y={245}
                             width={30}
                             height={30}
-                            fill={props.stringColors.black}
+                            fill={props.debugCellTypes.robotLocation}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}

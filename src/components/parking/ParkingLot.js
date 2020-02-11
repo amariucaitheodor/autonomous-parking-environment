@@ -1,14 +1,35 @@
 import React from "react";
 import ParkingGroup from './ParkingGroup';
-import PddlGrid from '../pddl/PddlGrid';
+import DebugGrid from '../debug/DebugGrid';
 import DateTime from '../DateTime';
 import { ButtonToolbar } from "react-bootstrap";
 import { Stage, Layer, Shape } from "react-konva";
 
 function ParkingLot(props) {
-    const upperLeftSquareSide = 275;
-    const size = { height: 730, width: 1300 + upperLeftSquareSide };
-    const offset = { x: 150, y: 10 };
+    const HEIGHT = 750;
+    // this is 96cm
+    const squareSideHeightRatio = 96 / 288;
+    const upperLeftSquareSide = HEIGHT * squareSideHeightRatio;
+    // height is 288cm, width is 401.4cm
+    const widthHeightRatio = 401.4 / 288;
+    const size = { height: HEIGHT, width: HEIGHT * widthHeightRatio };
+    const offset = { x: 380, y: 10 };
+
+    const debugGridDimensions = { rows: 6, columns: 4 };
+    const debugGridCellSize = {
+        height: size.height / 6,
+        width: size.width / 4
+    }
+    let parkingPointers = [
+        { i: 2, j: 1 },
+        { i: 2, j: 2 },
+        { i: 3, j: 1 },
+        { i: 3, j: 2 },
+        { i: 2, j: 3 },
+        { i: 3, j: 3 },
+        { i: 2, j: 4 },
+        { i: 3, j: 4 }
+    ]
 
     return (
         <div className="App" >
@@ -16,7 +37,7 @@ function ParkingLot(props) {
                 <ButtonToolbar>
                     <DateTime />
                 </ButtonToolbar>
-                <Stage width={1900} height={750}>
+                <Stage width={1900} height={825}>
                     <Layer>
                         <Shape
                             x={offset.x}
@@ -38,24 +59,20 @@ function ParkingLot(props) {
                             strokeWidth={5}
                         />
                         <ParkingGroup
-                            columns={8}
+                            cellSize={debugGridCellSize}
+                            parkingPointers={parkingPointers}
                             horizontal={true}
                             offset={{ x: offset.x + upperLeftSquareSide, y: offset.y }}
                             spaces={props.spacesAvailable}
-                            slice={[0, 16]}
-                        />
-                        <ParkingGroup
-                            columns={3}
-                            horizontal={false}
-                            offset={{ x: offset.x, y: offset.y + upperLeftSquareSide }}
-                            spaces={props.spacesAvailable}
-                            slice={[16, 25]}
+                            slice={[0, 8]}
                         />
                         {props.debugMode ?
-                            <PddlGrid
-                                stringColors={props.stringColors}
+                            <DebugGrid
+                                debugGridCellSize={debugGridCellSize}
+                                debugGridDimensions={debugGridDimensions}
+                                parkingPointers={parkingPointers}
+                                debugCellTypes={props.debugCellTypes}
                                 upperLeftSquareSide={upperLeftSquareSide} // for pddl grid automatic generation
-                                gridDimentions={{ rows: 5, columns: 19 }}
                                 parkingLotSize={size}
                                 parkingLotOffset={offset}
                             /> :

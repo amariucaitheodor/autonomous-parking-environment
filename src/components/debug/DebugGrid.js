@@ -1,43 +1,44 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { Rect } from "react-konva";
 
-function DebugGrid(props) {
+function DebugGrid({ debugGridDimensions, debugGridCellSize, debugCellTypes, upperLeftSquareSide, parkingLotOffset,parkingPointers }) {
     let pddlCells = [], i, j;
-    for (i = 0; i < props.debugGridDimensions.columns; i++)
-        for (j = 0; j < props.debugGridDimensions.rows; j++) {
-            let uniqueId = j + props.debugGridDimensions.rows * i;
+    for (i = 0; i < debugGridDimensions.columns; i++)
+        for (j = 0; j < debugGridDimensions.rows; j++) {
+            let uniqueId = j + debugGridDimensions.rows * i;
 
-            let xCoord = props.parkingLotOffset.x + i * props.debugGridCellSize.width;
-            let yCoord = props.parkingLotOffset.y + j * props.debugGridCellSize.height;
+            let xCoord = parkingLotOffset.x + i * debugGridCellSize.width;
+            let yCoord = parkingLotOffset.y + j * debugGridCellSize.height;
 
-            let cellType = props.debugCellTypes.road;
+            let cellType = debugCellTypes.road;
 
-            if (xCoord < props.parkingLotOffset.x + props.upperLeftSquareSide &&
-                props.parkingLotOffset.y + yCoord < props.upperLeftSquareSide)
-                cellType = props.debugCellTypes.blockingSpace;
+            if (xCoord < parkingLotOffset.x + upperLeftSquareSide &&
+                parkingLotOffset.y + yCoord < upperLeftSquareSide)
+                cellType = debugCellTypes.blockingSpace;
 
             let ih =i, ij =j;
-            props.parkingPointers.forEach(parkingPointer => {
+            parkingPointers.forEach(parkingPointer => {
                 if (parkingPointer.i === ih && parkingPointer.j === ij)
-                    cellType = props.debugCellTypes.availableParking;
+                    cellType = debugCellTypes.availableParking;
             });
 
             if (i === 0 && j === 5)
-                cellType = props.debugCellTypes.carAwaitingPickup;
+                cellType = debugCellTypes.carAwaitingPickup;
 
             if (i === 0 && j === 4)
-                cellType = props.debugCellTypes.carAwaitingOwner;
+                cellType = debugCellTypes.carAwaitingOwner;
 
             if (i === 0 && (j === 2 || j === 3))
-                cellType = props.debugCellTypes.availableDropoff;
+                cellType = debugCellTypes.availableDropoff;
 
             pddlCells.push(
                 <Rect
                     key={uniqueId}
                     x={xCoord}
                     y={yCoord}
-                    width={props.debugGridCellSize.width}
-                    height={props.debugGridCellSize.height}
+                    width={debugGridCellSize.width}
+                    height={debugGridCellSize.height}
                     fill={cellType}
                     shadowBlur={3}
                     stroke={"black"}
@@ -47,5 +48,14 @@ function DebugGrid(props) {
 
     return (<>{pddlCells}</>);
 }
+
+DebugGrid.propTypes = {
+    debugGridDimensions: PropTypes.object.isRequired,
+    debugGridCellSize: PropTypes.object.isRequired,
+    debugCellTypes: PropTypes.object.isRequired, 
+    upperLeftSquareSide: PropTypes.number.isRequired, 
+    parkingLotOffset: PropTypes.object.isRequired,
+    parkingPointers: PropTypes.array.isRequired
+};
 
 export default DebugGrid;

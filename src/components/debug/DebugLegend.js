@@ -2,7 +2,7 @@ import React from "react";
 import { Stage, Layer, Rect, Text, Group } from "react-konva";
 import { Popover, OverlayTrigger, NavDropdown } from "react-bootstrap";
 
-function PddlLegend(props) {
+function PddlLegend({ debugCellTypes }) {
     const popover = <Popover id="popover-basic">
         <Popover.Title as="h3">Legend</Popover.Title>
         <Popover.Content>
@@ -14,7 +14,7 @@ function PddlLegend(props) {
                             y={5}
                             width={30}
                             height={30}
-                            fill={props.debugCellTypes.blockingSpace}
+                            fill={debugCellTypes.blockingSpace}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -32,7 +32,7 @@ function PddlLegend(props) {
                             y={45}
                             width={30}
                             height={30}
-                            fill={props.debugCellTypes.road}
+                            fill={debugCellTypes.road}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -50,7 +50,7 @@ function PddlLegend(props) {
                             y={85}
                             width={30}
                             height={30}
-                            fill={props.debugCellTypes.availableParking}
+                            fill={debugCellTypes.availableParking}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -68,7 +68,7 @@ function PddlLegend(props) {
                             y={125}
                             width={30}
                             height={30}
-                            fill={props.debugCellTypes.availableDropoff}
+                            fill={debugCellTypes.availableDropoff}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -86,7 +86,7 @@ function PddlLegend(props) {
                             y={165}
                             width={30}
                             height={30}
-                            fill={props.debugCellTypes.carAwaitingPickup}
+                            fill={debugCellTypes.carAwaitingPickup}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}
@@ -104,7 +104,7 @@ function PddlLegend(props) {
                             y={205}
                             width={30}
                             height={30}
-                            fill={props.debugCellTypes.carAwaitingOwner}
+                            fill={debugCellTypes.carAwaitingOwner}
                             shadowBlur={3}
                             stroke={"black"}
                             strokeWidth={0.5}

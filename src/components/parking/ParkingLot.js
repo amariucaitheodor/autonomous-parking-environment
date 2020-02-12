@@ -1,13 +1,14 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import ParkingGroup from './ParkingGroup';
 import DebugGrid from '../debug/DebugGrid';
-import DebugPath from '../status/RobotPath';
+import RobotPath from '../RobotPath';
 import DateTime from '../DateTime';
 import { ButtonToolbar } from "react-bootstrap";
 import { Stage, Layer, Shape, Rect } from "react-konva";
 // import carImage from '../../assets/car.svg';
 
-function ParkingLot(props) {
+function ParkingLot({ spacesAvailable, debugMode, debugCellTypes }) {
     const HEIGHT = 750;
     // this is 96cm
     const squareSideHeightRatio = 96 / 288;
@@ -76,6 +77,7 @@ function ParkingLot(props) {
                             return (
                                 <Rect
                                     key={index}
+                                    // fillPatternImage={ carImage }
                                     fill={ "black" } // carImage soon
                                     x={offset.x + car.j * debugGridCellSize.width}
                                     y={offset.y + car.i * debugGridCellSize.height}
@@ -88,15 +90,15 @@ function ParkingLot(props) {
                             parkingPointers={parkingPointers}
                             horizontal={true}
                             offset={{ x: offset.x + upperLeftSquareSide, y: offset.y }}
-                            spaces={props.spacesAvailable}
+                            spaces={spacesAvailable}
                             slice={[0, 8]}
                         />
-                        {props.debugMode ?
+                        {debugMode ?
                             <DebugGrid
                                 debugGridCellSize={debugGridCellSize}
                                 debugGridDimensions={debugGridDimensions}
                                 parkingPointers={parkingPointers}
-                                debugCellTypes={props.debugCellTypes}
+                                debugCellTypes={debugCellTypes}
                                 upperLeftSquareSide={upperLeftSquareSide}
                                 parkingLotSize={size}
                                 parkingLotOffset={offset}
@@ -104,7 +106,7 @@ function ParkingLot(props) {
                             :
                             null
                         }
-                        <DebugPath
+                        <RobotPath
                             debugGridCellSize={debugGridCellSize}
                             robotPath={robotPath}
                             parkingLotOffset={offset}
@@ -115,5 +117,11 @@ function ParkingLot(props) {
         </div>
     );
 }
+
+ParkingLot.propTypes = {
+    spacesAvailable: PropTypes.array.isRequired,
+    debugMode: PropTypes.bool.isRequired,
+    debugCellTypes: PropTypes.object.isRequired
+};
 
 export default ParkingLot;

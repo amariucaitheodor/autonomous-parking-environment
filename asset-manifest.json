@@ -1,26 +1,28 @@
 {
   "files": {
     "main.css": "/operations-monitor/static/css/main.17ef48ec.chunk.css",
-    "main.js": "/operations-monitor/static/js/main.5542a8db.chunk.js",
-    "main.js.map": "/operations-monitor/static/js/main.5542a8db.chunk.js.map",
+    "main.js": "/operations-monitor/static/js/main.1888cda1.chunk.js",
+    "main.js.map": "/operations-monitor/static/js/main.1888cda1.chunk.js.map",
     "runtime-main.js": "/operations-monitor/static/js/runtime-main.ea1b8e5b.js",
     "runtime-main.js.map": "/operations-monitor/static/js/runtime-main.ea1b8e5b.js.map",
     "static/css/2.47e06e2e.chunk.css": "/operations-monitor/static/css/2.47e06e2e.chunk.css",
-    "static/js/2.3acfbf62.chunk.js": "/operations-monitor/static/js/2.3acfbf62.chunk.js",
-    "static/js/2.3acfbf62.chunk.js.map": "/operations-monitor/static/js/2.3acfbf62.chunk.js.map",
+    "static/js/2.ddb240e2.chunk.js": "/operations-monitor/static/js/2.ddb240e2.chunk.js",
+    "static/js/2.ddb240e2.chunk.js.map": "/operations-monitor/static/js/2.ddb240e2.chunk.js.map",
     "index.html": "/operations-monitor/index.html",
-    "precache-manifest.c1f932be34db0da3aa2104d263b08574.js": "/operations-monitor/precache-manifest.c1f932be34db0da3aa2104d263b08574.js",
+    "precache-manifest.7eed0318fc0e58b5cf885a36627c8d1c.js": "/operations-monitor/precache-manifest.7eed0318fc0e58b5cf885a36627c8d1c.js",
     "service-worker.js": "/operations-monitor/service-worker.js",
     "static/css/2.47e06e2e.chunk.css.map": "/operations-monitor/static/css/2.47e06e2e.chunk.css.map",
     "static/css/main.17ef48ec.chunk.css.map": "/operations-monitor/static/css/main.17ef48ec.chunk.css.map",
-    "static/js/2.3acfbf62.chunk.js.LICENSE.txt": "/operations-monitor/static/js/2.3acfbf62.chunk.js.LICENSE.txt",
-    "static/media/car.svg": "/operations-monitor/static/media/car.83d2582b.svg"
+    "static/js/2.ddb240e2.chunk.js.LICENSE.txt": "/operations-monitor/static/js/2.ddb240e2.chunk.js.LICENSE.txt",
+    "static/media/parking-sign.svg": "/operations-monitor/static/media/parking-sign.013e9a4f.svg",
+    "static/media/racecar.svg": "/operations-monitor/static/media/racecar.e66ab204.svg",
+    "static/media/robot.svg": "/operations-monitor/static/media/robot.3f20bb4e.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.ea1b8e5b.js",
     "static/css/2.47e06e2e.chunk.css",
-    "static/js/2.3acfbf62.chunk.js",
+    "static/js/2.ddb240e2.chunk.js",
     "static/css/main.17ef48ec.chunk.css",
-    "static/js/main.5542a8db.chunk.js"
+    "static/js/main.1888cda1.chunk.js"
   ]
 }

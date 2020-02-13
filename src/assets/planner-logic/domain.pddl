@@ -1,20 +1,16 @@
 ;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
 
 (define (domain finitech)
-    (:requirements :adl )
+    (:requirements :adl :typing :negative-preconditions)
 
     (:types
         blockedTile - tile  ;; you never go there, physically always blocked
         roadTile - tile
         parkingTile - tile  ;; occupied, otherwise available
         hubTile - tile ;; for waiting dropoff or waiting pickup, available otherwise
-
+        
         car - dynamic  ;; cars can only be moved around with the help of the robot
         robot - dynamic
-    )
-
-    (:constants
-        Robot - robot
     )
 
     (:predicates
@@ -30,7 +26,7 @@
         ;; TODO: put car here?
         (AwaitingParking ?ht - hubTile)
 
-        ;; Tha Car is waiting to be picked up by the owner
+        ;; The Car is waiting to be picked up by the owner
         ;; TODO: put car here?
         (AwaitingOwner ?ht - hubTile)
 
@@ -51,7 +47,6 @@
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?t ?f)
-            (not (Occupied ?t))  ;; TODO
             (not (TemporarilyBlocked ?t))
         )
         :effect (and
@@ -65,7 +60,6 @@
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?f ?t)
-            (not (Occupied ?t))  ;; TODO
             (not (TemporarilyBlocked ?t))
         )
         :effect (and
@@ -79,7 +73,6 @@
         :precondition (and
             (IsAt ?r ?f)
             (IsAbove ?t ?f)
-            (not (Occupied ?t))  ;; TODO
             (not (TemporarilyBlocked ?t))
         )
         :effect (and
@@ -93,7 +86,6 @@
         :precondition (and
             (IsAt ?r ?f)
             (IsAbove ?f ?t)
-            (not (Occupied ?t))  ;; TODO
             (not (TemporarilyBlocked ?t))
         )
         :effect (and

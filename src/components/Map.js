@@ -10,6 +10,8 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
 
     return (parkingLotLayout.map((parkingLot, index) => {
         let lotRender = null;
+        let debugName = null;
+        let hasStatus = false;
 
         switch (parkingLot.type) {
             case "parking":
@@ -43,6 +45,8 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                         null
                     }
                 </Group>
+                debugName = "Parking space";
+                hasStatus = true;
                 break;
             case "hub":
                 lotRender = <>
@@ -70,6 +74,14 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                         null
                     }
                 </>
+                debugName = "Hub";
+                hasStatus = true;
+                break;
+            case "road":
+                debugName = "Road";
+                break;
+            case "blocked":
+                debugName = "Blocked space";
                 break;
             default:
                 break;
@@ -93,19 +105,22 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                         <Text
                             x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 10}
                             y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 5}
-                            text={"R" + parkingLot.y + "C" + parkingLot.x}
+                            text={"R" + parkingLot.y + "C" + parkingLot.x + " (" + debugName + ")"}
                             fontSize={20}
                         />
                         <Text
                             x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 10}
                             y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 2 + 30}
-                            text={parkingLot.type === "hub" ?
-                                (spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
-                                    "AVAILABLE" : "AWAITING PARKING") :
-                                (parkingLot.type === "parking" ?
+                            text={hasStatus ?
+                                "Status: " +
+                                (parkingLot.type === "hub" ?
                                     (spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
-                                        "AVAILABLE" : "OCCUPIED") :
-                                    null)
+                                        "Available" : "Awaiting Parking") :
+                                    (parkingLot.type === "parking" ?
+                                        (spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
+                                            "Available" : "Occupied") :
+                                        null)) :
+                                null
                             }
                             fontSize={20}
                         />

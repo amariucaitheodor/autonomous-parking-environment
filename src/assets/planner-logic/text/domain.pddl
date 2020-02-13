@@ -1,34 +1,27 @@
 ;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
 
 (define (domain finitech)
-    (:requirements :adl :typing :negative-preconditions)
+    (:requirements :adl :typing :negative-preconditions :strips)
 
     (:types
-        blockedTile - tile  ;; you never go there, physically always blocked
+        blockedTile - tile  ;; physically inaccessible 
         roadTile - tile
-        parkingTile - tile  ;; occupied, otherwise available
-        hubTile - tile ;; for waiting dropoff or waiting pickup, available otherwise
+        parkingTile - tile
+        hubTile - tile
         
         car - dynamic  ;; cars can only be moved around with the help of the robot
         robot - dynamic
     )
 
     (:predicates
-        ;; Example:
-        ;; (Contains ?x - object ?c - container)
+        ;; TODO: enforce that one and only one is true at a given time
         (TemporarilyBlocked ?t - tile)
 
-        (Occupied ?pt - parkingTile)
-
-        ;; TODO: enforce that one and only one is true at a given time
-
-        ;; The Car is waiting to be parked
-        ;; TODO: put car here?
-        (AwaitingParking ?ht - hubTile)
-
-        ;; The Car is waiting to be picked up by the owner
-        ;; TODO: put car here?
-        (AwaitingOwner ?ht - hubTile)
+        ;; The car is waiting to be parked
+        (AwaitingParking ?c - car)
+        ;; The car is waiting for delivery
+        (AwaitingDelivery ?c - car)
+        ;; Otherwise the car is waiting for its owner
 
         ;; ?a IsToTheLeftOf/IsAbove ?b
         (IsToTheLeftOf ?a - tile ?b - tile)
@@ -97,21 +90,22 @@
     ;; 1) scan
     ;; 2) slide under
     ;; 3) lift
-    ;; END
     (:action pickup-car-leftwards
         :parameters (?r - robot ?f - roadTile ?t - hubTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
             (IsAt ?c ?t)
             (IsToTheLeftOf ?t ?f)
-            (AwaitingParking ?t)
-            (not (exists (?c - car) (and (IsCarrying ?r ?c))))
+            
+            (not (exists (?c2 - car) (and (IsCarrying ?r ?c2))))
+            (AwaitingParking ?c)
         )
         :effect (and
             (not (IsAt ?r ?f))
+            (not (IsAt ?c ?t))
             (IsAt ?r ?t)
+            
             (IsCarrying ?r ?c)
-            (not (AwaitingParking ?t))
         )
     )
 
@@ -120,13 +114,18 @@
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?t ?f)
+            
             (IsCarrying ?r ?c)
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
+            ;; Necessary? (AwaitingDelivery ?c)
         )
         :effect (and
             (not (IsAt ?r ?f))
             (IsAt ?r ?t)
+            (IsAt ?c ?t)
+            
             (not (IsCarrying ?r ?c))
-            (AwaitingOwner ?t)
+            (not (AwaitingDelivery ?c))
         )
     )
 
@@ -134,15 +133,18 @@
         :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
-            (not (Occupied ?t))
             (IsToTheLeftOf ?f ?t)
+            
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
             (IsCarrying ?r ?c)
         )
         :effect (and
             (not (IsAt ?r ?f))
             (IsAt ?r ?t)
+            
             (not (IsCarrying ?r ?c))
-            (Occupied ?t)
+            (IsAt ?c ?t)
+            (not (AwaitingParking ?c))
         )
     )
 
@@ -150,15 +152,18 @@
         :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
-            (not (Occupied ?t))
             (IsToTheLeftOf ?t ?f)
+            
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
             (IsCarrying ?r ?c)
         )
         :effect (and
             (not (IsAt ?r ?f))
             (IsAt ?r ?t)
+            
             (not (IsCarrying ?r ?c))
-            (Occupied ?t)
+            (IsAt ?c ?t)
+            (not (AwaitingParking ?c))
         )
     )
 
@@ -168,9 +173,11 @@
         :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
-            (Occupied ?t)
-            (IsAt ?c ?t)
             (IsToTheLeftOf ?f ?t)
+            
+            (AwaitingDelivery ?c)
+            (IsAt ?c ?t)
+            
             (not (exists (?c2 - car) (and
                 (IsCarrying ?r ?c2)
             )))
@@ -178,8 +185,8 @@
         :effect (and
             (not (IsAt ?r ?f))
             (IsAt ?r ?t)
+            
             (not (IsAt ?c ?t))
-            (not (Occupied ?t))
             (IsCarrying ?r ?c)
         )
     )
@@ -188,9 +195,11 @@
         :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
-            (Occupied ?t)
-            (IsAt ?c ?t)
             (IsToTheLeftOf ?t ?f)
+            
+            (AwaitingDelivery ?c)
+            (IsAt ?c ?t)
+            
             (not (exists (?c2 - car) (and
                 (IsCarrying ?r ?c2)
             )))
@@ -198,8 +207,8 @@
         :effect (and
             (not (IsAt ?r ?f))
             (IsAt ?r ?t)
+            
             (not (IsAt ?c ?t))
-            (not (Occupied ?t))
             (IsCarrying ?r ?c)
         )
     )

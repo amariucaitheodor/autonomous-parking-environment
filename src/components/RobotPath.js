@@ -24,7 +24,7 @@ function DebugPath({ robotPath, parkingLotOffset, debugGridCellSize }) {
             points={pathStop}
             shadowBlur={3}
             stroke={"black"}
-            strokeWidth={1.5}
+            strokeWidth={1.7}
         />}</>
     );
 }

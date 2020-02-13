@@ -4,8 +4,11 @@ import Overhead from './cameras/Overhead';
 import Onboard from './cameras/Onboard';
 import './App.css';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import { Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Toast } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import GridSettings from './GridSettings';
+import { GoGear } from 'react-icons/go';
+import plan from '../actions/plan';
 
 class App extends React.Component {
   constructor() {
@@ -14,8 +17,13 @@ class App extends React.Component {
       spacesAvailable: ["R0C1", "R1C1", "R0C3", "R1C3", "R2C0", "R3C0"],
       robotLocation: { x: 0, y: 5 }, // x is column and y row  for now
       robotPath: [{ i: 0, j: 5 }, { i: 2, j: 5 }, { i: 2, j: 4 }, { i: 2, j: 3 }, { i: 2, j: 2 }, { i: 2, j: 1 }, { i: 3, j: 1 }],
-      debugMode: false
+      debugMode: false,
+      gridSize: { x: 6, y: 4 },
+      settingsOn: false,
+      showAlert: false
     };
+    this.toggleSettings = this.toggleSettings.bind(this);
+    this.changeGridSize = this.changeGridSize.bind(this);
   }
 
   toggleSpaceAvailable(spaceIndex) {
@@ -32,8 +40,31 @@ class App extends React.Component {
     });
   }
 
+  toggleSettings() {
+    this.setState({
+      settingsOn: !this.state.settingsOn
+    });
+  }
+
+  changeGridSize(x, y) {
+    this.setState({
+      gridSize: { x: x, y: y }
+    });
+  }
+
+  async replan() {
+    let steps = await plan();
+    if (steps !== -1) {
+      steps.forEach(action => {
+          console.log(action.name);
+      });
+    }
+  }
+
   componentDidMount() {
-    // this.toggleSpaceAvailable(4);
+    // testing only
+    // this.replan();
+    this.setState({ showAlert: true })
   }
 
   render() {
@@ -48,6 +79,9 @@ class App extends React.Component {
               <NavDropdown.Item
                 onClick={() => { this.toggleDebugMode() }}
               >Debug Mode</NavDropdown.Item>
+              {/* <NavDropdown.Item
+                onClick={() => { this.toggleSettings() }}
+              >Debug Settings</NavDropdown.Item> */}
             </NavDropdown>
             <NavDropdown title="Cameras" id="collasible-nav-dropdown">
               <NavDropdown.Item href="#/overhead">CCTV</NavDropdown.Item>
@@ -55,6 +89,7 @@ class App extends React.Component {
             </NavDropdown>
           </Nav>
         </Navbar>
+
 
         <Switch>
           <Route path="/overhead">
@@ -64,15 +99,51 @@ class App extends React.Component {
             <Onboard />
           </Route>
           <Route path="/">
-            <Canvas
-              robotLocation={this.state.robotLocation}
-              robotPath={this.state.robotPath}
-              debugMode={this.state.debugMode}
-              spacesAvailable={this.state.spacesAvailable}
-            />
+            <div className="App">
+
+              <GridSettings
+                changeGridSize={this.changeGridSize}
+                toggleSettings={this.toggleSettings}
+                show={this.state.settingsOn}
+              />
+              <>
+                <div
+                  aria-live="polite"
+                  aria-atomic="true"
+                  style={{
+                    position: 'relative',
+                    minHeight: '200px',
+                  }}
+                >
+                  <Canvas
+                    gridSize={this.state.gridSize}
+                    robotLocation={this.state.robotLocation}
+                    robotPath={this.state.robotPath}
+                    debugMode={this.state.debugMode}
+                    spacesAvailable={this.state.spacesAvailable}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      right: 25,
+                    }}
+                  >
+                    <Toast onClose={() => this.setState({ showAlert: false })} show={this.state.showAlert} delay={5000} autohide>
+                      <Toast.Header>
+                        <GoGear />
+                        <strong className="mr-auto ml-2">Replanning...</strong>
+                        <small>just now</small>
+                      </Toast.Header>
+                      <Toast.Body>A vision event triggered a replan!       </Toast.Body>
+                    </Toast>
+                  </div>
+                </div>
+              </>
+            </div>
           </Route>
         </Switch>
-      </Router>
+      </Router >
     );
   }
 }

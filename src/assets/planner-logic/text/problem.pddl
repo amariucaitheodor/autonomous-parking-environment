@@ -5,7 +5,11 @@
     
     (:objects
         Robot - robot
-        Car - car
+        Car1 - car
+        Car2 - car
+        Car3 - car
+        Car4 - car
+        Car5 - car
         
         R0C0 - blockedTile
         R0C1 - parkingTile
@@ -35,7 +39,15 @@
 
     (:init
         (IsAt Robot R5C1)
-        (IsAt Car R5C0)
+        (IsCarrying Robot Car4)
+        (IsAt Car1 R5C0)
+        (IsAt Car2 R4C0)
+        (IsAt Car3 R0C1)
+        (IsAt Car5 R0C3)
+        (AwaitingParking Car1)
+        (AwaitingParking Car2)
+        (AwaitingDelivery Car3)
+        (AwaitingDelivery Car4)
         
         (IsToTheLeftOf R0C0 R0C1)
         (IsToTheLeftOf R0C1 R0C2)
@@ -79,9 +91,10 @@
     )
 
     (:goal (and
-        (exists (?ps - parkingTile) (and
-            (IsAt Car ?ps)
-        ))
+        (not (exists (?c - car) (or
+            (AwaitingParking ?c)
+            (AwaitingDelivery ?c)
+        )))
     ))
 )
 

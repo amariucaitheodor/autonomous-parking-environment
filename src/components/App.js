@@ -12,6 +12,7 @@ class App extends React.Component {
     super();
     this.state = {
       spacesAvailable: ["R0C1", "R1C1", "R0C3", "R1C3", "R2C0", "R3C0"],
+      robotLocation: { x: 0, y: 5 }, // x is column and y row  for now
       robotPath: [{ i: 0, j: 5 }, { i: 2, j: 5 }, { i: 2, j: 4 }, { i: 2, j: 3 }, { i: 2, j: 2 }, { i: 2, j: 1 }, { i: 3, j: 1 }],
       debugMode: false
     };
@@ -64,6 +65,7 @@ class App extends React.Component {
           </Route>
           <Route path="/">
             <Canvas
+              robotLocation={this.state.robotLocation}
               robotPath={this.state.robotPath}
               debugMode={this.state.debugMode}
               spacesAvailable={this.state.spacesAvailable}

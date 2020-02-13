@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { Rect, Text, Group, Image } from "react-konva";
 import parkingLotLayout from "../assets/planner-logic/map.json";
 import useImage from 'use-image';
-const carURL = require('../assets/car.svg');
+const carURL = require('../assets/racecar.svg');
+const parkingURL = require('../assets/parking-sign.svg');
 
 function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
     const [carImage] = useImage(carURL);
+    const [parkingImage] = useImage(parkingURL);
 
     return (parkingLotLayout.map((parkingLot, index) => {
         let lotRender = null;
@@ -34,11 +36,16 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                         stroke={"black"}
                         strokeWidth={3}
                     />
+                    <Image
+                        x={offset.x + parkingLot.x * debugGridCellSize.width + 100}
+                        y={offset.y + parkingLot.y * debugGridCellSize.height + 30}
+                        image={parkingImage}
+                        shadowBlur={5}
+                    />
                     {!spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
                         <Image
-                            x={offset.x + parkingLot.x * debugGridCellSize.width}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height - 65}
-                            scale={{ x: 0.5, y: 0.5 }}
+                            x={offset.x + parkingLot.x * debugGridCellSize.width + 30}
+                            y={offset.y + parkingLot.y * debugGridCellSize.height - 53}
                             image={carImage}
                             shadowBlur={5}
                         /> :
@@ -65,9 +72,8 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                     />
                     {!spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
                         <Image
-                            x={offset.x + parkingLot.x * debugGridCellSize.width}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height - 65}
-                            scale={{ x: 0.5, y: 0.5 }}
+                            x={offset.x + parkingLot.x * debugGridCellSize.width + 30}
+                            y={offset.y + parkingLot.y * debugGridCellSize.height - 53}
                             image={carImage}
                             shadowBlur={5}
                         /> :
@@ -97,7 +103,7 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                             y={offset.y + parkingLot.y * debugGridCellSize.height}
                             width={debugGridCellSize.width}
                             height={debugGridCellSize.height}
-                            fill={"rgba(255, 255, 255, 0.2)"}
+                            fill={"rgba(255, 255, 255, 0.3)"}
                             shadowBlur={5}
                             stroke={"black"}
                             strokeWidth={3}

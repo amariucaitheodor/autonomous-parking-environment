@@ -1,11 +1,8 @@
 import React from 'react';
-import ParkingLot from './parking/ParkingLot';
-import DebugLegend from './debug/DebugLegend';
+import Canvas from './Canvas';
 import Overhead from './cameras/Overhead';
 import Onboard from './cameras/Onboard';
 import './App.css';
-// import writeProblem from '../actions/writeProblem';
-// import solveProblem from '../actions/solveProblem';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,19 +11,11 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      spacesAvailable: new Array(8).fill(true),
+      spacesAvailable: ["R0C1", "R1C1", "R0C3", "R1C3", "R2C0", "R3C0"],
+      robotPath: [{ i: 0, j: 5 }, { i: 2, j: 5 }, { i: 2, j: 4 }, { i: 2, j: 3 }, { i: 2, j: 2 }, { i: 2, j: 1 }, { i: 3, j: 1 }],
       debugMode: false
     };
   }
-
-  debugCellTypes = Object.freeze({
-      "blockingSpace": "rgba(228, 27, 65, 0.2)", // red
-      "road": "rgba(255, 255, 255, 0.2)", // white
-      "availableParking": "rgba(103, 233, 98, 0.2)", // green
-      "availableDropoff": "rgba(34, 81, 221, 0.2)", // blue
-      "carAwaitingPickup": "rgba(236, 140, 19, 0.2)", // orange
-      "carAwaitingOwner": "rgba(94, 0, 255, 0.2)", // purple
-  })
 
   toggleSpaceAvailable(spaceIndex) {
     let toModifySpacesAvailable = [...this.state.spacesAvailable];
@@ -50,13 +39,6 @@ class App extends React.Component {
     return (
       <Router>
         <Navbar bg="primary" variant="dark" sticky="top" >
-          {/* <img
-            src={window.location.origin + "/favicon.ico"}
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-            alt="Finitech logo"
-          /> */}
           <Navbar.Brand>Finitech Operations Monitor</Navbar.Brand>
           <Nav className="mr-auto">
             <NavDropdown title="Parking Lot" id="collasible-nav-dropdown">
@@ -65,9 +47,6 @@ class App extends React.Component {
               <NavDropdown.Item
                 onClick={() => { this.toggleDebugMode() }}
               >Debug Mode</NavDropdown.Item>
-              <DebugLegend
-                debugCellTypes={this.debugCellTypes}
-              />
             </NavDropdown>
             <NavDropdown title="Cameras" id="collasible-nav-dropdown">
               <NavDropdown.Item href="#/overhead">CCTV</NavDropdown.Item>
@@ -84,9 +63,9 @@ class App extends React.Component {
             <Onboard />
           </Route>
           <Route path="/">
-            <ParkingLot
+            <Canvas
+              robotPath={this.state.robotPath}
               debugMode={this.state.debugMode}
-              debugCellTypes={this.debugCellTypes}
               spacesAvailable={this.state.spacesAvailable}
             />
           </Route>

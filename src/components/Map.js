@@ -37,15 +37,15 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                         strokeWidth={3}
                     />
                     <Image
-                        x={offset.x + parkingLot.x * debugGridCellSize.width + 100}
-                        y={offset.y + parkingLot.y * debugGridCellSize.height + 30}
+                        x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 2.6}
+                        y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 3.5}
                         image={parkingImage}
                         shadowBlur={5}
                     />
                     {!spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
                         <Image
                             x={offset.x + parkingLot.x * debugGridCellSize.width + 30}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height - 53}
+                            y={offset.y + parkingLot.y * debugGridCellSize.height - 40}
                             image={carImage}
                             shadowBlur={5}
                         /> :
@@ -73,7 +73,7 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                     {!spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
                         <Image
                             x={offset.x + parkingLot.x * debugGridCellSize.width + 30}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height - 53}
+                            y={offset.y + parkingLot.y * debugGridCellSize.height - 40}
                             image={carImage}
                             shadowBlur={5}
                         /> :
@@ -110,13 +110,13 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                         />
                         <Text
                             x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 10}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 5}
+                            y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 12}
                             text={"R" + parkingLot.y + "C" + parkingLot.x + " (" + debugName + ")"}
                             fontSize={20}
                         />
                         <Text
                             x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 10}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 2 + 30}
+                            y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 1.25}
                             text={hasStatus ?
                                 "Status: " +
                                 (parkingLot.type === "hub" ?

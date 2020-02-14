@@ -65,9 +65,8 @@ function Canvas({ spacesAvailable, debugMode, robotPath, robotLocation, gridSize
                         parkingLotOffset={offset}
                     />
                     <Image
-                        x={offset.x + robotLocation.x * debugGridCellSize.width + 80}
+                        x={offset.x + robotLocation.x * debugGridCellSize.width + debugGridCellSize.width / 4}
                         y={offset.y + robotLocation.y * debugGridCellSize.height}
-                        scale={{ x: 0.8, y: 0.8 }}
                         image={robotImage}
                         shadowBlur={5}
                     />

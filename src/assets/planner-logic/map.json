@@ -98,25 +98,5 @@
         "x": 3,
         "y": 4,
         "type": "parking"
-    },
-    {
-        "x": 0,
-        "y": 5,
-        "type": "hub"
-    },
-    {
-        "x": 1,
-        "y": 5,
-        "type": "road"
-    },
-    {
-        "x": 2,
-        "y": 5,
-        "type": "road"
-    },
-    {
-        "x": 3,
-        "y": 5,
-        "type": "parking"
     }
 ]

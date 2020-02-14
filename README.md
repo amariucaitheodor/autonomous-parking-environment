@@ -6,8 +6,8 @@
 - Live stream from Raspberry Pi cameras onboard the robot (**under debate**)
 - Live stream from parking lot CCTV cameras (**under debate**)
 
-## Monitor is part of the following architecture, which was developed as part of FinitechSDP 2019-2020
-![alt text](finitech-network-architecture.png)
+## Monitor is part of the following architecture, which was developed as part of [FinitechSDP](https://github.com/Finitech-SDP) (UoE project) 2019-2020
+![architecture](finitech-network-architecture.png)
 
 ## Available Scripts
 

@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export default async function plan() {
     const options = {
-        url: 'http://solver.planning.domains/solve-and-validate',
+        url: 'https://solver.planning.domains/solve-and-validate',
         method: 'POST',
         contentType: 'application/json',
         headers: {

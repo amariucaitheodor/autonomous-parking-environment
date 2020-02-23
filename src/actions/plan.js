@@ -1,5 +1,5 @@
-import domain from '../assets/planner-logic/domain.js';
-import problem from '../assets/planner-logic/problem.js';
+import domain from '../assets/planner/domain.js';
+import problem from '../assets/planner/problem-template.js';
 import axios from 'axios';
 
 //mostachito

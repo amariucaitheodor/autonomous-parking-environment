@@ -2,9 +2,10 @@
 
 ## Features
 - Autonomous parking solution using an [open-source](https://bitbucket.org/planning-researchers/cloud-solver/src/master/) project, [Solver.Planning.Domains](http://solver.planning.domains/). It is an artificial intelligence system for automated planning, and consists of an initial state, actions, and a goal state. By applying the actions over the initial state and all child states, a goal can be found.
+- Thoroughly tested in 10 different scenarios (available under `src/assets/planner-logic/tests/`):
+- Live stream from parking lot CCTV cameras
 - Closed-loop parking lot real-time visual updates (using camera vision feedback system)
-- Live stream from Raspberry Pi cameras onboard the robot (**under debate**)
-- Live stream from parking lot CCTV cameras (**under debate**)
+- Live stream from Raspberry Pi cameras onboard the robot (**under consideration**)
 
 ## Monitor is part of the following architecture, which was developed as part of [FinitechSDP](https://github.com/Finitech-SDP) (UoE project) 2019-2020
 ![architecture](finitech-network-architecture.png)

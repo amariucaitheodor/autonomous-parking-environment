@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import { Rect, Text, Group, Image } from "react-konva";
-import parkingLotLayout from "../assets/planner-logic/map.json";
+import parkingLotLayout from "../assets/planner/initial-map.json";
 import useImage from 'use-image';
-const carURL = require('../assets/racecar.svg');
 const parkingURL = require('../assets/parking-sign.svg');
+const hubURL = require('../assets/hub.svg');
 
-function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
-    const [carImage] = useImage(carURL);
+function Map({ spacesAvailable, gridCellSize, offset, debugMode, carImage }) {
     const [parkingImage] = useImage(parkingURL);
+    const [hubImage] = useImage(hubURL);
 
     return (parkingLotLayout.map((parkingLot, index) => {
         let lotRender = null;
@@ -17,16 +17,15 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
 
         switch (parkingLot.type) {
             case "parking":
-                lotRender = <Group
-                    key={index}>
+                lotRender = <>
                     <Rect
-                        x={offset.x + parkingLot.x * debugGridCellSize.width}
-                        y={offset.y + parkingLot.y * debugGridCellSize.height}
-                        width={debugGridCellSize.width}
-                        height={debugGridCellSize.height}
-                        fillRadialGradientStartPoint={{ x: debugGridCellSize.width / 2, y: debugGridCellSize.height / 2 }}
-                        fillRadialGradientEndPoint={{ x: debugGridCellSize.width / 2, y: debugGridCellSize.height / 2 }}
-                        fillRadialGradientStartRadius={debugGridCellSize.width > debugGridCellSize.height ? debugGridCellSize.height : debugGridCellSize.width}
+                        x={parkingLot.x * gridCellSize.width}
+                        y={parkingLot.y * gridCellSize.height}
+                        width={gridCellSize.width}
+                        height={gridCellSize.height}
+                        fillRadialGradientStartPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
+                        fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
+                        fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                         fillRadialGradientColorStops={
                             spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
                                 [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"] :
@@ -37,43 +36,57 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
                         strokeWidth={3}
                     />
                     <Image
-                        x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 2.6}
-                        y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 3.5}
+                        x={parkingLot.x * gridCellSize.width}
+                        y={parkingLot.y * gridCellSize.height + gridCellSize.height / 3.5}
+                        width={gridCellSize.width}
+                        height={gridCellSize.height / 2}
                         image={parkingImage}
                         shadowBlur={5}
                     />
                     {!spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
                         <Image
-                            x={offset.x + parkingLot.x * debugGridCellSize.width + 30}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height - 40}
+                            x={parkingLot.x * gridCellSize.width}
+                            y={parkingLot.y * gridCellSize.height}
+                            width={gridCellSize.width}
+                            height={gridCellSize.height}
                             image={carImage}
                             shadowBlur={5}
                         /> :
                         null
                     }
-                </Group>
+                </>
                 debugName = "Parking space";
                 hasStatus = true;
                 break;
             case "hub":
                 lotRender = <>
                     <Rect
-                        x={offset.x + parkingLot.x * debugGridCellSize.width}
-                        y={offset.y + parkingLot.y * debugGridCellSize.height}
-                        width={debugGridCellSize.width}
-                        height={debugGridCellSize.height}
-                        fillRadialGradientStartPoint={{ x: debugGridCellSize.width / 2, y: debugGridCellSize.height / 2 }}
-                        fillRadialGradientEndPoint={{ x: debugGridCellSize.width / 2, y: debugGridCellSize.height / 2 }}
-                        fillRadialGradientStartRadius={debugGridCellSize.width > debugGridCellSize.height ? debugGridCellSize.height : debugGridCellSize.width}
+                        x={parkingLot.x * gridCellSize.width}
+                        y={parkingLot.y * gridCellSize.height}
+                        width={gridCellSize.width}
+                        height={gridCellSize.height}
+                        fillRadialGradientStartPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
+                        fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
+                        fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                         fillRadialGradientColorStops={[0, "rgb(14, 82, 165)", 1, "rgb(19, 115, 236)"]}
                         shadowBlur={5}
                         stroke={"black"}
                         strokeWidth={3}
                     />
+                    <Image
+                        x={parkingLot.x * gridCellSize.width}
+                        y={parkingLot.y * gridCellSize.height + gridCellSize.height / 4}
+                        width={gridCellSize.width}
+                        height={gridCellSize.height / 2}
+                        image={hubImage}
+                        shadowBlur={5}
+                    />
                     {!spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
                         <Image
-                            x={offset.x + parkingLot.x * debugGridCellSize.width + 30}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height - 40}
+                            x={parkingLot.x * gridCellSize.width}
+                            y={parkingLot.y * gridCellSize.height}
+                            width={gridCellSize.width}
+                            height={gridCellSize.height}
                             image={carImage}
                             shadowBlur={5}
                         /> :
@@ -94,29 +107,32 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
         }
 
         return (
-            <Group key={index}>
+            <Group
+                key={index}
+                x={offset.x}
+                y={offset.y}>
                 {lotRender}
                 {debugMode ?
                     <Group>
                         <Rect
-                            x={offset.x + parkingLot.x * debugGridCellSize.width}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height}
-                            width={debugGridCellSize.width}
-                            height={debugGridCellSize.height}
+                            x={parkingLot.x * gridCellSize.width}
+                            y={parkingLot.y * gridCellSize.height}
+                            width={gridCellSize.width}
+                            height={gridCellSize.height}
                             fill={"rgba(255, 255, 255, 0.3)"}
                             shadowBlur={5}
                             stroke={"black"}
                             strokeWidth={3}
                         />
                         <Text
-                            x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 10}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 12}
+                            x={parkingLot.x * gridCellSize.width + gridCellSize.width / 15}
+                            y={parkingLot.y * gridCellSize.height + gridCellSize.height / 12}
                             text={"R" + parkingLot.y + "C" + parkingLot.x + " (" + debugName + ")"}
                             fontSize={20}
                         />
                         <Text
-                            x={offset.x + parkingLot.x * debugGridCellSize.width + debugGridCellSize.width / 10}
-                            y={offset.y + parkingLot.y * debugGridCellSize.height + debugGridCellSize.height / 1.25}
+                            x={parkingLot.x * gridCellSize.width + gridCellSize.width / 15}
+                            y={parkingLot.y * gridCellSize.height + gridCellSize.height / 1.25}
                             text={hasStatus ?
                                 "Status: " +
                                 (parkingLot.type === "hub" ?
@@ -140,7 +156,7 @@ function Map({ spacesAvailable, debugGridCellSize, offset, debugMode }) {
 
 Map.propTypes = {
     spacesAvailable: PropTypes.array.isRequired,
-    debugGridCellSize: PropTypes.object.isRequired,
+    gridCellSize: PropTypes.object.isRequired,
     debugMode: PropTypes.bool.isRequired,
     offset: PropTypes.object.isRequired
 };

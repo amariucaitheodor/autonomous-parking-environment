@@ -1,5 +1,5 @@
 import React from 'react';
-import Canvas from './Canvas';
+import Canvas from './canvas/Canvas';
 import Overhead from './cameras/Overhead';
 import './App.css';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
@@ -17,7 +17,7 @@ class App extends React.Component {
     this.state = {
       spacesAvailable: ["R0C1", "R1C1", "R0C3", "R1C3", "R2C0", "R3C0"],
       robotGridStaticLocation: { column: 1, row: 4 },
-      robotPath: [], //[{ column: 0, row: 4 }, { column: 1, row: 4 }, { column: 2, row: 4 }, { column: 2, row: 3 }, { column: 2, row: 2 }, { column: 2, row: 1 }, { column: 3, row: 1 }],
+      robotPath: [],
       debugMode: false,
       gridSize: { rows: 5, columns: 4 },
       settingsOn: false, // remove?
@@ -81,20 +81,28 @@ class App extends React.Component {
 
   async toggleSimulation(forced) {
     if (this.state.simulationOn) {
-      forced? 
-      this.setState({ robotPath: [], simulationOn: false }) :
-      this.setState({ simulationOn: false });
+      if (forced) {
+        this.setState({ robotPath: [], simulationOn: false },
+          () => { this.terminateSimulation() });
+      }
+      else
+        this.setState({ simulationOn: false });
     } else {
       let steps = await plan();
       if (steps !== -1) {
         this.setState({
           robotPath: generatePath(steps, this.state.robotGridStaticLocation),
-          simulationOn: true // starts robot movement along new path
+          simulationOn: true
         });
+
       } else {
         console.log("Online planner at `http://solver.planning.domains/solve-and-validate` failed.");
       }
     }
+  }
+
+  terminateSimulation() {
+
   }
 
   toggleDebugMode() {

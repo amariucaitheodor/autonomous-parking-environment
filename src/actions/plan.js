@@ -1,8 +1,6 @@
-import domain from '../assets/planner/domain.js';
+import domain from '../assets/planner/domain/domain.js';
 import problem from '../assets/planner/problem-template.js';
 import axios from 'axios';
-
-//mostachito
 
 export default async function plan() {
     const options = {

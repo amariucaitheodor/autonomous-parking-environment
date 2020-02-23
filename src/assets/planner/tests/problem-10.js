@@ -78,9 +78,9 @@ var plugins = {
 var problem = Mustache.render(`
 ;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
 \n\n
-(define (problem parking)\n    
-(:domain finitech)\n    
+(define (problem parking)
 \n    
+(:domain finitech)\n    \n    
 (:objects\n        
     {{robot}}
     \n       

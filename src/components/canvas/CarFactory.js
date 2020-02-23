@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 import { Rect, Image, Group } from "react-konva";
 import useImage from 'use-image';
-const trashURL = require('../assets/trash.svg');
+const trashURL = require('../../assets/trash.svg');
 
 function CarFactory({parkingLotOffset, size, gridCellSize, carImage, }) {
     const carFactoryOffset = { x: parkingLotOffset.x + size.width + gridCellSize.width / 3, y: parkingLotOffset.y };

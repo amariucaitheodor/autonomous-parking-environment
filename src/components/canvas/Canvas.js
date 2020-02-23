@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import RobotPath from './RobotPath';
-import { Stage, Layer, Shape } from "react-konva";
+import { Stage, Layer, Shape, Image } from "react-konva";
 import CarFactory from './CarFactory';
-import Map from './Map';
-import Robot from './Robot';
+import Map from './Map/Map';
 import useImage from 'use-image';
-const carURL = require('../assets/racecar.svg');
+import async from 'async';
+const carURL = require('../../assets/racecar.svg');
+const robotURL = require('../../assets/robot.svg');
 
-function Canvas({ spacesAvailable, debugMode, robotPath, toggleSimulation, robotGridStaticLocation, gridSize, simulationOn, changeRobotGridStaticLocation }) {
+function Canvas({
+    spacesAvailable,
+    debugMode,
+    robotPath,
+    toggleSimulation,
+    robotGridStaticLocation,
+    gridSize,
+    simulationOn,
+    changeRobotGridStaticLocation
+}) {
     const parkingLotOffset = { x: 0, y: 0 };
     const [stageHeight, setStageHeight] = useState(0);
     // this is 96cm
@@ -32,15 +42,76 @@ function Canvas({ spacesAvailable, debugMode, robotPath, toggleSimulation, robot
         window.addEventListener("resize", checkSize);
     }, []);
 
+    const [robotImage] = useImage(robotURL);
+    const shapeRef = React.useRef();
+
+    const setScale = (x, y) => {
+        shapeRef.current.to({
+            scaleX: x,
+            scaleY: y,
+            duration: 0.1
+        });
+    };
+
+    // TODO: STOP SIMULATION
+    if (simulationOn) {
+        // starts robot movement along new path
+        var count = 0;
+        async.whilst(
+            () => { return simulationOn && count < robotPath.length - 1; },
+            function (callback) {
+                count++;
+                shapeRef.current.to({
+                    x: fromGridToCanvas(robotPath[count]).x,
+                    y: fromGridToCanvas(robotPath[count]).y,
+                    duration: 1
+                });
+                setTimeout(callback, 1050);
+            },
+            function (_err) {
+                toggleSimulation(false);
+            }
+        );
+    }
+
+    const propToGrid = (robotCanvasLocation) => {
+        const cellColumn = Math.floor((robotCanvasLocation.x + gridCellSize.width / 2) / size.width * gridSize.columns);
+        const cellRow = Math.floor((robotCanvasLocation.y + gridCellSize.height / 2) / size.height * gridSize.rows);
+
+        if ((cellColumn >= 0 && cellColumn < gridSize.columns) && (cellRow >= 0 && cellRow < gridSize.rows)) {
+            changeRobotGridStaticLocation(cellColumn, cellRow);
+            var canvasLocation = fromGridToCanvas({ column: cellColumn, row: cellRow });
+            shapeRef.current.to({
+                x: canvasLocation.x,
+                y: canvasLocation.y,
+                duration: 0.1
+            });
+        }
+        else {
+            shapeRef.current.to({
+                x: fromGridToCanvas(robotGridStaticLocation).x,
+                y: fromGridToCanvas(robotGridStaticLocation).y,
+                duration: 0.1
+            });
+        }
+    };
+
+    function fromGridToCanvas(position) {
+        return {
+            x: parkingLotOffset.x + position.column * gridCellSize.width,
+            y: parkingLotOffset.y + position.row * gridCellSize.height - gridCellSize.height / 8
+        };
+    }
+
     return (
         <Stage
             width={parkingLotOffset.x + size.width + gridCellSize.width + gridCellSize.width / 3 + 5}
             height={size.height}
-            // style={{
-            //     textAlign: "center",
-            //     border: "3px solid black",                
-            //     background: "radial-gradient(ellipse at top, #e66465, transparent), radial-gradient(ellipse at bottom, #4d9f0c, transparent)"
-            // }}
+        // style={{
+        //     textAlign: "center",
+        //     border: "3px solid black",                
+        //     background: "radial-gradient(ellipse at top, #e66465, transparent), radial-gradient(ellipse at bottom, #4d9f0c, transparent)"
+        // }}
         >
             <Layer>
                 <Shape // Parking Lot
@@ -82,22 +153,26 @@ function Canvas({ spacesAvailable, debugMode, robotPath, toggleSimulation, robot
                         parkingLotOffset={parkingLotOffset}
                         size={size}
                     />
-                    }
+                }
                 <RobotPath
                     gridCellSize={gridCellSize}
                     robotPath={robotPath}
                     parkingLotOffset={parkingLotOffset}
                 />
-                <Robot
-                toggleSimulation={toggleSimulation}
-                    changeRobotGridStaticLocation={changeRobotGridStaticLocation}
-                    offset={parkingLotOffset}
-                    gridCellSize={gridCellSize}
-                    size={size}
-                    gridSize={gridSize}
-                    robotGridStaticLocation={robotGridStaticLocation}
-                    simulationOn={simulationOn}
-                    robotPath={robotPath}
+                <Image
+                    ref={shapeRef}
+                    x={fromGridToCanvas(robotGridStaticLocation).x}
+                    y={fromGridToCanvas(robotGridStaticLocation).y}
+                    width={gridCellSize.width}
+                    height={gridCellSize.height}
+                    image={robotImage}
+                    shadowBlur={0.5}
+                    draggable={!simulationOn}
+                    onDragStart={() => { setScale(1.2, 1.2) }}
+                    onDragEnd={() => {
+                        setScale(1, 1);
+                        propToGrid(shapeRef.current._lastPos);
+                    }}
                 />
             </Layer>
         </Stage>

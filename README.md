@@ -7,7 +7,7 @@
 - Closed-loop parking lot real-time visual updates (using camera vision feedback system)
 - Live stream from Raspberry Pi cameras onboard the robot (**under consideration**)
 
-## Monitor is part of the following architecture, which was developed as part of [FinitechSDP](https://github.com/Finitech-SDP) (UoE project) 2019-2020
+## This project is a member of the architecture shown below, which I helped develop as part of [FinitechSDP](https://github.com/Finitech-SDP) (University of Edinburgh project) 2019-2020
 ![architecture](finitech-network-architecture.png)
 
 ## Available Scripts

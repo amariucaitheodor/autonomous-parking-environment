@@ -1,69 +1,66 @@
 import React from "react";
 import { Rect, Group, Text } from "react-konva";
-import Portal from '../../Portal';
-import { Button } from 'react-bootstrap';
 
 function DebugTile({ mapTile, hasStatus, spacesAvailable, gridCellSize, debugName }) {
 
-    const color = 'rgba(220, 220, 220, 0.8)'
-    const statusButton = {
-        position: 'absolute',
-        background: color,
-        top: mapTile.y * gridCellSize.height + gridCellSize.height * 1.1,
-        left: mapTile.x * gridCellSize.width + gridCellSize.width / 13,
-        width: gridCellSize.width * 0.95,
-        height: gridCellSize.height / 4
-    }
-    const typeButton = {
-        position: 'absolute',
-        background: color,
-        top: mapTile.y * gridCellSize.height + gridCellSize.height / 2,
-        left: mapTile.x * gridCellSize.width + gridCellSize.width / 13,
-        width: gridCellSize.width * 0.95,
-        height: gridCellSize.height / 4
-    }
+    // const color = 'rgba(220, 220, 220, 0.8)'
+    // const statusButton = {
+    //     position: 'absolute',
+    //     background: color,
+    //     top: mapTile.y * gridCellSize.height + gridCellSize.height * 1.1,
+    //     left: mapTile.x * gridCellSize.width + gridCellSize.width / 13,
+    //     width: gridCellSize.width * 0.95,
+    //     height: gridCellSize.height / 4
+    // }
+    // const typeButton = {
+    //     position: 'absolute',
+    //     background: color,
+    //     top: mapTile.y * gridCellSize.height + gridCellSize.height / 2,
+    //     left: mapTile.x * gridCellSize.width + gridCellSize.width / 13,
+    //     width: gridCellSize.width * 0.95,
+    //     height: gridCellSize.height / 4
+    // }
 
-    let portalButtonGroup;
-
-    if (mapTile.type === "hub")
-        portalButtonGroup = <Portal>
-            <Button
-                variant="light"
-                style={typeButton}
-            >
-                {debugName}
-            </Button>
-            <Button
-                variant="light"
-                style={statusButton}
-            >
-                Available
-            </Button>
-        </Portal>;
-    else if (mapTile.type === "parking")
-        portalButtonGroup = <Portal>
-            <Button
-                variant="light"
-                style={typeButton}
-            >
-                {debugName}
-            </Button>
-            <Button
-                variant="light"
-                style={statusButton}
-            >
-                Available parking
-            </Button>
-        </Portal>;
-    else
-        portalButtonGroup = <Portal>
-            <Button
-                variant="light"
-                style={typeButton}
-            >
-                {debugName}
-            </Button>
-        </Portal>;
+    // TODO: replace portal with rect
+    // if (mapTile.type === "hub")
+    //     portalButtonGroup = <Portal>
+    //         <Button
+    //             variant="light"
+    //             style={typeButton}
+    //         >
+    //             {debugName}
+    //         </Button>
+    //         <Button
+    //             variant="light"
+    //             style={statusButton}
+    //         >
+    //             Available
+    //         </Button>
+    //     </Portal>;
+    // else if (mapTile.type === "parking")
+    //     portalButtonGroup = <Portal>
+    //         <Button
+    //             variant="light"
+    //             style={typeButton}
+    //         >
+    //             {debugName}
+    //         </Button>
+    //         <Button
+    //             variant="light"
+    //             style={statusButton}
+    //         >
+    //             Available parking
+    //         </Button>
+    //     </Portal>;
+    // else
+    //     portalButtonGroup = <Portal>
+    //         <Button
+    //             variant="light"
+    //             style={typeButton}
+    //         >
+    //             {debugName}
+    //         </Button>
+    //     </Portal>;
 
     return (
         <Group>

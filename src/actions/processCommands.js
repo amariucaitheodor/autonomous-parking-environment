@@ -1,4 +1,4 @@
-export default function generateCommands(steps, robotLocation) {
+export default function processCommands(steps, robotLocation) {
     let newPathPoint = { pickupCar: false, dropCar: false, column: robotLocation.column, row: robotLocation.row };
     let path = [newPathPoint];
     steps.forEach(action => {

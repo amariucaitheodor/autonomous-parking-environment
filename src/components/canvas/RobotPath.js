@@ -4,17 +4,9 @@ import { Arrow } from "react-konva";
 
 function RobotPath({ robotPath, parkingLotOffset, gridCellSize }) {
     let pathStop = [];
-    robotPath.forEach(element => {
-        let xCoord =
-            parkingLotOffset.x +
-            element.column * gridCellSize.width +
-            gridCellSize.width / 2
-            ;
-        let yCoord =
-            parkingLotOffset.y +
-            element.row * gridCellSize.height +
-            gridCellSize.height / 2
-            ;
+    robotPath.forEach(step => {
+        let xCoord = parkingLotOffset.x + step.column * gridCellSize.width + gridCellSize.width / 2;
+        let yCoord = parkingLotOffset.y + step.row * gridCellSize.height + gridCellSize.height / 2;
         pathStop.push(xCoord);
         pathStop.push(yCoord);
     });

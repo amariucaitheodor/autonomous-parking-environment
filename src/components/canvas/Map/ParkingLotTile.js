@@ -2,6 +2,9 @@ import React from "react";
 import { Rect, Image } from "react-konva";
 
 function ParkingLotTile({ parkingLot, spacesAvailable, gridCellSize, parkingImage, carImage }) {
+
+    let occupied = !spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x);
+
     return (
         <>
             <Rect
@@ -29,18 +32,15 @@ function ParkingLotTile({ parkingLot, spacesAvailable, gridCellSize, parkingImag
                 image={parkingImage}
                 shadowBlur={5}
             />
-            {
-                !spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
-                    <Image
-                        x={parkingLot.x * gridCellSize.width}
-                        y={parkingLot.y * gridCellSize.height}
-                        width={gridCellSize.width}
-                        height={gridCellSize.height}
-                        image={carImage}
-                        shadowBlur={5}
-                    /> :
-                    null
-            }
+            <Image
+                x={parkingLot.x * gridCellSize.width}
+                y={parkingLot.y * gridCellSize.height}
+                width={gridCellSize.width}
+                height={gridCellSize.height}
+                image={carImage}
+                shadowBlur={5}
+                visible={occupied}
+            />
         </>
     );
 }

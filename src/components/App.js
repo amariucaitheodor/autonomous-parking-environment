@@ -8,8 +8,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Toast } from "react-bootstrap";
 import { GoGear } from 'react-icons/go';
 import plan from '../actions/plan';
-import generateCommands from '../actions/generateCommands';
-import problem from '../assets/planner/problem-template.js';
+import processCommands from '../actions/processCommands';
+import generateProblem from '../actions/generateProblem.js';
 
 class App extends React.Component {
   constructor() {
@@ -20,11 +20,12 @@ class App extends React.Component {
       robotCommands: [],
       debugMode: false,
       gridSize: { rows: 5, columns: 4 },
-      settingsOn: false, // remove?
       simulationOn: false,
-      toasts: []
+      alreadyActivated: false,
+      toasts: [],
+      resizableCanvas: false,
     };
-    this.toggleSettings = this.toggleSettings.bind(this);
+    this.initialSpacesAvailable = this.state.spacesAvailable;
     this.toggleSimulation = this.toggleSimulation.bind(this);
     this.setSpaceAvailable = this.setSpaceAvailable.bind(this);
     this.setSpaceBusy = this.setSpaceBusy.bind(this);
@@ -46,12 +47,10 @@ class App extends React.Component {
   setSpaceBusy(row, column) {
     const thisSpace = "R" + row + "C" + column;
     let toModifySpacesAvailable = [...this.state.spacesAvailable];
-    console.log(toModifySpacesAvailable)
     if (!toModifySpacesAvailable.includes(thisSpace))
       return;
     else
       toModifySpacesAvailable.splice(toModifySpacesAvailable.indexOf(thisSpace), 1);
-    console.log(toModifySpacesAvailable)
     this.setState({
       spacesAvailable: toModifySpacesAvailable
     });
@@ -63,11 +62,11 @@ class App extends React.Component {
     });
   }
 
-  addToast = (message) => {
+  sendToastNotification = (message) => {
     const toastTemplate = (
       <Toast
         key={this.state.toasts.length + 1}
-        onClose={() => this.closeOldestToast()}
+        onClose={() => this.closeOldestNotification()}
         show={true}
         delay={3000}
         autohide
@@ -90,7 +89,7 @@ class App extends React.Component {
     });
   }
 
-  closeOldestToast() {
+  closeOldestNotification() {
     var newToasts = this.state.toasts;
     newToasts.shift();
     this.setState({
@@ -101,18 +100,20 @@ class App extends React.Component {
   async toggleSimulation(forced) {
     if (this.state.simulationOn) {
       if (forced) {
-        this.setState({ robotPath: [], simulationOn: false },
-          () => { });
+        // not working
+        this.setState({ robotPath: [], simulationOn: false });
       }
       else
-        this.setState({ simulationOn: false });
+        this.setState({ simulationOn: false, alreadyActivated: false });
     } else {
-      let steps = await plan(problem);
-      if (steps !== -1) {
+      let commands = await plan(generateProblem(null, null, null, null, null));
+      if (commands !== -1) {
         this.setState({
-          robotCommands: generateCommands(steps, this.state.robotGridStaticLocation),
-          simulationOn: true
-        });
+          spacesAvailable: this.initialSpacesAvailable,
+          robotCommands: processCommands(commands, this.state.robotGridStaticLocation),
+          simulationOn: true,
+          alreadyActivated: false
+        }, () => { this.setState({ alreadyActivated: true }) });
       } else {
         console.log("Online planner at `http://solver.planning.domains/solve-and-validate` failed.");
       }
@@ -125,18 +126,12 @@ class App extends React.Component {
     });
   }
 
-  toggleSettings() {
-    this.setState({
-      settingsOn: !this.state.settingsOn
-    });
-  }
-
   componentDidMount() {
-    this.addToast("A new car has arrived at hub R4C0!");
-    this.addToast("A car is now awaiting delivery at hub R2C3!");
-    this.addToast("A new car has arrived at hub R4C0!");
-    this.addToast("A new obstacle was detected!");
-    this.addToast("A new obstacle was detected!");
+    this.sendToastNotification("A new car has arrived at hub R4C0!");
+    this.sendToastNotification("A car is now awaiting delivery at hub R2C3!");
+    this.sendToastNotification("A new car has arrived at hub R4C0!");
+    this.sendToastNotification("A new obstacle was detected!");
+    this.sendToastNotification("A new obstacle was detected!");
   }
 
   render() {
@@ -156,10 +151,12 @@ class App extends React.Component {
               <NavDropdown.Divider />
               <NavDropdown.Item
                 onClick={() => { this.toggleDebugMode() }}
-              >Debug Mode</NavDropdown.Item>
+              >Debug Mode
+              </NavDropdown.Item>
               <NavDropdown.Item
                 onClick={() => { this.toggleSimulation(true) }}
-              >Toggle Simulation</NavDropdown.Item>
+              >Toggle Simulation
+              </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Cameras" id="collasible-nav-dropdown">
               <NavDropdown.Item href="#/overhead">CCTV</NavDropdown.Item>
@@ -184,6 +181,8 @@ class App extends React.Component {
                 <Row>
                   <Col xs={8}>
                     <Canvas
+                      resizable={this.state.resizableCanvas}
+                      alreadyActivated={this.state.alreadyActivated}
                       setSpaceAvailable={this.setSpaceAvailable}
                       setSpaceBusy={this.setSpaceBusy}
                       toggleSimulation={this.toggleSimulation}

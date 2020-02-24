@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import RobotPath from './RobotPath';
 import { Stage, Layer, Shape, Image } from "react-konva";
-import CarFactory from './CarFactory';
 import Map from './Map/Map';
 import useImage from 'use-image';
 import async from 'async';
-const carURL = require('../../assets/racecar.svg');
-const robotURL = require('../../assets/robot.svg');
+const carURL = require('../../assets/images/racecar.svg');
+const robotURL = require('../../assets/images/robot.svg');
 
 function Canvas({
     spacesAvailable,
@@ -17,10 +16,12 @@ function Canvas({
     robotGridStaticLocation,
     gridSize,
     simulationOn,
-    changeRobotGridStaticLocation
+    changeRobotGridStaticLocation,
+    setSpaceAvailable,
+    setSpaceBusy
 }) {
     const parkingLotOffset = { x: 0, y: 0 };
-    const [stageHeight, setStageHeight] = useState(0);
+    const [stageHeight] = useState(850);
     // this is 96cm
     const squareSideHeightRatio = 96 / 288;
     const upperLeftSquareSide = stageHeight * squareSideHeightRatio;
@@ -33,14 +34,14 @@ function Canvas({
     }
     const [carImage] = useImage(carURL);
 
-    function checkSize() {
-        setStageHeight(window.innerHeight * 0.9);
-    }
+    // function checkSize() {
+    //     setStageHeight(window.innerHeight * 0.9);
+    // }
 
-    useEffect(() => {
-        checkSize();
-        window.addEventListener("resize", checkSize);
-    }, []);
+    // useEffect(() => {
+    //     checkSize();
+    //     window.addEventListener("resize", checkSize);
+    // }, []);
 
     const [robotImage] = useImage(robotURL);
     const shapeRef = React.useRef();
@@ -61,6 +62,10 @@ function Canvas({
             () => { return simulationOn && count < robotPath.length - 1; },
             function (callback) {
                 count++;
+                if (robotPath[count - 1].pickupCar)
+                    setSpaceAvailable(robotPath[count - 1].row, robotPath[count - 1].column);
+                else if (robotPath[count - 1].dropCar)
+                    setSpaceBusy(robotPath[count - 1].row, robotPath[count - 1].column);
                 shapeRef.current.to({
                     x: fromGridToCanvas(robotPath[count]).x,
                     y: fromGridToCanvas(robotPath[count]).y,
@@ -105,11 +110,11 @@ function Canvas({
 
     return (
         <Stage
-            width={parkingLotOffset.x + size.width + gridCellSize.width + gridCellSize.width / 3 + 5}
+            width={parkingLotOffset.x + size.width + 5}
             height={size.height}
         // style={{
         //     textAlign: "center",
-        //     border: "3px solid black",                
+        //     border: "3px solid black",
         //     background: "radial-gradient(ellipse at top, #e66465, transparent), radial-gradient(ellipse at bottom, #4d9f0c, transparent)"
         // }}
         >
@@ -146,14 +151,6 @@ function Canvas({
                     gridCellSize={gridCellSize}
                     offset={parkingLotOffset}
                 />
-                {simulationOn ? null :
-                    <CarFactory
-                        carImage={carImage}
-                        gridCellSize={gridCellSize}
-                        parkingLotOffset={parkingLotOffset}
-                        size={size}
-                    />
-                }
                 <RobotPath
                     gridCellSize={gridCellSize}
                     robotPath={robotPath}

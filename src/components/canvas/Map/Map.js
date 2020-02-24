@@ -6,8 +6,8 @@ import useImage from 'use-image';
 import ParkingLotTile from "./ParkingLotTile.js";
 import HubTile from "./HubTile.js";
 import DebugTile from "./DebugTile.js";
-const parkingURL = require('../../../assets/parking-sign.svg');
-const hubURL = require('../../../assets/hub.svg');
+const parkingURL = require('../../../assets/images/parking-sign.svg');
+const hubURL = require('../../../assets/images/hub.svg');
 
 function Map({ spacesAvailable, gridCellSize, offset, debugMode, carImage }) {
     const [parkingImage] = useImage(parkingURL);

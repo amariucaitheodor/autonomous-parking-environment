@@ -1,10 +1,9 @@
 import domain from '../assets/planner/domain/domain.js';
-import problem from '../assets/planner/problem-template.js';
 import axios from 'axios';
 
-export default async function plan() {
+export default async function plan(problem) {
     const options = {
-        url: 'https://solver.planning.domains/solve-and-validate',
+        url: 'http://solver.planning.domains/solve-and-validate',
         method: 'POST',
         contentType: 'application/json',
         headers: {

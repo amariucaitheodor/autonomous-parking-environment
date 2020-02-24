@@ -1,5 +1,7 @@
 import Mustache from 'mustache';
 
+// Problem description: All parking spaces full, 3 cars awaiting delivery, cars in 2 hubs awaiting parking, 1 free hub space
+
 var plugins = {
     robot: "Robot - robot",
     cars: `
@@ -7,6 +9,11 @@ var plugins = {
     Car2 - car\n        
     Car3 - car\n        
     Car4 - car\n
+    Car5 - car\n       
+    Car6 - car\n        
+    Car7 - car\n        
+    Car8 - car\n
+    Car9 - car\n       
     `,
     tiles: `
     R0C0 - blockedTile\n        
@@ -31,13 +38,24 @@ var plugins = {
     R4C3 - parkingTile\n    
     `,
     scenario: `
-    (IsAt Robot R4C1)\n        
-    (IsAt Car1 R2C3)\n        
-    (IsAt Car2 R3C3)\n        
-    (IsAt Car3 R4C3)\n        
-    (IsAt Car4 R4C0)\n        
-    (AwaitingDelivery Car1)\n        
-    (AwaitingParking Car4)\n  
+    (IsAt Robot R4C1)\n  
+          
+    (IsAt Car1 R0C1)\n        
+    (IsAt Car2 R0C3)\n        
+    (IsAt Car3 R1C1)\n        
+    (IsAt Car4 R1C3)\n           
+    (IsAt Car5 R2C3)\n        
+    (IsAt Car6 R3C3)\n        
+    (IsAt Car7 R4C3)\n     
+
+    (IsAt Car8 R3C0)\n        
+    (IsAt Car9 R4C0)\n     
+        
+    (AwaitingDelivery Car1)\n    
+    (AwaitingDelivery Car2)\n    
+    (AwaitingDelivery Car3)\n        
+    (AwaitingParking Car8)\n  
+    (AwaitingParking Car9)\n  
     `,
     setup: `
     (IsToTheLeftOf R0C0 R0C1)\n        
@@ -76,7 +94,7 @@ var plugins = {
   };
 
 var problem = Mustache.render(`
-;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
+;; Test Problem Author: Theodor Amariucai
 \n\n
 (define (problem parking)
 \n    

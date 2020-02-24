@@ -29,16 +29,17 @@ function ParkingLotTile({ parkingLot, spacesAvailable, gridCellSize, parkingImag
                 image={parkingImage}
                 shadowBlur={5}
             />
-            {!spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
-                <Image
-                    x={parkingLot.x * gridCellSize.width}
-                    y={parkingLot.y * gridCellSize.height}
-                    width={gridCellSize.width}
-                    height={gridCellSize.height}
-                    image={carImage}
-                    shadowBlur={5}
-                /> :
-                null
+            {
+                !spacesAvailable.includes("R" + parkingLot.y + "C" + parkingLot.x) ?
+                    <Image
+                        x={parkingLot.x * gridCellSize.width}
+                        y={parkingLot.y * gridCellSize.height}
+                        width={gridCellSize.width}
+                        height={gridCellSize.height}
+                        image={carImage}
+                        shadowBlur={5}
+                    /> :
+                    null
             }
         </>
     );

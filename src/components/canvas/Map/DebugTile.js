@@ -1,7 +1,30 @@
 import React from "react";
 import { Rect, Group, Text } from "react-konva";
 
-function DebugTile({ mapTile, hasStatus, spacesAvailable, gridCellSize, debugName }) {
+function DebugTile({ mapTile, cars, gridCellSize, debugName }) {
+
+    var prettyCarStatus = "";
+    for (var i = 0; i < cars.length; i++) {
+        if (cars[i].location.row === mapTile.y && cars[i].location.column === mapTile.x) {
+            switch (cars[i].status) {
+                case "AwaitingParking":
+                    prettyCarStatus = "Status: Awaiting Parking";
+                    break;
+                case "AwaitingDelivery":
+                    prettyCarStatus = "Status: Awaiting Delivery";
+                    break;
+                case null:
+                    if (mapTile.type === "parking")
+                        prettyCarStatus = "Status: Idle";
+                    else if (mapTile.type === "hub")
+                        prettyCarStatus = "Status: Awaiting Owner";
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+    }
 
     // const color = 'rgba(220, 220, 220, 0.8)'
     // const statusButton = {
@@ -84,17 +107,7 @@ function DebugTile({ mapTile, hasStatus, spacesAvailable, gridCellSize, debugNam
             <Text
                 x={mapTile.x * gridCellSize.width + gridCellSize.width / 15}
                 y={mapTile.y * gridCellSize.height + gridCellSize.height / 1.25}
-                text={hasStatus ?
-                    "Status: " +
-                    (mapTile.type === "hub" ?
-                        (spacesAvailable.includes("R" + mapTile.y + "C" + mapTile.x) ?
-                            "Available" : "Awaiting Parking") :
-                        (mapTile.type === "parking" ?
-                            (spacesAvailable.includes("R" + mapTile.y + "C" + mapTile.x) ?
-                                "Available" : "Occupied") :
-                            null)) :
-                    null
-                }
+                text={prettyCarStatus}
                 fontSize={20}
             />
         </Group>

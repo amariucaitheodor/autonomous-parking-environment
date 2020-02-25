@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import RobotPath from './RobotPath';
 import { Stage, Layer, Shape } from "react-konva";
 import useImage from 'use-image';
 import Map from './Map/Map';
@@ -7,7 +6,9 @@ import Robot from "./Robot";
 const carURL = require('../../assets/images/racecar.svg');
 
 function Canvas({
-    spacesAvailable,
+    map,
+    cars,
+    carriedCar,
     debugMode,
     robotPath,
     toggleSimulation,
@@ -15,10 +16,11 @@ function Canvas({
     gridSize,
     simulationOn,
     changeRobotGridStaticLocation,
-    setSpaceAvailable,
-    setSpaceBusy,
+    removeCar,
+    addCar,
     alreadyActivated,
-    resizable
+    resizable,
+    shiftPath
 }) {
     const [carImage] = useImage(carURL);
     const parkingLotOffset = { x: 0, y: 0 };
@@ -83,26 +85,24 @@ function Canvas({
                     strokeWidth={5}
                 />
                 <Map
+                    map={map}
                     carImage={carImage}
-                    spacesAvailable={spacesAvailable}
+                    cars={cars}
                     debugMode={debugMode}
                     gridCellSize={gridCellSize}
                     offset={parkingLotOffset}
                 />
-                <RobotPath
-                    gridCellSize={gridCellSize}
-                    robotPath={robotPath}
-                    parkingLotOffset={parkingLotOffset}
-                />
                 <Robot
+                    shiftPath={shiftPath}
+                    carriedCar={carriedCar}
                     robotGridStaticLocation={robotGridStaticLocation}
                     gridCellSize={gridCellSize}
                     carImage={carImage}
                     simulationOn={simulationOn}
                     alreadyActivated={alreadyActivated}
                     robotPath={robotPath}
-                    setSpaceAvailable={setSpaceAvailable}
-                    setSpaceBusy={setSpaceBusy}
+                    removeCar={removeCar}
+                    addCar={addCar}
                     gridSize={gridSize}
                     parkingLotOffset={parkingLotOffset}
                     size={size}

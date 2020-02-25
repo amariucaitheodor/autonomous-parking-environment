@@ -21,6 +21,7 @@ export default async function plan(problem) {
             if (response['data']['status'] === 'ok') {
                 return response.data.result.plan;
             } else {
+                console.error("Online planner at `http://solver.planning.domains/solve-and-validate` failed:\n\n" + response.data.result.error);
                 return -1;
             }
         });

@@ -1,12 +1,12 @@
 import React from 'react';
 import Canvas from './canvas/Canvas';
 import Overhead from './cameras/Overhead';
+import Notifications from './Notifications';
 import './App.css';
+import initialMap from '../assets/initialMap';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container, Row, Col } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Toast } from "react-bootstrap";
-import { GoGear } from 'react-icons/go';
 import plan from '../actions/plan';
 import processCommands from '../actions/processCommands';
 import generateProblem from '../actions/generateProblem.js';
@@ -15,85 +15,83 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      spacesAvailable: ["R0C1", "R1C1", "R0C3", "R1C3", "R2C0", "R3C0"],
+      cars: [
+        { location: { row: 0, column: 1 }, licensePlate: "SAG 984", status: "AwaitingDelivery" },
+        { location: { row: 2, column: 3 }, licensePlate: "SBG 985", status: "AwaitingDelivery" },
+        { location: { row: 4, column: 3 }, licensePlate: "SBG 985", status: null },
+        { location: { row: 2, column: 0 }, licensePlate: "SDG 987", status: null },
+        { location: { row: 4, column: 0 }, licensePlate: "SEG 988", status: "AwaitingParking" },
+      ],
+      map: initialMap,
+      carriedCar: null,
       robotGridStaticLocation: { column: 1, row: 4 },
       robotCommands: [],
       debugMode: false,
       gridSize: { rows: 5, columns: 4 },
       simulationOn: false,
       alreadyActivated: false,
-      toasts: [],
       resizableCanvas: false,
     };
-    this.initialSpacesAvailable = this.state.spacesAvailable;
+    this.initialCars = this.state.cars;
     this.toggleSimulation = this.toggleSimulation.bind(this);
-    this.setSpaceAvailable = this.setSpaceAvailable.bind(this);
-    this.setSpaceBusy = this.setSpaceBusy.bind(this);
+    this.shiftPath = this.shiftPath.bind(this);
+    this.removeCar = this.removeCar.bind(this);
+    this.addCar = this.addCar.bind(this);
     this.changeRobotGridStaticLocation = this.changeRobotGridStaticLocation.bind(this);
   }
 
-  setSpaceAvailable(row, column) {
-    const thisSpace = "R" + row + "C" + column;
-    let toModifySpacesAvailable = [...this.state.spacesAvailable];
-    if (toModifySpacesAvailable.includes(thisSpace))
-      return;
-    else
-      toModifySpacesAvailable.push(thisSpace);
-    this.setState({
-      spacesAvailable: toModifySpacesAvailable
-    });
+  removeCar(row, column) {
+    var foundCarIndex = null;
+    for (var i = 0; i < this.state.cars.length; i++) {
+      if (this.state.cars[i].location.row === row && this.state.cars[i].location.column === column) {
+        foundCarIndex = i;
+        break;
+      }
+    }
+
+    if (foundCarIndex !== null) {
+      let newCars = [...this.state.cars];
+      newCars.splice(foundCarIndex, 1);
+      this.setState({
+        carriedCar: this.state.cars[foundCarIndex],
+        cars: newCars,
+      });
+    }
   }
 
-  setSpaceBusy(row, column) {
-    const thisSpace = "R" + row + "C" + column;
-    let toModifySpacesAvailable = [...this.state.spacesAvailable];
-    if (!toModifySpacesAvailable.includes(thisSpace))
-      return;
-    else
-      toModifySpacesAvailable.splice(toModifySpacesAvailable.indexOf(thisSpace), 1);
+  addCar(row, column) {
+    var foundCarIndex = null;
+    for (var i = 0; i < this.state.cars.length; i++) {
+      if (this.state.cars[i].location.row === row && this.state.cars[i].location.column === column) {
+        foundCarIndex = i;
+        break;
+      }
+    }
+
+    if (foundCarIndex === null) {
+      let newCars = [...this.state.cars];
+      newCars.push({
+        location: { row: row, column: column },
+        licensePlate: this.state.carriedCar.licensePlate,
+        status: null // after AwaitingParking car is simply idle, after AwaitingDelivery car is awaiting owner
+      });
+      this.setState({
+        carriedCar: null,
+        cars: newCars
+      });
+    }
+  }
+
+  shiftPath() {
+    let newPath = [...this.state.robotCommands].shift();
     this.setState({
-      spacesAvailable: toModifySpacesAvailable
+      robotCommands: newPath
     });
   }
 
   changeRobotGridStaticLocation(newColumn, newRow) {
     this.setState({
       robotGridStaticLocation: { column: newColumn, row: newRow }
-    });
-  }
-
-  sendToastNotification = (message) => {
-    const toastTemplate = (
-      <Toast
-        key={this.state.toasts.length + 1}
-        onClose={() => this.closeOldestNotification()}
-        show={true}
-        delay={3000}
-        autohide
-      >
-        <Toast.Header>
-          <GoGear />
-          <strong className="mr-auto ml-2">Replanning...</strong>
-          just now
-        </Toast.Header>
-        <Toast.Body>
-          <h6 style={{ color: "rgb(70, 70, 70)" }}>{message}</h6>
-        </Toast.Body>
-      </Toast>
-    );
-
-    var newToasts = this.state.toasts;
-    newToasts.push(toastTemplate)
-    this.setState({
-      toasts: newToasts
-    });
-  }
-
-  closeOldestNotification() {
-    var newToasts = this.state.toasts;
-    newToasts.shift();
-    this.setState({
-      toasts: newToasts
     });
   }
 
@@ -106,16 +104,17 @@ class App extends React.Component {
       else
         this.setState({ simulationOn: false, alreadyActivated: false });
     } else {
-      let commands = await plan(generateProblem(null, null, null, null, null));
+      let commands = await plan(generateProblem(
+        this.state.robotGridStaticLocation,
+        this.state.cars,
+        null,
+        null));
       if (commands !== -1) {
         this.setState({
-          spacesAvailable: this.initialSpacesAvailable,
           robotCommands: processCommands(commands, this.state.robotGridStaticLocation),
           simulationOn: true,
           alreadyActivated: false
         }, () => { this.setState({ alreadyActivated: true }) });
-      } else {
-        console.log("Online planner at `http://solver.planning.domains/solve-and-validate` failed.");
       }
     }
   }
@@ -124,14 +123,6 @@ class App extends React.Component {
     this.setState({
       debugMode: !this.state.debugMode
     });
-  }
-
-  componentDidMount() {
-    this.sendToastNotification("A new car has arrived at hub R4C0!");
-    this.sendToastNotification("A car is now awaiting delivery at hub R2C3!");
-    this.sendToastNotification("A new car has arrived at hub R4C0!");
-    this.sendToastNotification("A new obstacle was detected!");
-    this.sendToastNotification("A new obstacle was detected!");
   }
 
   render() {
@@ -150,7 +141,7 @@ class App extends React.Component {
               <NavDropdown.Item href="#/">View</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item
-                onClick={() => { this.toggleDebugMode() }}
+                onClick={() => { this.toggleDebugMode(); }}
               >Debug Mode
               </NavDropdown.Item>
               <NavDropdown.Item
@@ -159,7 +150,7 @@ class App extends React.Component {
               </NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Cameras" id="collasible-nav-dropdown">
-              <NavDropdown.Item href="#/overhead">CCTV</NavDropdown.Item>
+              <NavDropdown.Item {... !this.state.simulationOn ? { href: "#/overhead" } : {}}>CCTV</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar>
@@ -181,10 +172,13 @@ class App extends React.Component {
                 <Row>
                   <Col xs={8}>
                     <Canvas
+                      map={this.state.map}
+                      shiftPath={this.shiftPath}
+                      carriedCar={this.state.carriedCar}
                       resizable={this.state.resizableCanvas}
                       alreadyActivated={this.state.alreadyActivated}
-                      setSpaceAvailable={this.setSpaceAvailable}
-                      setSpaceBusy={this.setSpaceBusy}
+                      removeCar={this.removeCar}
+                      addCar={this.addCar}
                       toggleSimulation={this.toggleSimulation}
                       changeRobotGridStaticLocation={this.changeRobotGridStaticLocation}
                       simulationOn={this.state.simulationOn}
@@ -192,21 +186,11 @@ class App extends React.Component {
                       robotGridStaticLocation={this.state.robotGridStaticLocation}
                       robotPath={this.state.robotCommands}
                       debugMode={this.state.debugMode}
-                      spacesAvailable={this.state.spacesAvailable}
+                      cars={this.state.cars}
                     />
                   </Col>
                   <Col xs={4}>
-                    <div
-                      aria-live="polite"
-                      aria-atomic="true"
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        right: 20
-                      }}
-                    >
-                      {this.state.toasts}
-                    </div>
+                    <Notifications />
                   </Col>
                 </Row>
               </Container>

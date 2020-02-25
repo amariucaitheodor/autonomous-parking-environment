@@ -8,7 +8,7 @@ class Overhead extends React.Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => this.setState({ time: new Date().toLocaleString() }), 1000);
+        this.interval = setInterval(() => this.setState({ time: new Date().toLocaleString() }), 300);
     }
 
     componentWillUnmount() {
@@ -29,18 +29,12 @@ class Overhead extends React.Component {
                 <header className="App-header">
                     <h3 className="mb-3"> {this.state.time} UTC </h3>
                 </header>
-                <video
-                    controls
-                    autoPlay
-                    width={window.innerWidth * 0.9}
+                <iframe
+                    title="cctv"
+                    src="http://127.0.0.1:8081/stream.ogg"
+                    width={window.innerHeight}
                     height={window.innerHeight * 0.8}
-                >
-                    <source
-                        src="http://129.215.124.4:8081/stream.ogg"
-                        type="video/ogg"
-                    />
-                    Sorry, your browser doesn't support embedded videos.
-                </video>
+                />
             </div>
         );
     }

@@ -1,14 +1,22 @@
 import Mustache from 'mustache';
 
-function generateProblem(robot, cars, tiles, scenario, setup) {
+function generateProblem(robotGridStaticLocation, cars, tiles, setup) {
+
+    let robotString = "(IsAt Robot R" + robotGridStaticLocation.row + "C" + robotGridStaticLocation.column + ")\n";
+    let carsString = "";
+    let carsStatusesString = "";
+    let carsLocationsString = "";
+
+    for (var i = 0; i < cars.length; i++) {
+        carsString = carsString.concat("Car" + i + " - car\n");
+        carsLocationsString = carsLocationsString.concat("(IsAt Car" + i + " R" + cars[i].location.row + "C" + cars[i].location.column + ")\n");
+        if (cars[i].status !== null)
+            carsStatusesString = carsStatusesString.concat("(" + cars[i].status + " Car" + i + ")\n");
+    }
+
     var plugins = {
         robot: "Robot - robot",
-        cars: `
-        Car1 - car\n       
-        Car2 - car\n        
-        Car3 - car\n        
-        Car4 - car\n
-        `,
+        cars: carsString,
         tiles: `
         R0C0 - blockedTile\n        
         R0C1 - parkingTile\n        
@@ -31,15 +39,7 @@ function generateProblem(robot, cars, tiles, scenario, setup) {
         R4C2 - roadTile\n        
         R4C3 - parkingTile\n    
         `,
-        scenario: `
-        (IsAt Robot R4C1)\n        
-        (IsAt Car1 R2C3)\n        
-        (IsAt Car2 R3C3)\n        
-        (IsAt Car3 R4C3)\n        
-        (IsAt Car4 R4C0)\n        
-        (AwaitingDelivery Car1)\n        
-        (AwaitingParking Car4)\n  
-        `,
+        scenario: robotString + carsLocationsString + carsStatusesString,
         setup: `
         (IsToTheLeftOf R0C0 R0C1)\n        
         (IsToTheLeftOf R0C1 R0C2)\n        

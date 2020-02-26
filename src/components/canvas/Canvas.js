@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Stage, Layer, Shape } from "react-konva";
 import useImage from 'use-image';
 import Map from './Map/Map';
-import Robot from "./Robot";
 const carURL = require('../../assets/images/racecar.svg');
 
 function Canvas({
@@ -91,13 +90,6 @@ function Canvas({
                     debugMode={debugMode}
                     gridCellSize={gridCellSize}
                     offset={parkingLotOffset}
-                />
-                <Robot
-                    shiftPath={shiftPath}
-                    carriedCar={carriedCar}
-                    robotGridStaticLocation={robotGridStaticLocation}
-                    gridCellSize={gridCellSize}
-                    carImage={carImage}
                     simulationOn={simulationOn}
                     alreadyActivated={alreadyActivated}
                     robotPath={robotPath}
@@ -108,6 +100,9 @@ function Canvas({
                     size={size}
                     toggleSimulation={toggleSimulation}
                     changeRobotGridStaticLocation={changeRobotGridStaticLocation}
+                    shiftPath={shiftPath}
+                    carriedCar={carriedCar}
+                    robotGridStaticLocation={robotGridStaticLocation}
                 />
             </Layer>
         </Stage>

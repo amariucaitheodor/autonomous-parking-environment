@@ -3,21 +3,23 @@ import { Rect, Group, Text } from "react-konva";
 
 function DebugTile({ mapTile, cars, gridCellSize, debugName }) {
 
-    var prettyCarStatus = "";
+    var carStatus = "";
+    var carLicensePlate = "";
     for (var i = 0; i < cars.length; i++) {
-        if (cars[i].location.row === mapTile.y && cars[i].location.column === mapTile.x) {
+        if (cars[i].location.row === mapTile.row && cars[i].location.column === mapTile.column) {
+            carLicensePlate = "License Plate: " + cars[i].licensePlate;
             switch (cars[i].status) {
                 case "AwaitingParking":
-                    prettyCarStatus = "Status: Awaiting Parking";
+                    carStatus = "Status: Awaiting Parking";
                     break;
                 case "AwaitingDelivery":
-                    prettyCarStatus = "Status: Awaiting Delivery";
+                    carStatus = "Status: Awaiting Delivery";
                     break;
                 case null:
                     if (mapTile.type === "parking")
-                        prettyCarStatus = "Status: Idle";
+                        carStatus = "Status: Idle";
                     else if (mapTile.type === "hub")
-                        prettyCarStatus = "Status: Awaiting Owner";
+                        carStatus = "Status: Awaiting Owner";
                     break;
                 default:
                     break;
@@ -88,27 +90,36 @@ function DebugTile({ mapTile, cars, gridCellSize, debugName }) {
     return (
         <Group>
             <Rect
-                x={mapTile.x * gridCellSize.width}
-                y={mapTile.y * gridCellSize.height}
+                x={mapTile.column * gridCellSize.width}
+                y={mapTile.row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
-                fill={"rgba(255, 255, 255, 0.3)"}
+                fill={"rgba(255, 255, 255, 0.35)"}
                 shadowBlur={5}
                 stroke={"black"}
                 strokeWidth={3}
             />
             {/* {portalButtonGroup} */}
             <Text
-                x={mapTile.x * gridCellSize.width + gridCellSize.width / 15}
-                y={mapTile.y * gridCellSize.height + gridCellSize.height / 12}
-                text={"R" + mapTile.y + "C" + mapTile.x + " (" + debugName + ")"}
+                x={mapTile.column * gridCellSize.width + gridCellSize.width / 15}
+                y={mapTile.row * gridCellSize.height + gridCellSize.height / 12}
+                text={"R" + mapTile.row + "C" + mapTile.column + " (" + debugName + ")"}
                 fontSize={20}
+                fontStyle={"bold"}
             />
             <Text
-                x={mapTile.x * gridCellSize.width + gridCellSize.width / 15}
-                y={mapTile.y * gridCellSize.height + gridCellSize.height / 1.25}
-                text={prettyCarStatus}
+                x={mapTile.column * gridCellSize.width + gridCellSize.width / 15}
+                y={mapTile.row * gridCellSize.height + gridCellSize.height / 1.25}
+                text={carLicensePlate}
                 fontSize={20}
+                fontStyle={"bold"}
+            />
+            <Text
+                x={mapTile.column * gridCellSize.width + gridCellSize.width / 15}
+                y={mapTile.row * gridCellSize.height + gridCellSize.height / 1.55}
+                text={carStatus}
+                fontSize={20}
+                fontStyle={"bold"}
             />
         </Group>
     );

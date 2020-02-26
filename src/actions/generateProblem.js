@@ -2,9 +2,9 @@ import Mustache from 'mustache';
 
 function generateProblem(robotGridStaticLocation, cars, tiles, setup) {
 
-    let robotString = "(IsAt Robot R" + robotGridStaticLocation.row + "C" + robotGridStaticLocation.column + ")\n";
     let carsString = "";
     let carsStatusesString = "";
+    let robotLocationString = "(IsAt Robot R" + robotGridStaticLocation.row + "C" + robotGridStaticLocation.column + ")\n";
     let carsLocationsString = "";
 
     for (var i = 0; i < cars.length; i++) {
@@ -39,7 +39,7 @@ function generateProblem(robotGridStaticLocation, cars, tiles, setup) {
         R4C2 - roadTile\n        
         R4C3 - parkingTile\n    
         `,
-        scenario: robotString + carsLocationsString + carsStatusesString,
+        scenario: robotLocationString + carsLocationsString + carsStatusesString,
         setup: `
         (IsToTheLeftOf R0C0 R0C1)\n        
         (IsToTheLeftOf R0C1 R0C2)\n        

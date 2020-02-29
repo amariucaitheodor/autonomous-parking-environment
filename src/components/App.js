@@ -50,10 +50,11 @@ class App extends React.Component {
     }
 
     if (foundCarIndex !== null) {
+      var carriedStatus = this.state.cars[foundCarIndex].status.includes("Park") ? "Parking in Progress" : "Delivery in Progress";
       let newCars = [...this.state.cars];
       newCars.splice(foundCarIndex, 1);
       this.setState({
-        carriedCar: this.state.cars[foundCarIndex],
+        carriedCar: { licensePlate: this.state.cars[foundCarIndex].licensePlate, status: carriedStatus },
         cars: newCars,
       });
     }

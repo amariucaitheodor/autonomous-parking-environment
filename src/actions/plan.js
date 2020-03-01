@@ -19,7 +19,7 @@ export default async function plan(problem) {
     return await axios(options)
         .then(response => {
             if (response.data.parse_status === 'ok' && response.data.error === false) {
-                return response.data.result.plan;
+                return response.data.plan;
             } else {
                 console.error("Online planner at `https://pddl-planner-backend.herokuapp.com/solve-and-validate` failed:\nError: " + response.data.error + "\nParse status: " + response.data.parse_status);
                 return -1;

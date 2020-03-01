@@ -26,6 +26,7 @@ function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, c
                             switch (tile) {
                                 case "parking":
                                     renderTile = <ParkingLotTile
+                                        key={rowIndex + colIndex + rowIndex * gridSize.columns}
                                         row={rowIndex}
                                         col={colIndex}
                                         cars={cars}
@@ -36,6 +37,7 @@ function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, c
                                     break;
                                 case "hub":
                                     renderTile = <HubTile
+                                        key={rowIndex + colIndex + rowIndex * gridSize.columns}
                                         row={rowIndex}
                                         col={colIndex}
                                         cars={cars}
@@ -100,6 +102,7 @@ function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, c
                                 }
 
                                 return (<DebugTile
+                                    key={rowIndex + colIndex + rowIndex * gridSize.columns}
                                     tile={tile}
                                     row={rowIndex}
                                     col={colIndex}

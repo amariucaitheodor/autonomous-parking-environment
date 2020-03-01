@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default async function plan(problem) {
     const options = {
-        url: 'http://solver.planning.domains/solve-and-validate',
+        url: 'https://pddl-planner-backend.herokuapp.com/solve-and-validate',
         method: 'POST',
         contentType: 'application/json',
         headers: {
@@ -18,10 +18,10 @@ export default async function plan(problem) {
 
     return await axios(options)
         .then(response => {
-            if (response.data.status === 'ok') {
+            if (response.data.parse_status === 'ok' && response.data.error === false) {
                 return response.data.result.plan;
             } else {
-                console.error("Online planner at `http://solver.planning.domains/solve-and-validate` failed:\n\n" + response.data.error);
+                console.error("Online planner at `https://pddl-planner-backend.herokuapp.com/solve-and-validate` failed:\nError: " + response.data.error + "\nParse status: " + response.data.parse_status);
                 return -1;
             }
         });

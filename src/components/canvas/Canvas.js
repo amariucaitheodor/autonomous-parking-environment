@@ -5,7 +5,7 @@ import Map from './Map/Map';
 const carURL = require('../../assets/images/racecar.svg');
 
 function Canvas({
-    map,
+    parkingLotConfiguration,
     cars,
     carriedCar,
     debugMode,
@@ -84,7 +84,7 @@ function Canvas({
                     strokeWidth={5}
                 />
                 <Map
-                    map={map}
+                    parkingLotConfiguration={parkingLotConfiguration}
                     carImage={carImage}
                     cars={cars}
                     debugMode={debugMode}

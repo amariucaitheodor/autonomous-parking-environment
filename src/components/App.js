@@ -3,7 +3,6 @@ import Canvas from './canvas/Canvas';
 import Overhead from './cameras/Overhead';
 import Notifications from './Notifications';
 import './App.css';
-import initialMap from '../assets/initialMap';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import { Navbar, Nav, NavDropdown, Container, Row, Col } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,7 +21,13 @@ class App extends React.Component {
         { location: { row: 2, column: 0 }, licensePlate: "SDG 987", status: null },
         { location: { row: 4, column: 0 }, licensePlate: "SEG 988", status: "AwaitingParking" },
       ],
-      map: initialMap,
+      parkingLotConfiguration: [
+        ['blocked', 'parking', 'road', 'parking'],
+        ['blocked', 'parking', 'road', 'parking'],
+        ['hub', 'road', 'road', 'parking'],
+        ['hub', 'road', 'road', 'parking'],
+        ['hub', 'road', 'road', 'parking']
+      ],
       carriedCar: null,
       robotGridStaticLocation: { column: 1, row: 4 },
       robotCommands: [],
@@ -150,6 +155,22 @@ class App extends React.Component {
               >Toggle Simulation
               </NavDropdown.Item>
             </NavDropdown>
+            {/* <NavDropdown title="Simulation Environment" id="collasible-nav-dropdown">
+              <NavDropdown.Item href="#/">View</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item
+                onClick={() => { this.toggleDebugMode(); }}
+              >Debug Mode
+              </NavDropdown.Item>
+              <NavDropdown.Item
+                onClick={() => { this.toggleSimulation(true) }}
+              >Toggle Simulation
+              </NavDropdown.Item>
+              <NavDropdown.Item
+                onClick={() => {  }}
+              >Run test suite
+              </NavDropdown.Item>
+            </NavDropdown> */}
             <NavDropdown title="Cameras" id="collasible-nav-dropdown">
               <NavDropdown.Item {... !this.state.simulationOn ? { href: "#/overhead" } : {}}>CCTV</NavDropdown.Item>
             </NavDropdown>
@@ -173,7 +194,7 @@ class App extends React.Component {
                 <Row>
                   <Col xs={8}>
                     <Canvas
-                      map={this.state.map}
+                      parkingLotConfiguration={this.state.parkingLotConfiguration}
                       shiftPath={this.shiftPath}
                       carriedCar={this.state.carriedCar}
                       resizable={this.state.resizableCanvas}

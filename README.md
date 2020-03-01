@@ -1,9 +1,9 @@
 # Finitech Operations Monitor ![](https://github.com/Finitech-SDP/operations-monitor/workflows/Node.js%20CI/badge.svg)
 
 ## Features
-- Autonomous parking solution using an [open-source](https://bitbucket.org/planning-researchers/cloud-solver/src/master/) project, [Solver.Planning.Domains](http://solver.planning.domains/). It is an artificial intelligence system for automated planning, and consists of an initial state, actions, and a goal state. By applying the actions over the initial state and all child states, a goal can be found.
+- Parking lot real-time visual updates for operators and receptionists to more efficiently manage the parking spaces and communicate essential information and statistics when needed
+- Autonomous parking simulation using an [adaptation](https://github.com/theodor1289/pddl-planner-backend) of an [open-source](https://bitbucket.org/planning-researchers/cloud-solver/src/master/) project, [Solver.Planning.Domains](http://solver.planning.domains/). It is an artificial intelligence system for automated planning, and consists of an initial state, actions, and a goal state. By applying the actions over the initial state and all child states, a goal can be found.
 - Live stream from parking lot CCTV cameras
-- Closed-loop parking lot real-time visual updates (using camera vision feedback system)
 - Thoroughly tested in 10 different scenarios (available under `src/assets/planner/tests/`)
 
 ## This project is a member of the architecture shown below, which I helped develop as part of [FinitechSDP](https://github.com/Finitech-SDP) (University of Edinburgh project) 2019-2020

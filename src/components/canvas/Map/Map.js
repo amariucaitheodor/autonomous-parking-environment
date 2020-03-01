@@ -8,52 +8,54 @@ import Robot from "../Robot";
 const parkingURL = require('../../../assets/images/parking-sign.svg');
 const hubURL = require('../../../assets/images/hub.svg');
 
-function Map({ map, cars, gridCellSize, offset, debugMode, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation, shiftPath, carriedCar, robotGridStaticLocation }) {
+function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation, shiftPath, carriedCar, robotGridStaticLocation }) {
     const [parkingImage] = useImage(parkingURL);
     const [hubImage] = useImage(hubURL);
 
     return (
         <>
-            {
-                map.map((mapTile, index) => {
-                    let tile = null;
+            <Group
+                x={offset.x}
+                y={offset.y}
+            >
+                {
+                    parkingLotConfiguration.map((tileRow, rowIndex) => {
+                        return tileRow.map((tile, colIndex) => {
+                            let renderTile = null;
 
-                    switch (mapTile.type) {
-                        case "parking":
-                            tile = <ParkingLotTile
-                                mapTile={mapTile}
-                                cars={cars}
-                                gridCellSize={gridCellSize}
-                                parkingImage={parkingImage}
-                                carImage={carImage}
-                            />
-                            break;
-                        case "hub":
-                            tile = <HubTile
-                                mapTile={mapTile}
-                                cars={cars}
-                                gridCellSize={gridCellSize}
-                                hubImage={hubImage}
-                                carImage={carImage}
-                            />
-                            break;
-                        default:
-                            break;
-                    }
+                            switch (tile) {
+                                case "parking":
+                                    renderTile = <ParkingLotTile
+                                        row={rowIndex}
+                                        col={colIndex}
+                                        cars={cars}
+                                        gridCellSize={gridCellSize}
+                                        parkingImage={parkingImage}
+                                        carImage={carImage}
+                                    />
+                                    break;
+                                case "hub":
+                                    renderTile = <HubTile
+                                        row={rowIndex}
+                                        col={colIndex}
+                                        cars={cars}
+                                        gridCellSize={gridCellSize}
+                                        hubImage={hubImage}
+                                        carImage={carImage}
+                                    />
+                                    break;
+                                default:
+                                    break;
+                            }
 
-                    return (
-                        <Group
-                            key={index}
-                            x={offset.x}
-                            y={offset.y}>
-                            {tile}
-                        </Group >
-                    )
-                })
-            }
+                            return renderTile;
+                        })
+                    })
+                }
+            </Group>
 
             <Robot
-                map={map}
+                parkingLotConfiguration={parkingLotConfiguration}
                 shiftPath={shiftPath}
                 carriedCar={carriedCar}
                 robotGridStaticLocation={robotGridStaticLocation}
@@ -72,40 +74,43 @@ function Map({ map, cars, gridCellSize, offset, debugMode, carImage, simulationO
             />
 
             {debugMode ?
-                map.map((mapTile, index) => {
-                    let debugName = null;
+                <Group
+                    x={offset.x}
+                    y={offset.y}>
+                    {
+                        parkingLotConfiguration.map((tileRow, rowIndex) => {
+                            return tileRow.map((tile, colIndex) => {
+                                let debugName = null;
 
-                    switch (mapTile.type) {
-                        case "parking":
-                            debugName = "Parking space";
-                            break;
-                        case "hub":
-                            debugName = "Hub";
-                            break;
-                        case "road":
-                            debugName = "Road";
-                            break;
-                        case "blocked":
-                            debugName = "Blocked space";
-                            break;
-                        default:
-                            break;
+                                switch (tile) {
+                                    case "parking":
+                                        debugName = "Parking space";
+                                        break;
+                                    case "hub":
+                                        debugName = "Hub";
+                                        break;
+                                    case "road":
+                                        debugName = "Road";
+                                        break;
+                                    case "blocked":
+                                        debugName = "Blocked space";
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                return (<DebugTile
+                                    tile={tile}
+                                    row={rowIndex}
+                                    col={colIndex}
+                                    cars={cars}
+                                    gridCellSize={gridCellSize}
+                                    debugName={debugName}
+                                />)
+                            })
+                        })
                     }
-
-                    return (
-                        <Group
-                            key={index}
-                            x={offset.x}
-                            y={offset.y}>
-                            <DebugTile
-                                mapTile={mapTile}
-                                cars={cars}
-                                gridCellSize={gridCellSize}
-                                debugName={debugName}
-                            />
-                        </Group >
-                    )
-                })
+                </Group >
                 :
                 null
             }

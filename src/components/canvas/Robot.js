@@ -4,7 +4,7 @@ import useImage from 'use-image';
 import async from 'async';
 const robotURL = require('../../assets/images/robot.svg');
 
-function Robot({ robotGridStaticLocation, map, carriedCar, shiftPath, gridCellSize, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation }) {
+function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, shiftPath, gridCellSize, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation }) {
     const [robotImage] = useImage(robotURL);
     const robotImageRef = React.useRef();
     let pathStop = [];
@@ -60,10 +60,8 @@ function Robot({ robotGridStaticLocation, map, carriedCar, shiftPath, gridCellSi
         const cellColumn = Math.floor((robotCanvasLocation.x + gridCellSize.width / 2) / size.width * gridSize.columns);
         const cellRow = Math.floor((robotCanvasLocation.y + gridCellSize.height / 2) / size.height * gridSize.rows);
         var isOnBlockingSpace = false;
-        map.forEach(mapTile => {
-            if (cellRow === mapTile.row && cellColumn === mapTile.column && mapTile.type === "blocked")
-                isOnBlockingSpace = true;
-        });
+        if (parkingLotConfiguration[cellRow][cellColumn] === "blocked")
+            isOnBlockingSpace = true;
 
         if ((cellColumn >= 0 && cellColumn < gridSize.columns) &&
             (cellRow >= 0 && cellRow < gridSize.rows) &&

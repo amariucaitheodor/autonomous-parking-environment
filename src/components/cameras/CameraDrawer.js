@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(0, 1),
         ...theme.mixins.toolbar,
         justifyContent: 'flex-end',
+    },
+    content: {
+        marginRight: drawerWidth,
     }
 }));
 
@@ -40,28 +43,32 @@ export default function CameraDrawer() {
     const classes = useStyles();
 
     return (
-        <Drawer
-            className={classes.drawer}
-            variant="persistent"
-            anchor="right"
-            open
-            classes={{
-                paper: classes.drawerPaper,
-            }}
+        <main
+            className={classes.content}
         >
-            <div className={classes.drawerHeader}>
-                <Typography className={classes.title} variant="h6" noWrap align="center">
-                    Cameras
+            <Drawer
+                className={classes.drawer}
+                variant="persistent"
+                anchor="right"
+                open
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+            >
+                <div className={classes.drawerHeader}>
+                    <Typography className={classes.title} variant="h6" noWrap align="center">
+                        Surveillance
               </Typography>
-            </div>
-            <Divider />
-            <List>
-                {['AT Level 3 Demo Room'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemText primary={text + " (#" + (index + 1) + ")"} />
-                    </ListItem>
-                ))}
-            </List>
-        </Drawer>
+                </div>
+                <Divider />
+                <List>
+                    {['AT Level 3 Demo Room'].map((text, index) => (
+                        <ListItem button key={text}>
+                            <ListItemText primary={text + " (#" + (index + 1) + ")"} />
+                        </ListItem>
+                    ))}
+                </List>
+            </Drawer>
+        </main>
     );
 }

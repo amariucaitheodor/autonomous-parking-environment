@@ -11,12 +11,12 @@ import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme } from '@material-ui/core/styles';
-import deepPurple from '@material-ui/core/colors/deepPurple';
+import indigo from '@material-ui/core/colors/indigo';
 import pink from '@material-ui/core/colors/pink';
 
 const darkTheme = createMuiTheme({
   palette: {
-    primary: deepPurple,
+    primary: indigo,
     secondary: pink,
     type: 'dark'
   },
@@ -40,8 +40,10 @@ class App extends React.Component {
       gridSize: { rows: 5, columns: 4 },
       simulationOn: false,
       alreadyActivated: false,
-      resizableCanvas: false
+      resizableCanvas: false,
+      parkingLogs: [null, null, null, null, null, null, null, null, null]
     };
+    this.addLog = this.addLog.bind(this);
     this.toggleDebugMode = this.toggleDebugMode.bind(this);
     this.toggleSimulation = this.toggleSimulation.bind(this);
     this.shiftPath = this.shiftPath.bind(this);
@@ -50,8 +52,17 @@ class App extends React.Component {
     this.changeRobotGridStaticLocation = this.changeRobotGridStaticLocation.bind(this);
   }
 
+  addLog = (event) => {
+    var newParkingLogs = this.state.parkingLogs;
+    if (newParkingLogs.length === 9)
+      newParkingLogs.shift();
+    newParkingLogs.push(event);
+    this.setState({
+      parkingLogs: newParkingLogs
+    });
+  }
+
   removeCar(row, column) {
-    // var carriedStatus = this.state.parkingLotConfiguration[row][column].car.status.includes("Park") ? "Parking in Progress" : "Delivery in Progress";
     let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
     let carriedCar = newParkingLotConfiguration[row][column].car;
     newParkingLotConfiguration[row][column] = { type: newParkingLotConfiguration[row][column].type }
@@ -59,10 +70,16 @@ class App extends React.Component {
       carriedCar: carriedCar,
       parkingLotConfiguration: newParkingLotConfiguration,
     });
+
+    var reason = carriedCar.status.includes("Park") ? "parking" : "delivery";
+    this.addLog({ title: "Picked up " + carriedCar.license + " for " + reason, type: "moving" });
   }
 
   addCar(row, column) {
-    // var carriedStatus = this.state.parkingLotConfiguration[row][column].car.status.includes("Park") ? "Parking in Progress" : "Delivery in Progress";
+    var event = this.state.carriedCar.status.includes("Park") ? "Parked" : "Delivered";
+    var eventType = this.state.carriedCar.status.includes("Park") ? "parking" : "delivery";
+    this.addLog({ title: event + " " + this.state.carriedCar.license + " at R" + row + "C" + column, type: eventType });
+
     let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
     newParkingLotConfiguration[row][column] = {
       type: newParkingLotConfiguration[row][column].type,
@@ -94,7 +111,6 @@ class App extends React.Component {
     if (this.state.simulationOn) {
       if (forced) {
         // not working
-        this.setState({ robotPath: [], simulationOn: false });
       }
       else
         this.setState({ simulationOn: false, alreadyActivated: false });
@@ -153,10 +169,14 @@ class App extends React.Component {
                 debugMode={this.state.debugMode}
               />
               <ParkingLotDrawer
+                carriedCar={this.state.carriedCar}
                 simulationOn={this.state.simulationOn}
                 debugMode={this.state.debugMode}
                 toggleDebugMode={this.toggleDebugMode}
                 toggleSimulation={this.toggleSimulation}
+                parkingLogs={this.state.parkingLogs}
+                addLog={this.addLog}
+                parkingLotConfiguration={this.state.parkingLotConfiguration}
               />
             </Route>
           </Switch>

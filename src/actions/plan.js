@@ -25,7 +25,7 @@ export default async function plan(problem) {
                 if (response.data.status === 'ok' && response.data.result.error === false) {
                     return response.data.result.plan;
                 } else {
-                    console.error("Online planner at `" + api + "/solve-and-validate` failed:\nError: " + response.data.error + "\nParse status: " + response.data.parse_status);
+                    console.error("Online planner at `" + api + "/solve-and-validate` failed:\nError: " + response.data.result.error + "\nParse status: " + response.data.result.parse_status);
                     return -1;
                 }
             } else {

@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 import 'bootstrap-css-only/css/bootstrap.css';
 import * as serviceWorker from './serviceWorker';
+import JavascriptTimeAgo from 'javascript-time-ago';
+
+// The desired locales.
+import en from 'javascript-time-ago/locale/en'
+
+// Initialize the desired locales.
+JavascriptTimeAgo.locale(en)
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

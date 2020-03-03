@@ -6,6 +6,7 @@ import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import PlayCircleFilled from '@material-ui/icons/PlayCircleFilled';
+import ZoomIn from '@material-ui/icons/ZoomIn';
 import PauseCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import Build from '@material-ui/icons/Build';
 import List from '@material-ui/core/List';
@@ -13,7 +14,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import CheckBox from '@material-ui/icons/CheckBox';
+import Check from '@material-ui/icons/Check';
+import MoveToInbox from '@material-ui/icons/MoveToInbox';
+import LocalShipping from '@material-ui/icons/LocalShipping';
+import ReactTimeAgo from 'react-time-ago';
 
 const drawerWidth = 330;
 
@@ -44,14 +48,50 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ParkingLotDrawer({ simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function ParkingLotDrawer({ carriedCar, parkingLotConfiguration, parkingLogs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
 
-  function generate(element) {
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8].map(value =>
-      React.cloneElement(element, {
-        key: value,
-      }),
+  let spacesTotal = 0;
+  let spacesAvailable = 0;
+  parkingLotConfiguration.forEach(tileRow => {
+    tileRow.forEach(tile => {
+      if (tile.type === 'parking') {
+        spacesTotal++;
+        if (tile.car === undefined) {
+          spacesAvailable++;
+        }
+      }
+    })
+  });
+
+  let robotStatus = null;
+  if (carriedCar === null)
+    robotStatus = simulationOn ? "Moving" : "Idle";
+  else {
+    if (carriedCar.status === "AwaitingDelivery")
+      robotStatus = "Delivering " + carriedCar.license;
+    else
+      robotStatus = "Parking " + carriedCar.license;
+  }
+
+  function generateLogs() {
+    return parkingLogs.map((event, index) =>
+      React.cloneElement(
+        <ListItem>
+          {event === null ? <Box m={3.25} /> :
+            <ListItemAvatar>
+              <Avatar>
+                {event.type === "parking" ? <MoveToInbox /> : (event.type === "moving"? <LocalShipping/> : <Check />)}
+              </Avatar>
+            </ListItemAvatar>}
+          <ListItemText
+            primary={event === null ? null : event.title}
+            secondary={event === null ? null : <ReactTimeAgo date={new Date()} />}
+          />
+        </ListItem>,
+        {
+          key: index,
+        }),
     );
   }
 
@@ -67,36 +107,24 @@ export default function ParkingLotDrawer({ simulationOn, debugMode, toggleDebugM
     >
       <div className={classes.drawerHeader}>
         <Typography className={classes.title} variant="h6" noWrap align="center">
-          Parking Lot Logs
+          Parking Lot Information
         </Typography>
       </div>
       <Divider />
       <div className={classes.demo}>
         <List dense={true}>
-          {generate(
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <CheckBox />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary="Single-line item"
-                secondary="Just a minute ago"
-              />
-            </ListItem>,
-          )}
+          {generateLogs()}
         </List>
       </div>
       <Divider />
       <Box fontWeight="fontWeightBold" className={"m-auto "} fontSize="h6.fontSize">
-        Total Parking Spaces: 7
+        {"Total Parking Spaces: " + spacesTotal}
       </Box>
       <Box fontWeight="fontWeightBold" className={"m-auto "} fontSize="h6.fontSize">
-        Available Parking Spaces: 4
+        {"Available Parking Spaces: " + spacesAvailable}
       </Box>
       <Box fontWeight="fontWeightBold" className={"m-auto "} fontSize="h6.fontSize">
-        Robot status: Idle
+        {"Status: " + robotStatus}
       </Box>
       <Button
         className={"m-auto"}
@@ -109,9 +137,10 @@ export default function ParkingLotDrawer({ simulationOn, debugMode, toggleDebugM
       </Button >
       <Button
         className={"m-auto"}
-        startIcon={<PlayCircleFilled />}
+        startIcon={<ZoomIn />}
         variant="contained"
         color="primary"
+        disabled={simulationOn}
       >
         Run test suite
       </Button >
@@ -120,82 +149,11 @@ export default function ParkingLotDrawer({ simulationOn, debugMode, toggleDebugM
         startIcon={simulationOn ? <PauseCircleFilled /> : <PlayCircleFilled />}
         variant="contained"
         color="primary"
+        disabled={simulationOn}
         onClick={() => { toggleSimulation(true); }}
       >
-        {simulationOn ? "Stop" : "Start"} simulation
+        {simulationOn ? "Simulating..." : "Start simulation"}
       </Button >
     </Drawer>
   );
 }
-
-// class Overhead extends React.Component {
-//     constructor() {
-//         super();
-//         this.state = {
-//             toasts: [],
-//         };
-//     }
-
-//     sendToastNotification = (message) => {
-//         const toastTemplate = (
-//             <Toast
-//                 key={this.state.toasts.length + 1}
-//                 onClose={() => this.closeOldestNotification()}
-//                 show={true}
-//                 delay={3000}
-//                 autohide
-//             >
-//                 <Toast.Header>
-//                     <GoGear />
-//                     <strong className="mr-auto ml-2">Replanning...</strong>
-//                     just now
-//           </Toast.Header>
-//                 <Toast.Body>
-//                     <h6 style={{ color: "rgb(70, 70, 70)" }}>{message}</h6>
-//                 </Toast.Body>
-//             </Toast>
-//         );
-
-//         var newToasts = this.state.toasts;
-//         newToasts.push(toastTemplate)
-//         this.setState({
-//             toasts: newToasts
-//         });
-//     }
-
-//     closeOldestNotification() {
-//         var newToasts = this.state.toasts;
-//         newToasts.shift();
-//         this.setState({
-//             toasts: newToasts
-//         });
-//     }
-
-//     componentDidMount() {
-//       this.sendToastNotification("A new car has arrived at hub R4C0!");
-//       this.sendToastNotification("A car is now awaiting delivery at hub R2C3!");
-//       this.sendToastNotification("A new car has arrived at hub R4C0!");
-//       this.sendToastNotification("A new obstacle was detected!");
-//       this.sendToastNotification("A new obstacle was detected!");
-//     }
-
-//     render() {
-//         return (
-//             <div
-//                 aria-live="polite"
-//                 aria-atomic="true"
-//                 style={{
-//                     position: 'absolute',
-//                     bottom: 0,
-//                     right: 20
-//                 }}
-//             >
-//                 {this.state.toasts}
-//             </div>
-//         );
-//     }
-// }
-
-// export default Overhead;
-
-

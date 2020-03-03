@@ -1,24 +1,34 @@
 import Mustache from 'mustache';
 
-function generateProblem(robotGridStaticLocation, cars, tiles, setup) {
+function generateProblem(robotGridStaticLocation, parkingLotConfiguration, tiles, setup) {
 
     let carsString = "";
     let carsStatusesString = "";
     let robotLocationString = "(IsAt Robot R" + robotGridStaticLocation.row + "C" + robotGridStaticLocation.column + ")\n";
     let carsLocationsString = "";
 
-    for (var i = 0; i < cars.length; i++) {
-        carsString = carsString.concat("Car" + i + " - car\n");
-        carsLocationsString = carsLocationsString.concat("(IsAt Car" + i + " R" + cars[i].location.row + "C" + cars[i].location.column + ")\n");
-        if (cars[i].status !== null)
-            carsStatusesString = carsStatusesString.concat("(" + cars[i].status + " Car" + i + ")\n");
-    }
+    let row = 0;
+    let column = 0;
+    let carIndex = 0;
+    parkingLotConfiguration.forEach(tileRow => {
+        column = 0;
+        tileRow.forEach(tile => {
+            if (tile.car !== undefined) {
+                carIndex++;
+                carsString = carsString.concat("        Car" + carIndex + " - car\n");
+                carsLocationsString = carsLocationsString.concat("        (IsAt Car" + carIndex + " R" + row + "C" + column + ")\n");
+                if (tile.car.status !== null)
+                    carsStatusesString = carsStatusesString.concat("        (" + tile.car.status + " Car" + carIndex + ")\n");
+            }
+            column++;
+        })
+        row++;
+    });
 
     var plugins = {
         robot: "Robot - robot",
         cars: carsString,
-        tiles: `
-        R0C0 - blockedTile        
+        tiles: `R0C0 - blockedTile        
         R0C1 - parkingTile        
         R0C2 - roadTile        
         R0C3 - parkingTile        
@@ -40,8 +50,7 @@ function generateProblem(robotGridStaticLocation, cars, tiles, setup) {
         R4C3 - parkingTile    
         `,
         scenario: robotLocationString + carsLocationsString + carsStatusesString,
-        setup: `
-        (IsToTheLeftOf R0C0 R0C1)        
+        setup: `(IsToTheLeftOf R0C0 R0C1)        
         (IsToTheLeftOf R0C1 R0C2)        
         (IsToTheLeftOf R0C2 R0C3)        
         (IsToTheLeftOf R1C0 R1C1)        

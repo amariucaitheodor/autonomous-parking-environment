@@ -1,17 +1,14 @@
 import React from "react";
 import { Rect, Image } from "react-konva";
 
-function ParkingLotTile({ row, col, cars, gridCellSize, parkingImage, carImage }) {
+function HubTile({ row, col, parkingLotConfiguration, gridCellSize, hubImage, carImage }) {
 
     var occupied = false;
-    var hubColor = [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"]; // neutral, green
-    for (var i = 0; i < cars.length; i++) {
-        if (cars[i].location.row === row && cars[i].location.column === col) {
-            if (cars[i].status === "AwaitingDelivery")
-                hubColor = [0, "rgb(189, 130, 42)", 1, "rgb(210, 144, 45)"];
-            occupied = true;
-            break;
-        }
+    var hubColor = [0, "rgb(14, 82, 165)", 1, "rgb(19, 115, 236)"]; // neutral, blue
+    if (parkingLotConfiguration[row][col].car !== undefined) {
+        if (parkingLotConfiguration[row][col].car.status === "AwaitingParking")
+            hubColor = [0, "rgb(189, 130, 42)", 1, "rgb(210, 144, 45)"];
+        occupied = true;
     }
 
     return (
@@ -27,14 +24,14 @@ function ParkingLotTile({ row, col, cars, gridCellSize, parkingImage, carImage }
                 fillRadialGradientColorStops={hubColor}
                 shadowBlur={5}
                 stroke={"black"}
-                strokeWidth={3}
+                strokeWidth={2}
             />
             <Image
                 x={col * gridCellSize.width}
-                y={row * gridCellSize.height + gridCellSize.height / 3.5}
+                y={row * gridCellSize.height + gridCellSize.height / 4}
                 width={gridCellSize.width}
                 height={gridCellSize.height / 2}
-                image={parkingImage}
+                image={hubImage}
                 shadowBlur={5}
             />
             <Image
@@ -50,4 +47,4 @@ function ParkingLotTile({ row, col, cars, gridCellSize, parkingImage, carImage }
     );
 }
 
-export default ParkingLotTile;
+export default HubTile;

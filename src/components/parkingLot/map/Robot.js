@@ -2,7 +2,7 @@ import React from "react";
 import { Image, Arrow } from "react-konva";
 import useImage from 'use-image';
 import async from 'async';
-const robotURL = require('../../assets/images/robot.svg');
+const robotURL = require('../../../assets/images/robot.png');
 
 function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, shiftPath, gridCellSize, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation }) {
     const [robotImage] = useImage(robotURL);
@@ -60,7 +60,8 @@ function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, s
         const cellColumn = Math.floor((robotCanvasLocation.x + gridCellSize.width / 2) / size.width * gridSize.columns);
         const cellRow = Math.floor((robotCanvasLocation.y + gridCellSize.height / 2) / size.height * gridSize.rows);
         var isOnBlockingSpace = false;
-        if (parkingLotConfiguration[cellRow][cellColumn] === "blocked")
+        if (parkingLotConfiguration[cellRow][cellColumn] !== undefined &&
+            parkingLotConfiguration[cellRow][cellColumn].type === "blocked")
             isOnBlockingSpace = true;
 
         if ((cellColumn >= 0 && cellColumn < gridSize.columns) &&

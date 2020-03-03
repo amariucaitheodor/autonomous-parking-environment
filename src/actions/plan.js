@@ -2,8 +2,11 @@ import domain from '../assets/planner/domain/domain.js';
 import axios from 'axios';
 
 export default async function plan(problem) {
+    const development = false;
+    const api = development ? 'http://solver.planning.domains' : 'https://pddl-planner-backend.herokuapp.com';
+    
     const options = {
-        url: 'https://pddl-planner-backend.herokuapp.com/solve-and-validate',
+        url: api + '/solve-and-validate',
         method: 'POST',
         contentType: 'application/json',
         headers: {
@@ -18,11 +21,20 @@ export default async function plan(problem) {
 
     return await axios(options)
         .then(response => {
-            if (response.data.parse_status === 'ok' && response.data.error === false) {
-                return response.data.plan;
+            if (development) {
+                if (response.data.status === 'ok' && response.data.result.error === false) {
+                    return response.data.result.plan;
+                } else {
+                    console.error("Online planner at `" + api + "/solve-and-validate` failed:\nError: " + response.data.error + "\nParse status: " + response.data.parse_status);
+                    return -1;
+                }
             } else {
-                console.error("Online planner at `https://pddl-planner-backend.herokuapp.com/solve-and-validate` failed:\nError: " + response.data.error + "\nParse status: " + response.data.parse_status);
-                return -1;
+                if (response.data.parse_status === 'ok' && response.data.error === false) {
+                    return response.data.plan;
+                } else {
+                    console.error("Online planner at `" + api + "/solve-and-validate` failed:\nError: " + response.data.error + "\nParse status: " + response.data.parse_status);
+                    return -1;
+                }
             }
         });
 }

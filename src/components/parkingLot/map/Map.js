@@ -4,11 +4,11 @@ import useImage from 'use-image';
 import ParkingLotTile from "./ParkingLotTile.js";
 import HubTile from "./HubTile.js";
 import DebugTile from "./DebugTile.js";
-import Robot from "../Robot";
-const parkingURL = require('../../../assets/images/parking-sign.svg');
-const hubURL = require('../../../assets/images/hub.svg');
+import Robot from "./Robot";
+const parkingURL = require('../../../assets/images/parking-sign.png');
+const hubURL = require('../../../assets/images/hub.png');
 
-function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation, shiftPath, carriedCar, robotGridStaticLocation }) {
+function Map({ parkingLotConfiguration, gridCellSize, offset, debugMode, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation, shiftPath, carriedCar, robotGridStaticLocation }) {
     const [parkingImage] = useImage(parkingURL);
     const [hubImage] = useImage(hubURL);
 
@@ -23,13 +23,13 @@ function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, c
                         return tileRow.map((tile, colIndex) => {
                             let renderTile = null;
 
-                            switch (tile) {
+                            switch (tile.type) {
                                 case "parking":
                                     renderTile = <ParkingLotTile
                                         key={rowIndex + colIndex + rowIndex * gridSize.columns}
                                         row={rowIndex}
                                         col={colIndex}
-                                        cars={cars}
+                                        parkingLotConfiguration={parkingLotConfiguration}
                                         gridCellSize={gridCellSize}
                                         parkingImage={parkingImage}
                                         carImage={carImage}
@@ -40,7 +40,7 @@ function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, c
                                         key={rowIndex + colIndex + rowIndex * gridSize.columns}
                                         row={rowIndex}
                                         col={colIndex}
-                                        cars={cars}
+                                        parkingLotConfiguration={parkingLotConfiguration}
                                         gridCellSize={gridCellSize}
                                         hubImage={hubImage}
                                         carImage={carImage}
@@ -84,7 +84,7 @@ function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, c
                             return tileRow.map((tile, colIndex) => {
                                 let debugName = null;
 
-                                switch (tile) {
+                                switch (tile.type) {
                                     case "parking":
                                         debugName = "Parking space";
                                         break;
@@ -103,10 +103,10 @@ function Map({ parkingLotConfiguration, cars, gridCellSize, offset, debugMode, c
 
                                 return (<DebugTile
                                     key={rowIndex + colIndex + rowIndex * gridSize.columns}
-                                    tile={tile}
+                                    tile={tile.type}
                                     row={rowIndex}
                                     col={colIndex}
-                                    cars={cars}
+                                    parkingLotConfiguration={parkingLotConfiguration}
                                     gridCellSize={gridCellSize}
                                     debugName={debugName}
                                 />)

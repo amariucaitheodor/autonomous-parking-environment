@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg xml:space="preserve" viewBox="0 0 100 100" y="0" x="0" xmlns="http://www.w3.org/2000/svg" id="Layer_1" version="1.1" width="64px" height="64px" xmlns:xlink="http://www.w3.org/1999/xlink" style="width:100%;height:100%;animation-play-state:paused">
+<svg xml:space="preserve" viewBox="0 0 100 100" y="0" x="0" xmlns="http://www.w3.org/2000/svg" id="Layer_1" version="1.1" width="300" height="180" xmlns:xlink="http://www.w3.org/1999/xlink" style="width:100%;height:100%;animation-play-state:paused">
     <g class="ldl-scale" style="transform-origin:50% 50% 0;transform:scale(.8);animation-play-state:paused">
         <path stroke="#333" fill="#666766" stroke-miterlimit="10" stroke-width="3.5" d="M78.857 78.057h-1.023a6.69 6.69 0 0 1-6.69-6.69V57.366a6.69 6.69 0 0 1 6.69-6.69h1.023a6.69 6.69 0 0 1 6.69 6.69v14.002a6.69 6.69 0 0 1-6.69 6.689z" style="stroke:#333;fill:#666766;animation-play-state:paused"/>
         <path stroke-width="3.5" stroke="#000" stroke-miterlimit="10" stroke-linejoin="round" stroke-linecap="round" opacity=".2" d="M82.344 51.683c.426.88.672 1.864.672 2.907v14.002a6.69 6.69 0 0 1-6.69 6.69h-1.023a6.662 6.662 0 0 1-2.89-.663c-.161-.035-.326-.06-.482-.105a6.687 6.687 0 0 0 5.903 3.544h1.023a6.69 6.69 0 0 0 6.69-6.69V57.366c0-2.412-1.288-4.507-3.203-5.683z" style="stroke:#000;animation-play-state:paused"/>

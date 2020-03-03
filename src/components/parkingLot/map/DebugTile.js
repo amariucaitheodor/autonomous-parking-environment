@@ -1,30 +1,27 @@
 import React from "react";
 import { Rect, Group, Text } from "react-konva";
 
-function DebugTile({ tile, row, col, cars, gridCellSize, debugName }) {
+function DebugTile({ parkingLotConfiguration, tile, row, col, gridCellSize, debugName }) {
 
     var carStatus = "";
     var carLicensePlate = "";
-    for (var i = 0; i < cars.length; i++) {
-        if (cars[i].location.row === row && cars[i].location.column === col) {
-            carLicensePlate = "License Plate: " + cars[i].licensePlate;
-            switch (cars[i].status) {
-                case "AwaitingParking":
-                    carStatus = "Status: Awaiting Parking";
-                    break;
-                case "AwaitingDelivery":
-                    carStatus = "Status: Awaiting Delivery";
-                    break;
-                case null:
-                    if (tile === "parking")
-                        carStatus = "Status: Idle";
-                    else if (tile === "hub")
-                        carStatus = "Status: Awaiting Owner";
-                    break;
-                default:
-                    break;
-            }
-            break;
+    if (parkingLotConfiguration[row][col].car !== undefined) {
+        carLicensePlate = "License Plate: " + parkingLotConfiguration[row][col].car.license;
+        switch (parkingLotConfiguration[row][col].car.status) {
+            case "AwaitingParking":
+                carStatus = "Status: Awaiting Parking";
+                break;
+            case "AwaitingDelivery":
+                carStatus = "Status: Awaiting Delivery";
+                break;
+            case null:
+                if (tile === "parking")
+                    carStatus = "Status: Idle";
+                else if (tile === "hub")
+                    carStatus = "Status: Awaiting Owner";
+                break;
+            default:
+                break;
         }
     }
 
@@ -97,7 +94,7 @@ function DebugTile({ tile, row, col, cars, gridCellSize, debugName }) {
                 fill={"rgba(255, 255, 255, 0.35)"}
                 shadowBlur={5}
                 stroke={"black"}
-                strokeWidth={3}
+                strokeWidth={2}
             />
             {/* {portalButtonGroup} */}
             <Text

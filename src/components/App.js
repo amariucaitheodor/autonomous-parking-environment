@@ -1,32 +1,37 @@
 import React from 'react';
-import Canvas from './canvas/Canvas';
-import Overhead from './cameras/Overhead';
-import Notifications from './Notifications';
-import './App.css';
+import Canvas from './parkingLot/Canvas';
+import Camera from './cameras/Camera';
+import CameraDrawer from './cameras/CameraDrawer';
+import ParkingLotDrawer from './parkingLot/ParkingLotDrawer';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import { Navbar, Nav, NavDropdown, Container, Row, Col } from "react-bootstrap";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Bar from './Bar';
 import plan from '../actions/plan';
 import processCommands from '../actions/processCommands';
 import generateProblem from '../actions/generateProblem.js';
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { createMuiTheme } from '@material-ui/core/styles';
+import deepPurple from '@material-ui/core/colors/deepPurple';
+import pink from '@material-ui/core/colors/pink';
+
+const darkTheme = createMuiTheme({
+  palette: {
+    primary: deepPurple,
+    secondary: pink,
+    type: 'dark'
+  },
+});
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      cars: [
-        { location: { row: 0, column: 1 }, licensePlate: "SAG 984", status: "AwaitingDelivery" },
-        { location: { row: 2, column: 3 }, licensePlate: "SBG 985", status: "AwaitingDelivery" },
-        { location: { row: 4, column: 3 }, licensePlate: "SBG 985", status: null },
-        { location: { row: 2, column: 0 }, licensePlate: "SDG 987", status: null },
-        { location: { row: 4, column: 0 }, licensePlate: "SEG 988", status: "AwaitingParking" },
-      ],
       parkingLotConfiguration: [
-        ['blocked', 'parking', 'road', 'parking'],
-        ['blocked', 'parking', 'road', 'parking'],
-        ['hub', 'road', 'road', 'parking'],
-        ['hub', 'road', 'road', 'parking'],
-        ['hub', 'road', 'road', 'parking']
+        [{ type: 'blocked' }, { type: 'parking', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'road' }, { type: 'parking' }],
+        [{ type: 'blocked' }, { type: 'parking' }, { type: 'road' }, { type: 'parking' }],
+        [{ type: 'hub', car: { license: 'SAG 985', status: null } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
+        [{ type: 'hub' }, { type: 'road' }, { type: 'road' }, { type: 'parking' }],
+        [{ type: 'hub', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 987', status: null } }]
       ],
       carriedCar: null,
       robotGridStaticLocation: { column: 1, row: 4 },
@@ -35,9 +40,9 @@ class App extends React.Component {
       gridSize: { rows: 5, columns: 4 },
       simulationOn: false,
       alreadyActivated: false,
-      resizableCanvas: false,
+      resizableCanvas: false
     };
-    this.initialCars = this.state.cars;
+    this.toggleDebugMode = this.toggleDebugMode.bind(this);
     this.toggleSimulation = this.toggleSimulation.bind(this);
     this.shiftPath = this.shiftPath.bind(this);
     this.removeCar = this.removeCar.bind(this);
@@ -46,46 +51,30 @@ class App extends React.Component {
   }
 
   removeCar(row, column) {
-    var foundCarIndex = null;
-    for (var i = 0; i < this.state.cars.length; i++) {
-      if (this.state.cars[i].location.row === row && this.state.cars[i].location.column === column) {
-        foundCarIndex = i;
-        break;
-      }
-    }
-
-    if (foundCarIndex !== null) {
-      var carriedStatus = this.state.cars[foundCarIndex].status.includes("Park") ? "Parking in Progress" : "Delivery in Progress";
-      let newCars = [...this.state.cars];
-      newCars.splice(foundCarIndex, 1);
-      this.setState({
-        carriedCar: { licensePlate: this.state.cars[foundCarIndex].licensePlate, status: carriedStatus },
-        cars: newCars,
-      });
-    }
+    // var carriedStatus = this.state.parkingLotConfiguration[row][column].car.status.includes("Park") ? "Parking in Progress" : "Delivery in Progress";
+    let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
+    let carriedCar = newParkingLotConfiguration[row][column].car;
+    newParkingLotConfiguration[row][column] = { type: newParkingLotConfiguration[row][column].type }
+    this.setState({
+      carriedCar: carriedCar,
+      parkingLotConfiguration: newParkingLotConfiguration,
+    });
   }
 
   addCar(row, column) {
-    var foundCarIndex = null;
-    for (var i = 0; i < this.state.cars.length; i++) {
-      if (this.state.cars[i].location.row === row && this.state.cars[i].location.column === column) {
-        foundCarIndex = i;
-        break;
+    // var carriedStatus = this.state.parkingLotConfiguration[row][column].car.status.includes("Park") ? "Parking in Progress" : "Delivery in Progress";
+    let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
+    newParkingLotConfiguration[row][column] = {
+      type: newParkingLotConfiguration[row][column].type,
+      car: {
+        license: this.state.carriedCar.license,
+        status: null // after AwaitingParking car is simply idle, after AwaitingDelivery car is awaiting owner
       }
     }
-
-    if (foundCarIndex === null) {
-      let newCars = [...this.state.cars];
-      newCars.push({
-        location: { row: row, column: column },
-        licensePlate: this.state.carriedCar.licensePlate,
-        status: null // after AwaitingParking car is simply idle, after AwaitingDelivery car is awaiting owner
-      });
-      this.setState({
-        carriedCar: null,
-        cars: newCars
-      });
-    }
+    this.setState({
+      carriedCar: null,
+      parkingLotConfiguration: newParkingLotConfiguration,
+    });
   }
 
   shiftPath() {
@@ -112,7 +101,7 @@ class App extends React.Component {
     } else {
       let commands = await plan(generateProblem(
         this.state.robotGridStaticLocation,
-        this.state.cars,
+        this.state.parkingLotConfiguration,
         null,
         null));
       if (commands !== -1) {
@@ -134,91 +123,44 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <Navbar
-          variant="dark"
-          sticky="top"
-          style={{
-            width: "1920px"
-          }}
+        <ThemeProvider
+          theme={darkTheme}
         >
-          <Navbar.Brand>Finitech Operations Monitor</Navbar.Brand>
-          <Nav className="mr-auto">
-            <NavDropdown title="Parking Lot" id="collasible-nav-dropdown">
-              <NavDropdown.Item href="#/">View</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item
-                onClick={() => { this.toggleDebugMode(); }}
-              >Debug Mode
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={() => { this.toggleSimulation(true) }}
-              >Toggle Simulation
-              </NavDropdown.Item>
-            </NavDropdown>
-            {/* <NavDropdown title="Simulation Environment" id="collasible-nav-dropdown">
-              <NavDropdown.Item href="#/">View</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item
-                onClick={() => { this.toggleDebugMode(); }}
-              >Debug Mode
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={() => { this.toggleSimulation(true) }}
-              >Toggle Simulation
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={() => {  }}
-              >Run test suite
-              </NavDropdown.Item>
-            </NavDropdown> */}
-            <NavDropdown title="Cameras" id="collasible-nav-dropdown">
-              <NavDropdown.Item {... !this.state.simulationOn ? { href: "#/overhead" } : {}}>CCTV</NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        </Navbar>
-
-        <Switch>
-          <Route path="/overhead">
-            <Overhead />
-          </Route>
-          <Route path="/">
-            <div
-              style={{
-                height: "877px",
-                width: "1920px",
-                backgroundColor: "#282c34"
-              }}
-              className="pt-3"
-            >
-              <Container fluid>
-                <Row>
-                  <Col xs={8}>
-                    <Canvas
-                      parkingLotConfiguration={this.state.parkingLotConfiguration}
-                      shiftPath={this.shiftPath}
-                      carriedCar={this.state.carriedCar}
-                      resizable={this.state.resizableCanvas}
-                      alreadyActivated={this.state.alreadyActivated}
-                      removeCar={this.removeCar}
-                      addCar={this.addCar}
-                      toggleSimulation={this.toggleSimulation}
-                      changeRobotGridStaticLocation={this.changeRobotGridStaticLocation}
-                      simulationOn={this.state.simulationOn}
-                      gridSize={this.state.gridSize}
-                      robotGridStaticLocation={this.state.robotGridStaticLocation}
-                      robotPath={this.state.robotCommands}
-                      debugMode={this.state.debugMode}
-                      cars={this.state.cars}
-                    />
-                  </Col>
-                  <Col xs={4}>
-                    <Notifications />
-                  </Col>
-                </Row>
-              </Container>
-            </div>
-          </Route>
-        </Switch>
+          <CssBaseline />
+          <Bar
+            theme={darkTheme}
+          />
+          <Switch>
+            <Route path="/overhead">
+              <Camera />
+              <CameraDrawer />
+            </Route>
+            <Route path="/">
+              <Canvas
+                parkingLotConfiguration={this.state.parkingLotConfiguration}
+                shiftPath={this.shiftPath}
+                carriedCar={this.state.carriedCar}
+                resizable={this.state.resizableCanvas}
+                alreadyActivated={this.state.alreadyActivated}
+                removeCar={this.removeCar}
+                addCar={this.addCar}
+                toggleSimulation={this.toggleSimulation}
+                changeRobotGridStaticLocation={this.changeRobotGridStaticLocation}
+                simulationOn={this.state.simulationOn}
+                gridSize={this.state.gridSize}
+                robotGridStaticLocation={this.state.robotGridStaticLocation}
+                robotPath={this.state.robotCommands}
+                debugMode={this.state.debugMode}
+              />
+              <ParkingLotDrawer
+                simulationOn={this.state.simulationOn}
+                debugMode={this.state.debugMode}
+                toggleDebugMode={this.toggleDebugMode}
+                toggleSimulation={this.toggleSimulation}
+              />
+            </Route>
+          </Switch>
+        </ThemeProvider>
       </Router >
     );
   }

@@ -14,9 +14,12 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import Check from '@material-ui/icons/Check';
+import Check from '@material-ui/icons/Receipt';
 import MoveToInbox from '@material-ui/icons/MoveToInbox';
 import LocalShipping from '@material-ui/icons/LocalShipping';
+import HourglassEmpty from '@material-ui/icons/HourglassEmpty';
+import DoneOutline from '@material-ui/icons/DoneOutline';
+import Close from '@material-ui/icons/Close';
 import ReactTimeAgo from 'react-time-ago';
 
 const drawerWidth = 330;
@@ -48,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ParkingLotDrawer({ carriedCar, parkingLotConfiguration, parkingLogs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function ParkingLotDrawer({ simulationButtonsDisabled, carriedCar, parkingLotConfiguration, parkingLogs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
 
   let spacesTotal = 0;
@@ -66,7 +69,7 @@ export default function ParkingLotDrawer({ carriedCar, parkingLotConfiguration, 
 
   let robotStatus = null;
   if (carriedCar === null)
-    robotStatus = simulationOn ? "Moving" : "Idle";
+    robotStatus = simulationOn ? "Moving" : "Standby";
   else {
     if (carriedCar.status === "AwaitingDelivery")
       robotStatus = "Delivering " + carriedCar.license;
@@ -81,7 +84,11 @@ export default function ParkingLotDrawer({ carriedCar, parkingLotConfiguration, 
           {event === null ? <Box m={3.25} /> :
             <ListItemAvatar>
               <Avatar>
-                {event.type === "parking" ? <MoveToInbox /> : (event.type === "moving"? <LocalShipping/> : <Check />)}
+                {event.type === "parking" ? <MoveToInbox /> : 
+                (event.type === "moving" ? <LocalShipping /> : 
+                (event.type === "success" ? <DoneOutline /> : 
+                (event.type === "fail" ? <Close /> : 
+                (event.type === "standby" ? <HourglassEmpty /> : <Check />))))}
               </Avatar>
             </ListItemAvatar>}
           <ListItemText
@@ -111,11 +118,9 @@ export default function ParkingLotDrawer({ carriedCar, parkingLotConfiguration, 
         </Typography>
       </div>
       <Divider />
-      <div className={classes.demo}>
-        <List dense={true}>
-          {generateLogs()}
-        </List>
-      </div>
+      <List dense={true}>
+        {generateLogs()}
+      </List>
       <Divider />
       <Box fontWeight="fontWeightBold" className={"m-auto "} fontSize="h6.fontSize">
         {"Total Parking Spaces: " + spacesTotal}
@@ -140,16 +145,16 @@ export default function ParkingLotDrawer({ carriedCar, parkingLotConfiguration, 
         startIcon={<ZoomIn />}
         variant="contained"
         color="primary"
-        disabled={simulationOn}
+        disabled={simulationButtonsDisabled}
       >
         Run test suite
       </Button >
       <Button
         className={"mx-auto mb-3 mt-auto"}
-        startIcon={simulationOn ? <PauseCircleFilled /> : <PlayCircleFilled />}
+        startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
         variant="contained"
         color="primary"
-        disabled={simulationOn}
+        disabled={simulationButtonsDisabled}
         onClick={() => { toggleSimulation(true); }}
       >
         {simulationOn ? "Simulating..." : "Start simulation"}

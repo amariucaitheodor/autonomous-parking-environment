@@ -41,7 +41,8 @@ class App extends React.Component {
       simulationOn: false,
       alreadyActivated: false,
       resizableCanvas: false,
-      parkingLogs: [null, null, null, null, null, null, null, null, null]
+      parkingLogs: [null, null, null, null, null, null, null, null, null],
+      simulationButtonsDisabled: false
     };
     this.addLog = this.addLog.bind(this);
     this.toggleDebugMode = this.toggleDebugMode.bind(this);
@@ -71,8 +72,7 @@ class App extends React.Component {
       parkingLotConfiguration: newParkingLotConfiguration,
     });
 
-    var reason = carriedCar.status.includes("Park") ? "parking" : "delivery";
-    this.addLog({ title: "Picked up " + carriedCar.license + " for " + reason, type: "moving" });
+    this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving" });
   }
 
   addCar(row, column) {
@@ -108,26 +108,42 @@ class App extends React.Component {
   }
 
   async toggleSimulation(forced) {
-    if (this.state.simulationOn) {
-      if (forced) {
-        // not working
-      }
-      else
-        this.setState({ simulationOn: false, alreadyActivated: false });
-    } else {
-      let commands = await plan(generateProblem(
-        this.state.robotGridStaticLocation,
-        this.state.parkingLotConfiguration,
-        null,
-        null));
-      if (commands !== -1) {
-        this.setState({
-          robotCommands: processCommands(commands, this.state.robotGridStaticLocation),
-          simulationOn: true,
+    this.setState({ simulationButtonsDisabled: true }, async () => {
+      if (this.state.simulationOn) {
+        if (forced) {
+          // not working
+        }
+        else this.setState({
+          simulationOn: false,
+          simulationButtonsDisabled: false,
           alreadyActivated: false
-        }, () => { this.setState({ alreadyActivated: true }) });
+        }, () => {
+          this.addLog({ title: "Robot is now on standby", type: "standby" });
+        });
+      } else {
+        let commands = await plan(generateProblem(
+          this.state.robotGridStaticLocation,
+          this.state.parkingLotConfiguration,
+          null,
+          null));
+        if (commands !== -1) {
+          this.setState({
+            robotCommands: processCommands(commands, this.state.robotGridStaticLocation),
+            simulationOn: true,
+            simulationButtonsDisabled: true,
+            alreadyActivated: false
+          }, () => {
+            this.setState({ alreadyActivated: true })
+            this.addLog({ title: "Planning succeeded!", type: "success" });
+          });
+        } else {
+          this.addLog({ title: "There is nothing to do!", type: "fail" });
+          this.setState({
+            simulationButtonsDisabled: false,
+          });
+        }
       }
-    }
+    });
   }
 
   toggleDebugMode() {
@@ -169,6 +185,7 @@ class App extends React.Component {
                 debugMode={this.state.debugMode}
               />
               <ParkingLotDrawer
+                simulationButtonsDisabled={this.state.simulationButtonsDisabled}
                 carriedCar={this.state.carriedCar}
                 simulationOn={this.state.simulationOn}
                 debugMode={this.state.debugMode}

@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
         marginRight: drawerWidth,
     },
     title: {
-        // flexGrow: 1, for everything but title to right
+        flexGrow: 1, // for everything but title to right
         display: 'none',
         [theme.breakpoints.up('sm')]: {
             display: 'block',

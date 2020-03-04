@@ -4,6 +4,7 @@ import { Container } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import useImage from 'use-image';
 import Map from './map/Map';
+import indigo from '@material-ui/core/colors/indigo';
 const carURL = require('../../assets/images/racecar.png');
 
 const drawerWidth = 330;
@@ -12,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,
     content: {
         marginRight: drawerWidth,
+        background: indigo,
     }
 }));
 
@@ -67,7 +69,7 @@ function Canvas({
                 <Stage
                     width={parkingLotOffset.x + size.width + 5}
                     height={size.height}
-                    className="my-2"
+                    className="mt-2"
                 // style={{
                 //     textAlign: "center",
                 //     border: "3px solid black",

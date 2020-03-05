@@ -22,7 +22,6 @@ function ParkingLotTile({ row, col, parkingLotConfiguration, gridCellSize, parki
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                 fillRadialGradientColorStops={hubColor}
-                shadowBlur={5}
                 stroke={"black"}
                 strokeWidth={2}
             />

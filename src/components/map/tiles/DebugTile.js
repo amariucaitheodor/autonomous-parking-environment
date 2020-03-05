@@ -102,6 +102,8 @@ function DebugTile({ parkingLotConfiguration, tile, row, col, gridCellSize, debu
                 y={row * gridCellSize.height + gridCellSize.height / 12}
                 text={"R" + row + "C" + col + " (" + debugName + ")"}
                 fontSize={20}
+                width={gridCellSize.width}
+                height={gridCellSize.height}
                 fontStyle={"bold"}
             />
             <Text
@@ -109,6 +111,8 @@ function DebugTile({ parkingLotConfiguration, tile, row, col, gridCellSize, debu
                 y={row * gridCellSize.height + gridCellSize.height / 1.25}
                 text={carLicensePlate}
                 fontSize={20}
+                width={gridCellSize.width}
+                height={gridCellSize.height}
                 fontStyle={"bold"}
             />
             <Text
@@ -116,6 +120,8 @@ function DebugTile({ parkingLotConfiguration, tile, row, col, gridCellSize, debu
                 y={row * gridCellSize.height + gridCellSize.height / 1.55}
                 text={carStatus}
                 fontSize={20}
+                width={gridCellSize.width}
+                height={gridCellSize.height}
                 fontStyle={"bold"}
             />
         </Group>

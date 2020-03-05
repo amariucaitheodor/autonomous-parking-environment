@@ -1,22 +1,23 @@
 import React from "react";
 import { Group } from "react-konva";
 import useImage from 'use-image';
-import ParkingLotTile from "./ParkingLotTile.js";
-import HubTile from "./HubTile.js";
-import DebugTile from "./DebugTile.js";
+import ParkingLotTile from "./tiles/ParkingLotTile";
+import HubTile from "./tiles/HubTile";
+import RoadTile from "./tiles/RoadTile";
+import DebugTile from "./tiles/DebugTile";
 import Robot from "./Robot";
-const parkingURL = require('../../../assets/images/parking-sign.png');
-const hubURL = require('../../../assets/images/hub.png');
+const parkingURL = require('../../assets/images/parking-sign.png');
+const hubURL = require('../../assets/images/hub.png');
 
-function Map({ parkingLotConfiguration, gridCellSize, offset, debugMode, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation, shiftPath, carriedCar, robotGridStaticLocation }) {
+function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, size, toggleSimulation, changeRobotGridStaticLocation, shiftPath, carriedCar, robotGridStaticLocation }) {
     const [parkingImage] = useImage(parkingURL);
     const [hubImage] = useImage(hubURL);
 
     return (
         <>
             <Group
-                x={offset.x}
-                y={offset.y}
+                x={parkingLotOffset.x}
+                y={parkingLotOffset.y}
             >
                 {
                     parkingLotConfiguration.map((tileRow, rowIndex) => {
@@ -26,7 +27,7 @@ function Map({ parkingLotConfiguration, gridCellSize, offset, debugMode, carImag
                             switch (tile.type) {
                                 case "parking":
                                     renderTile = <ParkingLotTile
-                                        key={rowIndex + colIndex + rowIndex * gridSize.columns}
+                                        key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
                                         row={rowIndex}
                                         col={colIndex}
                                         parkingLotConfiguration={parkingLotConfiguration}
@@ -37,7 +38,18 @@ function Map({ parkingLotConfiguration, gridCellSize, offset, debugMode, carImag
                                     break;
                                 case "hub":
                                     renderTile = <HubTile
-                                        key={rowIndex + colIndex + rowIndex * gridSize.columns}
+                                        key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
+                                        row={rowIndex}
+                                        col={colIndex}
+                                        parkingLotConfiguration={parkingLotConfiguration}
+                                        gridCellSize={gridCellSize}
+                                        hubImage={hubImage}
+                                        carImage={carImage}
+                                    />
+                                    break;
+                                case "road":
+                                    renderTile = <RoadTile
+                                        key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
                                         row={rowIndex}
                                         col={colIndex}
                                         parkingLotConfiguration={parkingLotConfiguration}
@@ -68,7 +80,6 @@ function Map({ parkingLotConfiguration, gridCellSize, offset, debugMode, carImag
                 robotPath={robotPath}
                 removeCar={removeCar}
                 addCar={addCar}
-                gridSize={gridSize}
                 parkingLotOffset={parkingLotOffset}
                 size={size}
                 toggleSimulation={toggleSimulation}
@@ -77,8 +88,8 @@ function Map({ parkingLotConfiguration, gridCellSize, offset, debugMode, carImag
 
             {debugMode ?
                 <Group
-                    x={offset.x}
-                    y={offset.y}>
+                    x={parkingLotOffset.x}
+                    y={parkingLotOffset.y}>
                     {
                         parkingLotConfiguration.map((tileRow, rowIndex) => {
                             return tileRow.map((tile, colIndex) => {
@@ -102,7 +113,7 @@ function Map({ parkingLotConfiguration, gridCellSize, offset, debugMode, carImag
                                 }
 
                                 return (<DebugTile
-                                    key={rowIndex + colIndex + rowIndex * gridSize.columns}
+                                    key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
                                     tile={tile.type}
                                     row={rowIndex}
                                     col={colIndex}

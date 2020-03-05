@@ -5,11 +5,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-// import SportsEsports from '@material-ui/icons/SportsEsports';
+import SportsEsports from '@material-ui/icons/SportsEsports';
 import LocalParking from '@material-ui/icons/LocalParking';
 import Visibility from '@material-ui/icons/Visibility';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
-var drawerWidth = 330;
+var drawerWidth = 315;
 
 const useStyles = makeStyles(theme => ({
     menuButtonLeft: {
@@ -45,24 +46,31 @@ export default function Bar() {
                 </Typography>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href="#/"
+                    href="#/parking"
                     aria-label="go to parking lot"
                 >
                     <LocalParking />
                 </IconButton>
-                {/* <IconButton
+                <IconButton
                     className={clsx(classes.menuButtonRight)}
                     href="#/"
                     aria-label="go to simulator"
                 >
                     <SportsEsports />
-                </IconButton> */}
+                </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
                     href="#/overhead"
                     aria-label="go to cctv cameras"
                 >
                     <Visibility />
+                </IconButton>
+                <IconButton
+                    className={clsx(classes.menuButtonRight)}
+                    href="#/payment"
+                    aria-label="go to user payment"
+                >
+                    <AccountCircle />
                 </IconButton>
             </Toolbar>
         </AppBar>

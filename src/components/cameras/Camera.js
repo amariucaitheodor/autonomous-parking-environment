@@ -2,7 +2,7 @@ import React from "react";
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 
-const drawerWidth = 330;
+const drawerWidth = 315;
 
 const useStyles = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,

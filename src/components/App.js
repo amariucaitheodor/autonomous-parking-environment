@@ -1,10 +1,12 @@
 import React from 'react';
-import Canvas from './parkingLot/Canvas';
+import Canvas from './Canvas';
 import Camera from './cameras/Camera';
-import CameraDrawer from './cameras/CameraDrawer';
-import ParkingLotDrawer from './parkingLot/ParkingLotDrawer';
+import CameraDrawer from './cameras/CameraPanel';
+import ParkingLotPanel from './ParkingLotPanel';
+import SimulatorPanel from './SimulatorPanel';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import Bar from './Bar';
+// import Websockets from './Websockets';
 import plan from '../actions/plan';
 import processCommands from '../actions/processCommands';
 import generateProblem from '../actions/generateProblem.js';
@@ -37,13 +39,17 @@ class App extends React.Component {
       robotGridStaticLocation: { column: 1, row: 4 },
       robotCommands: [],
       debugMode: false,
-      gridSize: { rows: 5, columns: 4 },
       simulationOn: false,
       alreadyActivated: false,
-      resizableCanvas: false,
+      resizableCanvas: true,
       parkingLogs: [null, null, null, null, null, null, null, null, null],
-      simulationButtonsDisabled: false
+      simulationButtonsDisabled: false,
+      spacesAvailable: null,
+      spacesTotal: null
     };
+    let calculatedSpaces = this.recalculateSpaces(this.state.parkingLotConfiguration);
+    this.state.spacesTotal = calculatedSpaces.spacesTotal;
+    this.state.spacesAvailable = calculatedSpaces.spacesAvailable;
     this.addLog = this.addLog.bind(this);
     this.toggleDebugMode = this.toggleDebugMode.bind(this);
     this.toggleSimulation = this.toggleSimulation.bind(this);
@@ -63,13 +69,32 @@ class App extends React.Component {
     });
   }
 
+  recalculateSpaces(parkingLotConfiguration) {
+    let calculatedSpacesTotal = 0;
+    let calculatedSpacesAvailable = 0;
+    parkingLotConfiguration.forEach(tileRow => {
+      tileRow.forEach(tile => {
+        if (tile.type === 'parking') {
+          calculatedSpacesTotal++;
+          if (tile.car === undefined) {
+            calculatedSpacesAvailable++;
+          }
+        }
+      })
+    });
+    return { spacesTotal: calculatedSpacesTotal, spacesAvailable: calculatedSpacesAvailable };
+  }
+
   removeCar(row, column) {
     let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
     let carriedCar = newParkingLotConfiguration[row][column].car;
     newParkingLotConfiguration[row][column] = { type: newParkingLotConfiguration[row][column].type }
+    let calculatedSpaces = this.recalculateSpaces(newParkingLotConfiguration);
     this.setState({
       carriedCar: carriedCar,
       parkingLotConfiguration: newParkingLotConfiguration,
+      spacesTotal: calculatedSpaces.spacesTotal,
+      spacesAvailable: calculatedSpaces.spacesAvailable,
     });
 
     this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving" });
@@ -88,9 +113,12 @@ class App extends React.Component {
         status: null // after AwaitingParking car is simply idle, after AwaitingDelivery car is awaiting owner
       }
     }
+    let calculatedSpaces = this.recalculateSpaces(newParkingLotConfiguration);
     this.setState({
       carriedCar: null,
       parkingLotConfiguration: newParkingLotConfiguration,
+      spacesTotal: calculatedSpaces.spacesTotal,
+      spacesAvailable: calculatedSpaces.spacesAvailable,
     });
   }
 
@@ -126,7 +154,7 @@ class App extends React.Component {
           this.state.parkingLotConfiguration,
           null,
           null));
-        if (commands !== -1) {
+        if (typeof commands !== "string") {
           this.setState({
             robotCommands: processCommands(commands, this.state.robotGridStaticLocation),
             simulationOn: true,
@@ -134,10 +162,13 @@ class App extends React.Component {
             alreadyActivated: false
           }, () => {
             this.setState({ alreadyActivated: true })
-            this.addLog({ title: "Planning succeeded!", type: "success" });
+            this.addLog({ title: "Planning succeeded", type: "success" });
           });
         } else {
-          this.addLog({ title: "There is nothing to do!", type: "fail" });
+          if (commands.includes("goal can be simplified to TRUE. The empty plan solves it"))
+            this.addLog({ title: "There is nothing to do", type: "fail" });
+          else
+            this.addLog({ title: "Planning failed", type: "fail" });
           this.setState({
             simulationButtonsDisabled: false,
           });
@@ -167,6 +198,20 @@ class App extends React.Component {
               <Camera />
               <CameraDrawer />
             </Route>
+            <Route path="/parking">
+              {/* <Websockets /> */}
+              <ParkingLotPanel
+                simulationButtonsDisabled={this.state.simulationButtonsDisabled}
+                carriedCar={this.state.carriedCar}
+                simulationOn={this.state.simulationOn}
+                debugMode={this.state.debugMode}
+                toggleDebugMode={this.toggleDebugMode}
+                toggleSimulation={this.toggleSimulation}
+                parkingLogs={this.state.parkingLogs}
+                addLog={this.addLog}
+                parkingLotConfiguration={this.state.parkingLotConfiguration}
+              />
+            </Route>
             <Route path="/">
               <Canvas
                 parkingLotConfiguration={this.state.parkingLotConfiguration}
@@ -179,12 +224,13 @@ class App extends React.Component {
                 toggleSimulation={this.toggleSimulation}
                 changeRobotGridStaticLocation={this.changeRobotGridStaticLocation}
                 simulationOn={this.state.simulationOn}
-                gridSize={this.state.gridSize}
                 robotGridStaticLocation={this.state.robotGridStaticLocation}
                 robotPath={this.state.robotCommands}
                 debugMode={this.state.debugMode}
               />
-              <ParkingLotDrawer
+              <SimulatorPanel
+                spacesAvailable={this.state.spacesAvailable}
+                spacesTotal={this.state.spacesTotal}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}
                 carriedCar={this.state.carriedCar}
                 simulationOn={this.state.simulationOn}

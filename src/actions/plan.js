@@ -26,14 +26,14 @@ export default async function plan(problem) {
                     return response.data.result.plan;
                 } else {
                     console.error("Online planner at `" + api + "/solve-and-validate` failed:\nError: " + response.data.result.error + "\nParse status: " + response.data.result.parse_status);
-                    return -1;
+                    return response.data.result.error;
                 }
             } else {
                 if (response.data.parse_status === 'ok' && response.data.error === false) {
                     return response.data.plan;
                 } else {
                     console.error("Online planner at `" + api + "/solve-and-validate` failed:\nError: " + response.data.error + "\nParse status: " + response.data.parse_status);
-                    return -1;
+                    return response.data.error;
                 }
             }
         });

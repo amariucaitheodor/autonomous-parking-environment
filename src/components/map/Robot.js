@@ -2,9 +2,9 @@ import React from "react";
 import { Image, Arrow } from "react-konva";
 import useImage from 'use-image';
 import async from 'async';
-const robotURL = require('../../../assets/images/robot.png');
+const robotURL = require('../../assets/images/robot.png');
 
-function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, shiftPath, gridCellSize, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, gridSize, parkingLotOffset, size, toggleSimulation, changeRobotGridStaticLocation }) {
+function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, shiftPath, gridCellSize, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, size, parkingLotOffset, toggleSimulation, changeRobotGridStaticLocation }) {
     const [robotImage] = useImage(robotURL);
     const robotImageRef = React.useRef();
     let pathStop = [];
@@ -57,15 +57,19 @@ function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, s
     }
 
     const propToGrid = (robotCanvasLocation) => {
-        const cellColumn = Math.floor((robotCanvasLocation.x + gridCellSize.width / 2) / size.width * gridSize.columns);
-        const cellRow = Math.floor((robotCanvasLocation.y + gridCellSize.height / 2) / size.height * gridSize.rows);
+        // (gridCellSize.width / 2, gridCellSize.height / 2) is the center of tile (0, 0)
+        // But parkingLotOffset is also (gridCellSize.width / 2, gridCellSize.height / 2), so they cancel each other out
+        // +1 because of padding cells 
+        const cellColumn = Math.floor(robotCanvasLocation.x / size.width * (parkingLotConfiguration[0].length + 1));
+        const cellRow = Math.floor(robotCanvasLocation.y / size.height * (parkingLotConfiguration.length + 1));
         var isOnBlockingSpace = false;
-        if (parkingLotConfiguration[cellRow][cellColumn] !== undefined &&
+        if (parkingLotConfiguration[cellRow] !== undefined &&
+            parkingLotConfiguration[cellRow][cellColumn] !== undefined &&
             parkingLotConfiguration[cellRow][cellColumn].type === "blocked")
             isOnBlockingSpace = true;
 
-        if ((cellColumn >= 0 && cellColumn < gridSize.columns) &&
-            (cellRow >= 0 && cellRow < gridSize.rows) &&
+        if ((cellColumn >= 0 && cellColumn < parkingLotConfiguration[0].length) &&
+            (cellRow >= 0 && cellRow < parkingLotConfiguration.length) &&
             !isOnBlockingSpace) {
             changeRobotGridStaticLocation(cellColumn, cellRow);
             var canvasLocation = fromGridToCanvas({ column: cellColumn, row: cellRow });
@@ -95,7 +99,7 @@ function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, s
                 points={pathStop}
                 shadowBlur={0.5}
                 stroke={"black"}
-                strokeWidth={1.7}
+                strokeWidth={0.7}
             />
             <Image
                 ref={robotImageRef}

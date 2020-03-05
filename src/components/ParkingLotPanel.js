@@ -5,9 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
-import PlayCircleFilled from '@material-ui/icons/PlayCircleFilled';
-import ZoomIn from '@material-ui/icons/ZoomIn';
-import PauseCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import Build from '@material-ui/icons/Build';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -22,7 +19,7 @@ import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import ReactTimeAgo from 'react-time-ago';
 
-const drawerWidth = 330;
+const drawerWidth = 315;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,21 +48,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ParkingLotDrawer({ simulationButtonsDisabled, carriedCar, parkingLotConfiguration, parkingLogs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function ParkingLotDrawer({ spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, parkingLotConfiguration, parkingLogs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
-
-  let spacesTotal = 0;
-  let spacesAvailable = 0;
-  parkingLotConfiguration.forEach(tileRow => {
-    tileRow.forEach(tile => {
-      if (tile.type === 'parking') {
-        spacesTotal++;
-        if (tile.car === undefined) {
-          spacesAvailable++;
-        }
-      }
-    })
-  });
 
   let robotStatus = null;
   if (carriedCar === null)
@@ -84,11 +68,11 @@ export default function ParkingLotDrawer({ simulationButtonsDisabled, carriedCar
           {event === null ? <Box m={3.25} /> :
             <ListItemAvatar>
               <Avatar>
-                {event.type === "parking" ? <MoveToInbox /> : 
-                (event.type === "moving" ? <LocalShipping /> : 
-                (event.type === "success" ? <DoneOutline /> : 
-                (event.type === "fail" ? <Close /> : 
-                (event.type === "standby" ? <HourglassEmpty /> : <Check />))))}
+                {event.type === "parking" ? <MoveToInbox /> :
+                  (event.type === "moving" ? <LocalShipping /> :
+                    (event.type === "success" ? <DoneOutline /> :
+                      (event.type === "fail" ? <Close /> :
+                        (event.type === "standby" ? <HourglassEmpty /> : <Check />))))}
               </Avatar>
             </ListItemAvatar>}
           <ListItemText
@@ -114,7 +98,7 @@ export default function ParkingLotDrawer({ simulationButtonsDisabled, carriedCar
     >
       <div className={classes.drawerHeader}>
         <Typography className={classes.title} variant="h6" noWrap align="center">
-          Parking Lot Information
+          Parking Lot
         </Typography>
       </div>
       <Divider />
@@ -122,42 +106,26 @@ export default function ParkingLotDrawer({ simulationButtonsDisabled, carriedCar
         {generateLogs()}
       </List>
       <Divider />
-      <Box fontWeight="fontWeightBold" className={"m-auto "} fontSize="h6.fontSize">
+      <Typography variant='h6' className={"m-auto "} >
         {"Total Parking Spaces: " + spacesTotal}
-      </Box>
-      <Box fontWeight="fontWeightBold" className={"m-auto "} fontSize="h6.fontSize">
+      </Typography>
+      <Typography variant='h6' className={"m-auto "} >
         {"Available Parking Spaces: " + spacesAvailable}
-      </Box>
-      <Box fontWeight="fontWeightBold" className={"m-auto "} fontSize="h6.fontSize">
+      </Typography>
+      <Typography variant='h6' className={"m-auto "} >
         {"Status: " + robotStatus}
-      </Box>
+      </Typography>
+      <Typography color='error' variant='h6' className={"m-auto "} >
+        {"Server: Disconnected"}
+      </Typography>
       <Button
-        className={"m-auto"}
+        className={"mx-auto mb-3 mt-auto"}
         startIcon={<Build />}
         variant="contained"
         color="primary"
         onClick={() => { toggleDebugMode(); }}
       >
         {debugMode ? "Disable" : "Enable"} debug mode
-      </Button >
-      <Button
-        className={"m-auto"}
-        startIcon={<ZoomIn />}
-        variant="contained"
-        color="primary"
-        disabled={simulationButtonsDisabled}
-      >
-        Run test suite
-      </Button >
-      <Button
-        className={"mx-auto mb-3 mt-auto"}
-        startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
-        variant="contained"
-        color="primary"
-        disabled={simulationButtonsDisabled}
-        onClick={() => { toggleSimulation(true); }}
-      >
-        {simulationOn ? "Simulating..." : "Start simulation"}
       </Button >
     </Drawer>
   );

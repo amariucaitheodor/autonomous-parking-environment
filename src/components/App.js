@@ -73,7 +73,14 @@ class App extends React.Component {
       alreadyActivated: false,
       simulationButtonsDisabled: false,
     };
-    this.state.simulatorInitialConfiguration = JSON.parse(JSON.stringify(this.state.simulatorConfiguration))
+    // Should be deep  cloned:
+    this.state.simulatorInitialConfiguration = [
+      [{ type: 'blocked' }, { type: 'parking', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'road' }, { type: 'parking' }],
+      [{ type: 'blocked' }, { type: 'parking' }, { type: 'road' }, { type: 'parking' }],
+      [{ type: 'hub', car: { license: 'SAG 985', status: null } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
+      [{ type: 'hub' }, { type: 'road' }, { type: 'road' }, { type: 'parking' }],
+      [{ type: 'hub', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 987', status: null } }]
+    ];
     this.state.robotInitialLocation = this.state.robotLocationSimulator;
 
     let calculatedSpaces = this.recalculateSpaces(this.state.parkingLotConfiguration);
@@ -94,8 +101,10 @@ class App extends React.Component {
     this.addCar = this.addCar.bind(this);
     this.changeRobotGridLocation = this.changeRobotGridLocation.bind(this);
     this.resetConfiguration = this.resetConfiguration.bind(this);
-    this.checkSize = this.checkForResize.bind(this);
+    this.checkForResize = this.checkForResize.bind(this);
+  }
 
+  componentDidMount() {
     this.checkForResize();
     window.addEventListener("resize", this.checkForResize);
   }
@@ -231,10 +240,6 @@ class App extends React.Component {
           this.checkForResize();
         });
       } else {
-        this.setState({
-          simulatorInitialConfiguration: JSON.parse(JSON.stringify(this.state.simulatorConfiguration)),
-          robotInitialLocation: this.state.robotLocationSimulator
-        });
         let commands = await plan(generateProblem(
           this.state.robotLocationSimulator,
           this.state.simulatorConfiguration,

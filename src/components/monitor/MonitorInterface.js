@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import useImage from 'use-image';
 import Map from './map/Map';
 import indigo from '@material-ui/core/colors/indigo';
-const carURL = require('../assets/images/racecar.png');
+const carURL = require('../../assets/images/racecar.png');
 
 const drawerWidth = 315;
 

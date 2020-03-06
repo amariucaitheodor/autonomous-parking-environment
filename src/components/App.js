@@ -1,24 +1,25 @@
 import React from 'react';
-import Canvas from './Canvas';
-import Camera from './cameras/Camera';
-import CameraDrawer from './cameras/CameraPanel';
-import ParkingLotPanel from './ParkingLotPanel';
-import SimulatorPanel from './SimulatorPanel';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import Bar from './Bar';
+import Bar from './AppBar';
+import MonitorInterface from './monitor/MonitorInterface';
+import MonitorPanel from './monitor/MonitorPanel';
+import SurveillanceInterface from './surveillance/SurveillanceInterface';
+import SurveillancePanel from './surveillance/SurveillancePanel';
+import PaymentInterface from './payment/PaymentInterface';
+import PaymentPanel from './payment/PaymentPanel';
 // import Websockets from './Websockets';
-import plan from '../actions/plan';
+import plan from '../actions/generatePlan';
 import processCommands from '../actions/processCommands';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme } from '@material-ui/core/styles';
-import indigo from '@material-ui/core/colors/indigo';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import deepPurple from '@material-ui/core/colors/deepPurple';
 import pink from '@material-ui/core/colors/pink';
 
 const darkTheme = createMuiTheme({
   palette: {
-    primary: indigo,
+    primary: deepPurple,
     secondary: pink,
     type: 'dark'
   },
@@ -97,13 +98,13 @@ class App extends React.Component {
       spacesAvailable: calculatedSpaces.spacesAvailable,
     });
 
-    this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving" });
+    this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving", time: new Date() });
   }
 
   addCar(row, column) {
     var event = this.state.carriedCar.status.includes("Park") ? "Parked" : "Delivered";
     var eventType = this.state.carriedCar.status.includes("Park") ? "parking" : "delivery";
-    this.addLog({ title: event + " " + this.state.carriedCar.license + " at R" + row + "C" + column, type: eventType });
+    this.addLog({ title: event + " " + this.state.carriedCar.license + " at R" + row + "C" + column, type: eventType, time: new Date() });
 
     let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
     newParkingLotConfiguration[row][column] = {
@@ -146,7 +147,7 @@ class App extends React.Component {
           simulationButtonsDisabled: false,
           alreadyActivated: false
         }, () => {
-          this.addLog({ title: "Robot is now on standby", type: "standby" });
+          this.addLog({ title: "Robot is now on standby", type: "standby", time: new Date() });
         });
       } else {
         let commands = await plan(generateProblem(
@@ -162,13 +163,13 @@ class App extends React.Component {
             alreadyActivated: false
           }, () => {
             this.setState({ alreadyActivated: true })
-            this.addLog({ title: "Planning succeeded", type: "success" });
+            this.addLog({ title: "Planning succeeded", type: "success", time: new Date() });
           });
         } else {
           if (commands.includes("goal can be simplified to TRUE. The empty plan solves it"))
-            this.addLog({ title: "There is nothing to do", type: "fail" });
+            this.addLog({ title: "There is nothing to do", type: "fail", time: new Date() });
           else
-            this.addLog({ title: "Planning failed", type: "fail" });
+            this.addLog({ title: "Planning failed", type: "fail", time: new Date() });
           this.setState({
             simulationButtonsDisabled: false,
           });
@@ -194,13 +195,20 @@ class App extends React.Component {
             theme={darkTheme}
           />
           <Switch>
-            <Route path="/overhead">
-              <Camera />
-              <CameraDrawer />
+            <Route path="/payment">
+              <PaymentInterface />
+              <PaymentPanel />
+            </Route>
+            <Route path="/surveillance">
+              <SurveillanceInterface />
+              <SurveillancePanel />
             </Route>
             <Route path="/parking">
               {/* <Websockets /> */}
-              <ParkingLotPanel
+              <MonitorPanel
+                forSimulation={false}
+                spacesAvailable={this.state.spacesAvailable}
+                spacesTotal={this.state.spacesTotal}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}
                 carriedCar={this.state.carriedCar}
                 simulationOn={this.state.simulationOn}
@@ -208,12 +216,10 @@ class App extends React.Component {
                 toggleDebugMode={this.toggleDebugMode}
                 toggleSimulation={this.toggleSimulation}
                 parkingLogs={this.state.parkingLogs}
-                addLog={this.addLog}
-                parkingLotConfiguration={this.state.parkingLotConfiguration}
               />
             </Route>
             <Route path="/">
-              <Canvas
+              <MonitorInterface
                 parkingLotConfiguration={this.state.parkingLotConfiguration}
                 shiftPath={this.shiftPath}
                 carriedCar={this.state.carriedCar}
@@ -228,7 +234,8 @@ class App extends React.Component {
                 robotPath={this.state.robotCommands}
                 debugMode={this.state.debugMode}
               />
-              <SimulatorPanel
+              <MonitorPanel
+                forSimulation={true}
                 spacesAvailable={this.state.spacesAvailable}
                 spacesTotal={this.state.spacesTotal}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}
@@ -238,8 +245,6 @@ class App extends React.Component {
                 toggleDebugMode={this.toggleDebugMode}
                 toggleSimulation={this.toggleSimulation}
                 parkingLogs={this.state.parkingLogs}
-                addLog={this.addLog}
-                parkingLotConfiguration={this.state.parkingLotConfiguration}
               />
             </Route>
           </Switch>

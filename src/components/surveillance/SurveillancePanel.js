@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function CameraDrawer() {
+export default function SurveillancePanel() {
     const classes = useStyles();
 
     return (

@@ -2,7 +2,7 @@ import React from "react";
 import { Image, Arrow } from "react-konva";
 import useImage from 'use-image';
 import async from 'async';
-const robotURL = require('../../assets/images/robot.png');
+const robotURL = require('../../../assets/images/robot.png');
 
 function Robot({ parkingLotConfiguration, robotGridStaticLocation, carriedCar, shiftPath, gridCellSize, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, size, parkingLotOffset, toggleSimulation, changeRobotGridStaticLocation }) {
     const [robotImage] = useImage(robotURL);

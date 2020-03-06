@@ -60,7 +60,7 @@ export default function Bar() {
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href="#/overhead"
+                    href="#/surveillance"
                     aria-label="go to cctv cameras"
                 >
                     <Visibility />

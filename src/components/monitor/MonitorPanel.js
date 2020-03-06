@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import PlayCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import ZoomIn from '@material-ui/icons/ZoomIn';
 import PauseCircleFilled from '@material-ui/icons/PlayCircleFilled';
+import Replay from '@material-ui/icons/Replay';
 import Build from '@material-ui/icons/Build';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -51,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ forSimulation, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, parkingLogs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ simulatorPanel, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
 
   let robotStatus = null;
@@ -65,7 +66,7 @@ export default function MonitorPanel({ forSimulation, spacesTotal, spacesAvailab
   }
 
   function generateLogs() {
-    return parkingLogs.map((event, index) =>
+    return logs.map((event, index) =>
       React.cloneElement(
         <ListItem>
           {event === null ? <Box m={3.25} /> :
@@ -101,7 +102,7 @@ export default function MonitorPanel({ forSimulation, spacesTotal, spacesAvailab
     >
       <div className={classes.drawerHeader}>
         <Typography className={classes.title} variant="h6" noWrap align="center">
-          {forSimulation ? "Simulator" : "Parking Lot"}
+          {simulatorPanel ? "Simulator" : "Parking Lot"}
         </Typography>
       </div>
       <Divider />
@@ -118,7 +119,7 @@ export default function MonitorPanel({ forSimulation, spacesTotal, spacesAvailab
       <Typography variant='h6' className={"m-auto "} >
         {"Status: " + robotStatus}
       </Typography>
-      {!forSimulation ?
+      {!simulatorPanel ?
         <Typography color='error' variant='h6' className={"m-auto "} >
           {"Server: Disconnected"}
         </Typography> :
@@ -129,11 +130,11 @@ export default function MonitorPanel({ forSimulation, spacesTotal, spacesAvailab
         startIcon={<Build />}
         variant="contained"
         color="primary"
-        onClick={() => { toggleDebugMode(); }}
+        onClick={() => { toggleDebugMode(simulatorPanel); }}
       >
         {debugMode ? "Disable" : "Enable"} debug mode
       </Button >
-      {forSimulation ?
+      {simulatorPanel ?
         <Button
           className={"m-auto"}
           startIcon={<ZoomIn />}
@@ -145,14 +146,27 @@ export default function MonitorPanel({ forSimulation, spacesTotal, spacesAvailab
       </Button > :
         null
       }
-      {forSimulation ?
+      {simulatorPanel ?
+        <Button
+          className={"m-auto"}
+          startIcon={<Replay />}
+          variant="contained"
+          color="primary"
+          disabled={simulationButtonsDisabled}
+          onClick={() => { resetConfiguration() }}
+        >
+          Reset Configuration
+        </Button > :
+        null
+      }
+      {simulatorPanel ?
         <Button
           className={"mx-auto mb-3 mt-auto"}
           startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
           variant="contained"
           color="primary"
           disabled={simulationButtonsDisabled}
-          onClick={() => { toggleSimulation(true); }}
+          onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
         >
           {simulationOn ? "Simulating..." : "Start simulation"}
         </Button > :

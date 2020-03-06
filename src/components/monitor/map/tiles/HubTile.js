@@ -1,12 +1,12 @@
 import React from "react";
 import { Rect, Image } from "react-konva";
 
-function HubTile({ row, col, parkingLotConfiguration, gridCellSize, hubImage, carImage }) {
+function HubTile({ row, col, configuration, gridCellSize, hubImage, carImage }) {
 
     var occupied = false;
     var hubColor = [0, "rgb(14, 82, 165)", 1, "rgb(19, 115, 236)"]; // neutral, blue
-    if (parkingLotConfiguration[row][col].car !== undefined) {
-        if (parkingLotConfiguration[row][col].car.status === "AwaitingParking")
+    if (configuration[row][col].car !== undefined) {
+        if (configuration[row][col].car.status === "AwaitingParking")
             hubColor = [0, "rgb(189, 130, 42)", 1, "rgb(210, 144, 45)"];
         occupied = true;
     }

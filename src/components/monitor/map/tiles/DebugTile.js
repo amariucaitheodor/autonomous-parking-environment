@@ -1,13 +1,13 @@
 import React from "react";
 import { Rect, Group, Text } from "react-konva";
 
-function DebugTile({ parkingLotConfiguration, tile, row, col, gridCellSize, debugName }) {
+function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
 
     var carStatus = "";
     var carLicensePlate = "";
-    if (parkingLotConfiguration[row][col].car !== undefined) {
-        carLicensePlate = "License Plate: " + parkingLotConfiguration[row][col].car.license;
-        switch (parkingLotConfiguration[row][col].car.status) {
+    if (configuration[row][col].car !== undefined) {
+        carLicensePlate = "License Plate: " + configuration[row][col].car.license;
+        switch (configuration[row][col].car.status) {
             case "AwaitingParking":
                 carStatus = "Status: Awaiting Parking";
                 break;

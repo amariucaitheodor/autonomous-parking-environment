@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function Bar() {
+export default function Bar({ simulationOn }) {
     const classes = useStyles();
 
     return (
@@ -60,14 +60,14 @@ export default function Bar() {
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href="#/surveillance"
+                    href={simulationOn? null : "#/surveillance"}
                     aria-label="go to cctv cameras"
                 >
                     <Visibility />
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href="#/payment"
+                    href={simulationOn? null : "#/payment"}
                     aria-label="go to user payment"
                 >
                     <AccountCircle />

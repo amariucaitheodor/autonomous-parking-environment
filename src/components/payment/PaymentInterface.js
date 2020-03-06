@@ -1,5 +1,5 @@
 import React from "react";
-import Container from '@material-ui/core/Container';
+// import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 
 const drawerWidth = 315;
@@ -19,8 +19,8 @@ export default function Payment() {
             className={classes.content}
         >
             <div className={classes.toolbar} />
-            <Container>
-            </Container>
+            {/* <Container>
+            </Container> */}
         </main>
     );
 }

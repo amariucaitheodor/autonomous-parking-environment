@@ -9,7 +9,7 @@ import Robot from "./Robot";
 const parkingURL = require('../../../assets/images/parking-sign.png');
 const hubURL = require('../../../assets/images/hub.png');
 
-function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotPath, removeCar, addCar, size, toggleSimulation, changeRobotGridStaticLocation, shiftPath, carriedCar, robotGridStaticLocation }) {
+function Map({ simulatorInterface, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
     const [parkingImage] = useImage(parkingURL);
     const [hubImage] = useImage(hubURL);
 
@@ -20,17 +20,17 @@ function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffse
                 y={parkingLotOffset.y}
             >
                 {
-                    parkingLotConfiguration.map((tileRow, rowIndex) => {
+                    configuration.map((tileRow, rowIndex) => {
                         return tileRow.map((tile, colIndex) => {
                             let renderTile = null;
 
                             switch (tile.type) {
                                 case "parking":
                                     renderTile = <ParkingLotTile
-                                        key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
+                                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
                                         row={rowIndex}
                                         col={colIndex}
-                                        parkingLotConfiguration={parkingLotConfiguration}
+                                        configuration={configuration}
                                         gridCellSize={gridCellSize}
                                         parkingImage={parkingImage}
                                         carImage={carImage}
@@ -38,10 +38,10 @@ function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffse
                                     break;
                                 case "hub":
                                     renderTile = <HubTile
-                                        key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
+                                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
                                         row={rowIndex}
                                         col={colIndex}
-                                        parkingLotConfiguration={parkingLotConfiguration}
+                                        configuration={configuration}
                                         gridCellSize={gridCellSize}
                                         hubImage={hubImage}
                                         carImage={carImage}
@@ -49,10 +49,10 @@ function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffse
                                     break;
                                 case "road":
                                     renderTile = <RoadTile
-                                        key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
+                                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
                                         row={rowIndex}
                                         col={colIndex}
-                                        parkingLotConfiguration={parkingLotConfiguration}
+                                        configuration={configuration}
                                         gridCellSize={gridCellSize}
                                         hubImage={hubImage}
                                         carImage={carImage}
@@ -69,21 +69,22 @@ function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffse
             </Group>
 
             <Robot
-                parkingLotConfiguration={parkingLotConfiguration}
-                shiftPath={shiftPath}
+                simulatorInterface={simulatorInterface}
+                configuration={configuration}
                 carriedCar={carriedCar}
-                robotGridStaticLocation={robotGridStaticLocation}
+                robotLocation={robotLocation}
                 gridCellSize={gridCellSize}
                 carImage={carImage}
-                simulationOn={simulationOn}
-                alreadyActivated={alreadyActivated}
-                robotPath={robotPath}
+                robotCommands={robotCommands}
                 removeCar={removeCar}
                 addCar={addCar}
                 parkingLotOffset={parkingLotOffset}
                 size={size}
+                changeRobotGridLocation={changeRobotGridLocation}
+                // Simulation specific actions
+                simulationOn={simulationOn}
                 toggleSimulation={toggleSimulation}
-                changeRobotGridStaticLocation={changeRobotGridStaticLocation}
+                alreadyActivated={alreadyActivated}
             />
 
             {debugMode ?
@@ -91,7 +92,7 @@ function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffse
                     x={parkingLotOffset.x}
                     y={parkingLotOffset.y}>
                     {
-                        parkingLotConfiguration.map((tileRow, rowIndex) => {
+                        configuration.map((tileRow, rowIndex) => {
                             return tileRow.map((tile, colIndex) => {
                                 let debugName = null;
 
@@ -113,11 +114,11 @@ function Map({ parkingLotConfiguration, gridCellSize, debugMode, parkingLotOffse
                                 }
 
                                 return (<DebugTile
-                                    key={rowIndex + colIndex + rowIndex * parkingLotConfiguration[0].length}
+                                    key={rowIndex + colIndex + rowIndex * configuration[0].length}
                                     tile={tile.type}
                                     row={rowIndex}
                                     col={colIndex}
-                                    parkingLotConfiguration={parkingLotConfiguration}
+                                    configuration={configuration}
                                     gridCellSize={gridCellSize}
                                     debugName={debugName}
                                 />)

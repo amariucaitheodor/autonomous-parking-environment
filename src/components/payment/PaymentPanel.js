@@ -51,14 +51,17 @@ export default function PaymentPanel() {
         >
             <div className={classes.drawerHeader}>
                 <Typography className={classes.title} variant="h6" noWrap align="center">
-                    Payment
-              </Typography>
+                    Payments
+                </Typography>
             </div>
             <Divider />
             <List>
-                {['Basic interface'].map((text, index) => (
+                <ListItem button key={"Interface"}>
+                    <ListItemText primary={"Interface"} />
+                </ListItem>
+                {['Elvis Presley', 'Brad Pitt', 'Michael Jackson'].map((text, index) => (
                     <ListItem button key={text}>
-                        <ListItemText primary={text + " (#" + (index + 1) + ")"} />
+                        <ListItemText primary={text + " (customer #" + (index + 1) + ")"} />
                     </ListItem>
                 ))}
             </List>

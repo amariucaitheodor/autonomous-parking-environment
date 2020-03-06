@@ -1,15 +1,15 @@
 import React from 'react';
 import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import Bar from './AppBar';
+import AppBar from './AppBar';
 import MonitorInterface from './monitor/MonitorInterface';
 import MonitorPanel from './monitor/MonitorPanel';
+// import Websockets from './Websockets';
 import SurveillanceInterface from './surveillance/SurveillanceInterface';
 import SurveillancePanel from './surveillance/SurveillancePanel';
 import PaymentInterface from './payment/PaymentInterface';
 import PaymentPanel from './payment/PaymentPanel';
-// import Websockets from './Websockets';
 import plan from '../actions/generatePlan';
-import processCommands from '../actions/processCommands';
+import processCommands from '../actions/processPlan';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
@@ -25,10 +25,18 @@ const darkTheme = createMuiTheme({
   },
 });
 
+const drawerWidth = 315;
+const MATERIAL_UI_APP_BAR_HEIGHT = 64;
+
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
+      // General configuration
+      resizableMonitor: true,
+      monitorWidth: window.innerWidth - drawerWidth,
+      monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT,
+      // Parking Lot Monitor configuration
       parkingLotConfiguration: [
         [{ type: 'blocked' }, { type: 'parking', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'road' }, { type: 'parking' }],
         [{ type: 'blocked' }, { type: 'parking' }, { type: 'road' }, { type: 'parking' }],
@@ -36,44 +44,97 @@ class App extends React.Component {
         [{ type: 'hub' }, { type: 'road' }, { type: 'road' }, { type: 'parking' }],
         [{ type: 'hub', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 987', status: null } }]
       ],
-      carriedCar: null,
-      robotGridStaticLocation: { column: 1, row: 4 },
-      robotCommands: [],
-      debugMode: false,
+      carriedCarParking: null,
+      robotLocationParking: { column: 1, row: 4 },
+      robotCommandsParking: [],
+      debugModeParking: false,
+      logsParking: [null, null, null, null, null, null, null, null, null],
+      spacesAvailableParking: null,
+      spacesTotalParking: null,
+      // Simulator Monitor configuration
+      simulatorConfiguration: [
+        [{ type: 'blocked' }, { type: 'parking', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'road' }, { type: 'parking' }],
+        [{ type: 'blocked' }, { type: 'parking' }, { type: 'road' }, { type: 'parking' }],
+        [{ type: 'hub', car: { license: 'SAG 985', status: null } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
+        [{ type: 'hub' }, { type: 'road' }, { type: 'road' }, { type: 'parking' }],
+        [{ type: 'hub', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 987', status: null } }]
+      ],
+      carriedCarSimulator: null,
+      robotLocationSimulator: { column: 1, row: 4 },
+      robotCommandsSimulator: [],
+      debugModeSimulator: false,
+      logsSimulator: [null, null, null, null, null, null, null],
+      spacesAvailableSimulator: null,
+      spacesTotalSimulator: null,
+      // Simulator specific configuration
+      simulatorInitialConfiguration: null,
+      robotInitialLocation: null,
       simulationOn: false,
       alreadyActivated: false,
-      resizableCanvas: true,
-      parkingLogs: [null, null, null, null, null, null, null, null, null],
       simulationButtonsDisabled: false,
-      spacesAvailable: null,
-      spacesTotal: null
     };
+    this.state.simulatorInitialConfiguration = JSON.parse(JSON.stringify(this.state.simulatorConfiguration))
+    this.state.robotInitialLocation = this.state.robotLocationSimulator;
+
     let calculatedSpaces = this.recalculateSpaces(this.state.parkingLotConfiguration);
-    this.state.spacesTotal = calculatedSpaces.spacesTotal;
-    this.state.spacesAvailable = calculatedSpaces.spacesAvailable;
+    this.state.spacesTotalParking = calculatedSpaces.spacesTotal;
+    this.state.spacesAvailableParking = calculatedSpaces.spacesAvailable;
+
+    calculatedSpaces = this.recalculateSpaces(this.state.simulatorConfiguration);
+    this.state.spacesTotalSimulator = calculatedSpaces.spacesTotal;
+    this.state.spacesAvailableSimulator = calculatedSpaces.spacesAvailable;
+
+    this.simulatorLogSize = 7;
+    this.parkingLogSize = 9;
+
     this.addLog = this.addLog.bind(this);
     this.toggleDebugMode = this.toggleDebugMode.bind(this);
     this.toggleSimulation = this.toggleSimulation.bind(this);
-    this.shiftPath = this.shiftPath.bind(this);
     this.removeCar = this.removeCar.bind(this);
     this.addCar = this.addCar.bind(this);
-    this.changeRobotGridStaticLocation = this.changeRobotGridStaticLocation.bind(this);
+    this.changeRobotGridLocation = this.changeRobotGridLocation.bind(this);
+    this.resetConfiguration = this.resetConfiguration.bind(this);
+    this.checkSize = this.checkForResize.bind(this);
+
+    this.checkForResize();
+    window.addEventListener("resize", this.checkForResize);
   }
 
-  addLog = (event) => {
-    var newParkingLogs = this.state.parkingLogs;
-    if (newParkingLogs.length === 9)
-      newParkingLogs.shift();
-    newParkingLogs.push(event);
-    this.setState({
-      parkingLogs: newParkingLogs
-    });
+  checkForResize() {
+    if (this.state.simulationOn || !this.state.resizableMonitor)
+      return;
+
+    if (window.innerHeight > MATERIAL_UI_APP_BAR_HEIGHT) {
+      this.setState({
+        monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT
+      });
+    }
+    if (window.innerWidth > drawerWidth) {
+      this.setState({
+        monitorWidth: window.innerWidth - drawerWidth
+      });
+    }
   }
 
-  recalculateSpaces(parkingLotConfiguration) {
+  addLog = (event, toSimulatorPanel) => {
+    var newLogs = toSimulatorPanel ? this.state.logsSimulator : this.state.logsParking;
+    if (newLogs.length === (toSimulatorPanel ? this.simulatorLogSize : this.parkingLogSize))
+      newLogs.shift();
+    newLogs.push(event);
+    if (toSimulatorPanel)
+      this.setState({
+        logsSimulator: newLogs
+      });
+    else
+      this.setState({
+        logsParking: newLogs
+      });
+  }
+
+  recalculateSpaces(configuration) {
     let calculatedSpacesTotal = 0;
     let calculatedSpacesAvailable = 0;
-    parkingLotConfiguration.forEach(tileRow => {
+    configuration.forEach(tileRow => {
       tileRow.forEach(tile => {
         if (tile.type === 'parking') {
           calculatedSpacesTotal++;
@@ -86,53 +147,72 @@ class App extends React.Component {
     return { spacesTotal: calculatedSpacesTotal, spacesAvailable: calculatedSpacesAvailable };
   }
 
-  removeCar(row, column) {
-    let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
-    let carriedCar = newParkingLotConfiguration[row][column].car;
-    newParkingLotConfiguration[row][column] = { type: newParkingLotConfiguration[row][column].type }
-    let calculatedSpaces = this.recalculateSpaces(newParkingLotConfiguration);
-    this.setState({
-      carriedCar: carriedCar,
-      parkingLotConfiguration: newParkingLotConfiguration,
-      spacesTotal: calculatedSpaces.spacesTotal,
-      spacesAvailable: calculatedSpaces.spacesAvailable,
-    });
+  removeCar(row, column, fromSimulator) {
+    let newConfiguration = [...fromSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
+    let carriedCar = newConfiguration[row][column].car;
+    newConfiguration[row][column] = { type: newConfiguration[row][column].type }
+    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
+    if (fromSimulator)
+      this.setState({
+        carriedCarSimulator: carriedCar,
+        simulatorConfiguration: newConfiguration,
+        spacesTotalSimulator: calculatedSpaces.spacesTotal,
+        spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
+      });
+    else
+      this.setState({
+        carriedCarParking: carriedCar,
+        parkingLotConfiguration: newConfiguration,
+        spacesTotalParking: calculatedSpaces.spacesTotal,
+        spacesAvailableParking: calculatedSpaces.spacesAvailable,
+      });
 
-    this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving", time: new Date() });
+    this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving", time: new Date() }, fromSimulator);
   }
 
-  addCar(row, column) {
-    var event = this.state.carriedCar.status.includes("Park") ? "Parked" : "Delivered";
-    var eventType = this.state.carriedCar.status.includes("Park") ? "parking" : "delivery";
-    this.addLog({ title: event + " " + this.state.carriedCar.license + " at R" + row + "C" + column, type: eventType, time: new Date() });
+  addCar(row, column, toSimulator) {
+    if (toSimulator) {
+      var event = this.state.carriedCarSimulator.status.includes("Park") ? "Parked" : "Delivered";
+      var eventType = this.state.carriedCarSimulator.status.includes("Park") ? "parking" : "delivery";
+    } else {
+      event = this.state.carriedCarParking.status.includes("Park") ? "Parked" : "Delivered";
+      eventType = this.state.carriedCarParking.status.includes("Park") ? "parking" : "delivery";
+    }
 
-    let newParkingLotConfiguration = [...this.state.parkingLotConfiguration];
-    newParkingLotConfiguration[row][column] = {
-      type: newParkingLotConfiguration[row][column].type,
+    this.addLog({
+      title: event + " " + (toSimulator ? this.state.carriedCarSimulator.license : this.state.carriedCarParking.license) + " at R" + row + "C" + column,
+      type: eventType,
+      time: new Date()
+    }, toSimulator);
+
+    let newConfiguration = [...toSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
+    newConfiguration[row][column] = {
+      type: newConfiguration[row][column].type,
       car: {
-        license: this.state.carriedCar.license,
+        license: toSimulator ? this.state.carriedCarSimulator.license : this.state.carriedCarParking.license,
         status: null // after AwaitingParking car is simply idle, after AwaitingDelivery car is awaiting owner
       }
     }
-    let calculatedSpaces = this.recalculateSpaces(newParkingLotConfiguration);
-    this.setState({
-      carriedCar: null,
-      parkingLotConfiguration: newParkingLotConfiguration,
-      spacesTotal: calculatedSpaces.spacesTotal,
-      spacesAvailable: calculatedSpaces.spacesAvailable,
-    });
+    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
+    if (toSimulator)
+      this.setState({
+        carriedCarSimulator: null,
+        simulatorConfiguration: newConfiguration,
+        spacesTotalSimulator: calculatedSpaces.spacesTotal,
+        spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
+      });
+    else
+      this.setState({
+        carriedCarParking: null,
+        parkingLotConfiguration: newConfiguration,
+        spacesTotalParking: calculatedSpaces.spacesTotal,
+        spacesAvailableParking: calculatedSpaces.spacesAvailable,
+      });
   }
 
-  shiftPath() {
-    let newPath = [...this.state.robotCommands].shift();
+  changeRobotGridLocation({ newRow, newColumn }) {
     this.setState({
-      robotCommands: newPath
-    });
-  }
-
-  changeRobotGridStaticLocation(newColumn, newRow) {
-    this.setState({
-      robotGridStaticLocation: { column: newColumn, row: newRow }
+      robotLocationSimulator: { column: newColumn, row: newRow }
     });
   }
 
@@ -147,29 +227,34 @@ class App extends React.Component {
           simulationButtonsDisabled: false,
           alreadyActivated: false
         }, () => {
-          this.addLog({ title: "Robot is now on standby", type: "standby", time: new Date() });
+          this.addLog({ title: "Robot is now on standby", type: "standby", time: new Date() }, true);
+          this.checkForResize();
         });
       } else {
+        this.setState({
+          simulatorInitialConfiguration: JSON.parse(JSON.stringify(this.state.simulatorConfiguration)),
+          robotInitialLocation: this.state.robotLocationSimulator
+        });
         let commands = await plan(generateProblem(
-          this.state.robotGridStaticLocation,
-          this.state.parkingLotConfiguration,
+          this.state.robotLocationSimulator,
+          this.state.simulatorConfiguration,
           null,
           null));
         if (typeof commands !== "string") {
           this.setState({
-            robotCommands: processCommands(commands, this.state.robotGridStaticLocation),
+            robotCommandsSimulator: processCommands(commands, this.state.robotLocationSimulator),
             simulationOn: true,
             simulationButtonsDisabled: true,
             alreadyActivated: false
           }, () => {
             this.setState({ alreadyActivated: true })
-            this.addLog({ title: "Planning succeeded", type: "success", time: new Date() });
+            this.addLog({ title: "Planning succeeded", type: "success", time: new Date() }, true);
           });
         } else {
           if (commands.includes("goal can be simplified to TRUE. The empty plan solves it"))
-            this.addLog({ title: "There is nothing to do", type: "fail", time: new Date() });
+            this.addLog({ title: "There is nothing to do", type: "fail", time: new Date() }, true);
           else
-            this.addLog({ title: "Planning failed", type: "fail", time: new Date() });
+            this.addLog({ title: "Planning failed", type: "fail", time: new Date() }, true);
           this.setState({
             simulationButtonsDisabled: false,
           });
@@ -178,9 +263,22 @@ class App extends React.Component {
     });
   }
 
-  toggleDebugMode() {
+  toggleDebugMode(forSimulator) {
+    if (forSimulator)
+      this.setState({
+        debugModeSimulator: !this.state.debugModeSimulator
+      });
+    else
+      this.setState({
+        debugModeParking: !this.state.debugModeParking
+      });
+  }
+
+  resetConfiguration() {
+    this.changeRobotGridLocation({ newRow: this.state.robotInitialLocation.row, newColumn: this.state.robotInitialLocation.column });
     this.setState({
-      debugMode: !this.state.debugMode
+      simulatorConfiguration: this.state.simulatorInitialConfiguration,
+      robotCommandsSimulator: []
     });
   }
 
@@ -191,7 +289,8 @@ class App extends React.Component {
           theme={darkTheme}
         >
           <CssBaseline />
-          <Bar
+          <AppBar
+            simulationOn={this.state.simulationOn}
             theme={darkTheme}
           />
           <Switch>
@@ -205,46 +304,58 @@ class App extends React.Component {
             </Route>
             <Route path="/parking">
               {/* <Websockets /> */}
+              <MonitorInterface
+                simulatorInterface={false}
+                size={{ monitorHeight: this.state.monitorHeight, monitorWidth: this.state.monitorWidth }}
+                configuration={this.state.parkingLotConfiguration}
+                carriedCar={this.state.carriedCarParking}
+                changeRobotGridLocation={this.changeRobotGridLocation}
+                robotLocation={this.state.robotLocationParking}
+                robotCommands={this.state.robotCommandsParking}
+                debugMode={this.state.debugModeParking}
+                removeCar={this.removeCar}
+                addCar={this.addCar}
+              />
               <MonitorPanel
-                forSimulation={false}
-                spacesAvailable={this.state.spacesAvailable}
-                spacesTotal={this.state.spacesTotal}
-                simulationButtonsDisabled={this.state.simulationButtonsDisabled}
-                carriedCar={this.state.carriedCar}
-                simulationOn={this.state.simulationOn}
-                debugMode={this.state.debugMode}
+                simulatorPanel={false}
+                spacesAvailable={this.state.spacesAvailableParking}
+                spacesTotal={this.state.spacesTotalParking}
+                carriedCar={this.state.carriedCarParking}
+                debugMode={this.state.debugModeParking}
                 toggleDebugMode={this.toggleDebugMode}
-                toggleSimulation={this.toggleSimulation}
-                parkingLogs={this.state.parkingLogs}
+                logs={this.state.logsParking}
               />
             </Route>
             <Route path="/">
               <MonitorInterface
-                parkingLotConfiguration={this.state.parkingLotConfiguration}
-                shiftPath={this.shiftPath}
-                carriedCar={this.state.carriedCar}
-                resizable={this.state.resizableCanvas}
-                alreadyActivated={this.state.alreadyActivated}
+                simulatorInterface={true}
+                size={{ monitorHeight: this.state.monitorHeight, monitorWidth: this.state.monitorWidth }}
+                configuration={this.state.simulatorConfiguration}
+                carriedCar={this.state.carriedCarSimulator}
+                changeRobotGridLocation={this.changeRobotGridLocation}
+                robotLocation={this.state.robotLocationSimulator}
+                robotCommands={this.state.robotCommandsSimulator}
+                debugMode={this.state.debugModeSimulator}
                 removeCar={this.removeCar}
                 addCar={this.addCar}
-                toggleSimulation={this.toggleSimulation}
-                changeRobotGridStaticLocation={this.changeRobotGridStaticLocation}
+                // Simulator specific configuration
                 simulationOn={this.state.simulationOn}
-                robotGridStaticLocation={this.state.robotGridStaticLocation}
-                robotPath={this.state.robotCommands}
-                debugMode={this.state.debugMode}
+                toggleSimulation={this.toggleSimulation}
+                alreadyActivated={this.state.alreadyActivated}
               />
               <MonitorPanel
-                forSimulation={true}
-                spacesAvailable={this.state.spacesAvailable}
-                spacesTotal={this.state.spacesTotal}
-                simulationButtonsDisabled={this.state.simulationButtonsDisabled}
-                carriedCar={this.state.carriedCar}
-                simulationOn={this.state.simulationOn}
-                debugMode={this.state.debugMode}
+                simulatorPanel={true}
+                spacesAvailable={this.state.spacesAvailableSimulator}
+                spacesTotal={this.state.spacesTotalSimulator}
+                carriedCar={this.state.carriedCarSimulator}
+                debugMode={this.state.debugModeSimulator}
                 toggleDebugMode={this.toggleDebugMode}
+                logs={this.state.logsSimulator}
+                // Simulator specific configuration
+                simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
-                parkingLogs={this.state.parkingLogs}
+                simulationButtonsDisabled={this.state.simulationButtonsDisabled}
+                resetConfiguration={this.resetConfiguration}
               />
             </Route>
           </Switch>

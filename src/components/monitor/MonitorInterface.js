@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Stage, Layer } from "react-konva";
 import { makeStyles } from '@material-ui/core/styles';
 import useImage from 'use-image';
@@ -16,48 +16,15 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function Canvas({
-    parkingLotConfiguration,
-    carriedCar,
-    debugMode,
-    robotPath,
-    toggleSimulation,
-    robotGridStaticLocation,
-    simulationOn,
-    changeRobotGridStaticLocation,
-    removeCar,
-    addCar,
-    alreadyActivated,
-    resizable,
-    shiftPath
-}) {
-    const MATERIAL_UI_APP_BAR_HEIGHT = 64;
+function MonitorInterface({ size, simulatorInterface, configuration, carriedCar, debugMode, robotCommands, toggleSimulation, robotLocation, simulationOn, changeRobotGridLocation, removeCar, addCar, alreadyActivated}) {
     const classes = useStyles();
     const [carImage] = useImage(carURL);
-    const [stageHeight, setStageHeight] = useState(window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT);
-    const [stageWidth, setStageWidth] = useState(window.innerWidth - drawerWidth);
-    const size = { height: stageHeight, width: stageWidth };
     const gridCellSize = {
         // +1 for padding (1/2 of normal block is the size of the padding block)
-        height: size.height / (parkingLotConfiguration.length + 1),
-        width: size.width / (parkingLotConfiguration[0].length + 1)
+        height: size.monitorHeight / (configuration.length + 1),
+        width: size.monitorWidth / (configuration[0].length + 1)
     }
     const parkingLotOffset = { x: gridCellSize.width / 2, y: gridCellSize.height / 2 };
-
-    useEffect(() => {
-        function checkSize() {
-            if (window.innerHeight > MATERIAL_UI_APP_BAR_HEIGHT)
-                setStageHeight(window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT);
-            if (window.innerWidth > drawerWidth)
-                setStageWidth(window.innerWidth - drawerWidth);
-        }
-
-        if (resizable) {
-            checkSize();
-            window.addEventListener("resize", checkSize);
-        }
-    }, [resizable]);
-
 
     return (
         <main
@@ -65,27 +32,27 @@ function Canvas({
         >
             <div className={classes.toolbar} />
             <Stage
-                width={size.width}
-                height={size.height}
+                width={size.monitorWidth}
+                height={size.monitorHeight}
             >
                 <Layer>
                     <Map
-                        parkingLotConfiguration={parkingLotConfiguration}
+                        simulatorInterface={simulatorInterface}
+                        configuration={configuration}
                         carImage={carImage}
                         debugMode={debugMode}
                         gridCellSize={gridCellSize}
                         simulationOn={simulationOn}
                         alreadyActivated={alreadyActivated}
-                        robotPath={robotPath}
+                        robotCommands={robotCommands}
                         removeCar={removeCar}
                         addCar={addCar}
                         parkingLotOffset={parkingLotOffset}
-                        size={size}
+                        size={{ height: size.monitorHeight, width: size.monitorWidth }}
                         toggleSimulation={toggleSimulation}
-                        changeRobotGridStaticLocation={changeRobotGridStaticLocation}
-                        shiftPath={shiftPath}
+                        changeRobotGridLocation={changeRobotGridLocation}
                         carriedCar={carriedCar}
-                        robotGridStaticLocation={robotGridStaticLocation}
+                        robotLocation={robotLocation}
                     />
                 </Layer>
             </Stage>
@@ -93,4 +60,4 @@ function Canvas({
     );
 }
 
-export default Canvas;
+export default MonitorInterface;

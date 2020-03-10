@@ -4,7 +4,7 @@ import useImage from 'use-image';
 import async from 'async';
 const robotURL = require('../../../assets/images/robot.png');
 
-function Robot({ simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, size, parkingLotOffset, toggleSimulation, changeRobotGridLocation }) {
+function Robot({ simulatorInterface, horizontalPaddingInGridCells, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, size, parkingLotOffset, toggleSimulation, changeRobotGridLocation }) {
     const [robotImage] = useImage(robotURL);
     const simulatorRobotImageRef = React.useRef();
     const parkingRobotImageRef = React.useRef();
@@ -52,27 +52,40 @@ function Robot({ simulatorInterface, configuration, robotLocation, carriedCar, g
                     addCar(robotCommands[count].row, robotCommands[count].column, simulatorInterface);
 
                 toggleSimulation(false);
-                changeRobotGridLocation({newColumn: robotCommands[count].column, newRow: robotCommands[count].row});
+                changeRobotGridLocation({ newColumn: robotCommands[count].column, newRow: robotCommands[count].row });
             }
         );
     }
 
     const propToGrid = (robotCanvasLocation) => {
-        // (gridCellSize.width / 2, gridCellSize.height / 2) is the center of tile (0, 0)
-        // But parkingLotOffset is also (gridCellSize.width / 2, gridCellSize.height / 2), so they cancel each other out
-        // +1 because of padding cells 
-        const cellColumn = Math.floor(robotCanvasLocation.x / size.width * (configuration[0].length + 1));
-        const cellRow = Math.floor(robotCanvasLocation.y / size.height * (configuration.length + 1));
+        // The center of tile (0, 0) is (- gridCellSize.width / 2, - gridCellSize.height / 2)
+        // parkingLotOffset is (gridCellSize.width / 2, gridCellSize.height / 2)
+        // Height cancels out, but for width we have additional computations to perform
+        console.log(horizontalPaddingInGridCells);
+        const cellColumn = Math.floor(
+            (robotCanvasLocation.x
+                + gridCellSize.width / 2
+                - gridCellSize.width / 2 * horizontalPaddingInGridCells
+            )
+            / size.width
+            * (configuration[0].length + horizontalPaddingInGridCells) // horizontal padding cells are variable (1 or 2)
+        );
+        const cellRow = Math.floor(
+            robotCanvasLocation.y
+            / size.height
+            * (configuration.length + 1) // vertical padding cells are always 1 height tall in total
+        );
+
         var isOnBlockingSpace = false;
         if (configuration[cellRow] !== undefined &&
             configuration[cellRow][cellColumn] !== undefined &&
-            configuration[cellRow][cellColumn].type === "blocked")
+            configuration[cellRow][cellColumn].type === "blockedTile")
             isOnBlockingSpace = true;
 
         if ((cellColumn >= 0 && cellColumn < configuration[0].length) &&
             (cellRow >= 0 && cellRow < configuration.length) &&
             !isOnBlockingSpace) {
-            changeRobotGridLocation({newColumn: cellColumn, newRow: cellRow});
+            changeRobotGridLocation({ newColumn: cellColumn, newRow: cellRow });
             var canvasLocation = fromGridToCanvas({ column: cellColumn, row: cellRow });
         }
         else {

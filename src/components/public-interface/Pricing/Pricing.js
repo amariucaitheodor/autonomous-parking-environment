@@ -76,7 +76,7 @@ const tiers = [
     subheader: 'Most popular',
     price: '1.99',
     description: [
-      'Any vehicle size',
+      'All vehicle sizes',
       'No storage time limit',
       'Help center access',
       'Priority email support',
@@ -110,7 +110,7 @@ export default function Pricing() {
           Pricing
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" component="p">
-          We offer a variety of tailored vehicle storage packages:
+          We offer a tailored variety of storage packages:
         </Typography>
       </Container>
       {/* End hero unit */}

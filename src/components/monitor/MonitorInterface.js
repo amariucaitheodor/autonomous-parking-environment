@@ -16,15 +16,24 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function MonitorInterface({ size, simulatorInterface, configuration, carriedCar, debugMode, robotCommands, toggleSimulation, robotLocation, simulationOn, changeRobotGridLocation, removeCar, addCar, alreadyActivated}) {
+function MonitorInterface({ size, simulatorInterface, configuration, carriedCar, debugMode, robotCommands, toggleSimulation, robotLocation, simulationOn, changeRobotGridLocation, removeCar, addCar, alreadyActivated }) {
     const classes = useStyles();
     const [carImage] = useImage(carURL);
+
+    if (size.monitorWidth / size.monitorHeight > 16 / 9)
+        var horizontalPaddingInGridCells = 2; // widescreen
+    else
+        horizontalPaddingInGridCells = 1; // ~ square screen
+
     const gridCellSize = {
-        // +1 for padding (1/2 of normal block is the size of the padding block)
-        height: size.monitorHeight / (configuration.length + 1),
-        width: size.monitorWidth / (configuration[0].length + 1)
+        height: size.monitorHeight / (configuration.length + 1), // vertical padding is always 1 grid cell high
+        width: size.monitorWidth / (configuration[0].length + horizontalPaddingInGridCells)
     }
-    const parkingLotOffset = { x: gridCellSize.width / 2, y: gridCellSize.height / 2 };
+
+    const parkingLotOffset = {
+        x: gridCellSize.width * horizontalPaddingInGridCells / 2, // divide padding into left and right padding
+        y: gridCellSize.height / 2
+    };
 
     return (
         <main
@@ -37,6 +46,7 @@ function MonitorInterface({ size, simulatorInterface, configuration, carriedCar,
             >
                 <Layer>
                     <Map
+                        horizontalPaddingInGridCells={horizontalPaddingInGridCells}
                         simulatorInterface={simulatorInterface}
                         configuration={configuration}
                         carImage={carImage}

@@ -9,9 +9,59 @@ import Robot from "./Robot";
 const parkingURL = require('../../../assets/images/parking-sign.png');
 const hubURL = require('../../../assets/images/hub.png');
 
-function Map({ simulatorInterface, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
+function Map({ simulatorInterface, horizontalPaddingInGridCells, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
     const [parkingImage] = useImage(parkingURL);
     const [hubImage] = useImage(hubURL);
+
+    let tiles = [];
+    configuration.forEach((tileRow, rowIndex) => {
+        tileRow.forEach((tile, colIndex) => {
+            let renderTile = null;
+
+            switch (tile.type) {
+                case "parkingTile":
+                    renderTile = <ParkingLotTile
+                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
+                        row={rowIndex}
+                        col={colIndex}
+                        configuration={configuration}
+                        gridCellSize={gridCellSize}
+                        parkingImage={parkingImage}
+                        carImage={carImage}
+                    />
+                    break;
+                case "hubTile":
+                    renderTile = <HubTile
+                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
+                        row={rowIndex}
+                        col={colIndex}
+                        configuration={configuration}
+                        gridCellSize={gridCellSize}
+                        hubImage={hubImage}
+                        carImage={carImage}
+                    />
+                    break;
+                case "roadTile":
+                    renderTile = <RoadTile
+                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
+                        row={rowIndex}
+                        col={colIndex}
+                        configuration={configuration}
+                        gridCellSize={gridCellSize}
+                        hubImage={hubImage}
+                        carImage={carImage}
+                    />
+                    break;
+                default:
+                    break;
+            }
+
+            if (tile.type === 'roadTile')
+                tiles.unshift(renderTile); // road tiles should be rendered first to bring them to the bottom
+            else
+                tiles.push(renderTile);
+        })
+    });
 
     return (
         <React.Fragment>
@@ -19,56 +69,11 @@ function Map({ simulatorInterface, configuration, gridCellSize, debugMode, parki
                 x={parkingLotOffset.x}
                 y={parkingLotOffset.y}
             >
-                {
-                    configuration.map((tileRow, rowIndex) => {
-                        return tileRow.map((tile, colIndex) => {
-                            let renderTile = null;
-
-                            switch (tile.type) {
-                                case "parking":
-                                    renderTile = <ParkingLotTile
-                                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
-                                        row={rowIndex}
-                                        col={colIndex}
-                                        configuration={configuration}
-                                        gridCellSize={gridCellSize}
-                                        parkingImage={parkingImage}
-                                        carImage={carImage}
-                                    />
-                                    break;
-                                case "hub":
-                                    renderTile = <HubTile
-                                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
-                                        row={rowIndex}
-                                        col={colIndex}
-                                        configuration={configuration}
-                                        gridCellSize={gridCellSize}
-                                        hubImage={hubImage}
-                                        carImage={carImage}
-                                    />
-                                    break;
-                                case "road":
-                                    renderTile = <RoadTile
-                                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
-                                        row={rowIndex}
-                                        col={colIndex}
-                                        configuration={configuration}
-                                        gridCellSize={gridCellSize}
-                                        hubImage={hubImage}
-                                        carImage={carImage}
-                                    />
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            return renderTile;
-                        })
-                    })
-                }
+                {tiles}
             </Group>
 
             <Robot
+                horizontalPaddingInGridCells={horizontalPaddingInGridCells}
                 simulatorInterface={simulatorInterface}
                 configuration={configuration}
                 carriedCar={carriedCar}
@@ -97,16 +102,16 @@ function Map({ simulatorInterface, configuration, gridCellSize, debugMode, parki
                                 let debugName = null;
 
                                 switch (tile.type) {
-                                    case "parking":
+                                    case "parkingTile":
                                         debugName = "Parking space";
                                         break;
-                                    case "hub":
+                                    case "hubTile":
                                         debugName = "Hub";
                                         break;
-                                    case "road":
+                                    case "roadTile":
                                         debugName = "Road";
                                         break;
-                                    case "blocked":
+                                    case "blockedTile":
                                         debugName = "Blocked space";
                                         break;
                                     default:

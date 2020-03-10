@@ -51,11 +51,11 @@ class App extends React.Component {
       monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [
-        [{ type: 'blocked' }, { type: 'parking', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'road' }, { type: 'parking' }],
-        [{ type: 'blocked' }, { type: 'parking' }, { type: 'road' }, { type: 'parking' }],
-        [{ type: 'hub', car: { license: 'SAG 985', status: null } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
-        [{ type: 'hub' }, { type: 'road' }, { type: 'road' }, { type: 'parking' }],
-        [{ type: 'hub', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 987', status: null } }]
+        [{ type: 'blockedTile' }, { type: 'parkingTile', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'roadTile' }, { type: 'parkingTile' }],
+        [{ type: 'blockedTile' }, { type: 'parkingTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
+        [{ type: 'hubTile', car: { license: 'SAG 985', status: null } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
+        [{ type: 'hubTile' }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
+        [{ type: 'hubTile', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 987', status: null } }]
       ],
       carriedCarParking: null,
       robotLocationParking: { column: 1, row: 4 },
@@ -66,11 +66,11 @@ class App extends React.Component {
       spacesTotalParking: null,
       // Simulator Monitor configuration
       simulatorConfiguration: [
-        [{ type: 'blocked' }, { type: 'parking', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'road' }, { type: 'parking' }],
-        [{ type: 'blocked' }, { type: 'parking' }, { type: 'road' }, { type: 'parking' }],
-        [{ type: 'hub', car: { license: 'SAG 985', status: null } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
-        [{ type: 'hub' }, { type: 'road' }, { type: 'road' }, { type: 'parking' }],
-        [{ type: 'hub', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 987', status: null } }]
+        [{ type: 'blockedTile' }, { type: 'parkingTile', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'roadTile' }, { type: 'parkingTile' }],
+        [{ type: 'blockedTile' }, { type: 'parkingTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
+        [{ type: 'hubTile', car: { license: 'SAG 985', status: null } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
+        [{ type: 'hubTile' }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
+        [{ type: 'hubTile', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 987', status: null } }]
       ],
       carriedCarSimulator: null,
       robotLocationSimulator: { column: 1, row: 4 },
@@ -112,7 +112,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.checkForResize();
     window.addEventListener("resize", this.checkForResize);
   }
 
@@ -152,7 +151,7 @@ class App extends React.Component {
     let calculatedSpacesAvailable = 0;
     configuration.forEach(tileRow => {
       tileRow.forEach(tile => {
-        if (tile.type === 'parking') {
+        if (tile.type === 'parkingTile') {
           calculatedSpacesTotal++;
           if (tile.car === undefined) {
             calculatedSpacesAvailable++;
@@ -247,11 +246,12 @@ class App extends React.Component {
           this.checkForResize();
         });
       } else {
-        let commands = await plan(generateProblem(
-          this.state.robotLocationSimulator,
-          this.state.simulatorConfiguration,
-          null,
-          null));
+        let commands = await plan(
+          generateProblem(
+            this.state.robotLocationSimulator,
+            this.state.simulatorConfiguration
+          )
+        );
         if (typeof commands !== "string") {
           this.setState({
             robotCommandsSimulator: processCommands(commands, this.state.robotLocationSimulator),

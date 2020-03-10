@@ -15,9 +15,9 @@ function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
                 carStatus = "Status: Awaiting Delivery";
                 break;
             case null:
-                if (tile === "parking")
+                if (tile === "parkingTile")
                     carStatus = "Status: Idle";
-                else if (tile === "hub")
+                else if (tile === "hubTile")
                     carStatus = "Status: Awaiting Owner";
                 break;
             default:
@@ -44,7 +44,7 @@ function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
     // }
 
     // TODO: replace portal with rect
-    // if (mapTile.type === "hub")
+    // if (mapTile.type === "hubTile")
     //     portalButtonGroup = <Portal>
     //         <Button
     //             variant="light"
@@ -59,7 +59,7 @@ function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
     //             Available
     //         </Button>
     //     </Portal>;
-    // else if (mapTile.type === "parking")
+    // else if (mapTile.type === "parkingTile")
     //     portalButtonGroup = <Portal>
     //         <Button
     //             variant="light"

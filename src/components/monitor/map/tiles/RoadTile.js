@@ -8,15 +8,9 @@ function RoadTile({ row, col, gridCellSize, }) {
             y={row * gridCellSize.height}
             width={gridCellSize.width}
             height={gridCellSize.height}
-            fillRadialGradientStartPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
-            fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
-            fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
-            fillRadialGradientColorStops={[
-                0, "rgb(210, 210, 210)",
-                1, "rgb(255, 255, 255)"
-            ]}
+            fill={"rgb(240, 240, 240)"}
             stroke={"black"}
-            strokeWidth={2}
+            strokeWidth={0.5}
         />
     );
 }

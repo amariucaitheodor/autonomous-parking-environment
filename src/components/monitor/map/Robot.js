@@ -94,7 +94,7 @@ function Robot({ simulatorInterface, configuration, robotLocation, carriedCar, g
     }
 
     return (
-        <>
+        <React.Fragment>
             {/* Robot path */}
             < Arrow
                 points={pathStop}
@@ -129,7 +129,7 @@ function Robot({ simulatorInterface, configuration, robotLocation, carriedCar, g
                 image={carriedCar !== null ? carImage : robotImage}
                 shadowBlur={0.5}
             />
-        </>
+        </React.Fragment>
     );
 }
 

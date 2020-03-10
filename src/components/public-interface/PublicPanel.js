@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import Link from '@material-ui/core/Link';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -36,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function PaymentPanel() {
+export default function PublicPanel({ changePublicInterfaceDisplay }) {
     const classes = useStyles();
 
     return (
@@ -51,19 +52,21 @@ export default function PaymentPanel() {
         >
             <div className={classes.drawerHeader}>
                 <Typography className={classes.title} variant="h6" noWrap align="center">
-                    Payments
+                    Public Interface
                 </Typography>
             </div>
             <Divider />
             <List>
-                <ListItem button key={"Interface"}>
-                    <ListItemText primary={"Interface"} />
-                </ListItem>
-                {['Elvis Presley', 'Brad Pitt', 'Michael Jackson'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemText primary={text + " (customer #" + (index + 1) + ")"} />
+                <Link href="#/public-interface/pricing" >
+                    <ListItem button key={"Pricing"}>
+                        <ListItemText primary={"Pricing"} />
                     </ListItem>
-                ))}
+                </Link>
+                <Link href="#/public-interface/checkout" >
+                    <ListItem button key={"Checkout"}>
+                        <ListItemText primary={"Checkout"} />
+                    </ListItem>
+                </Link>
             </List>
         </Drawer>
     );

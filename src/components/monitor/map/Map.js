@@ -14,7 +14,7 @@ function Map({ simulatorInterface, configuration, gridCellSize, debugMode, parki
     const [hubImage] = useImage(hubURL);
 
     return (
-        <>
+        <React.Fragment>
             <Group
                 x={parkingLotOffset.x}
                 y={parkingLotOffset.y}
@@ -129,7 +129,7 @@ function Map({ simulatorInterface, configuration, gridCellSize, debugMode, parki
                 :
                 null
             }
-        </>
+        </React.Fragment>
     );
 }
 

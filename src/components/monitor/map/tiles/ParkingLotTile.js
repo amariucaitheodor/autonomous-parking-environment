@@ -12,7 +12,7 @@ function ParkingLotTile({ row, col, configuration, gridCellSize, parkingImage, c
     }
 
     return (
-        <>
+        <React.Fragment>
             <Rect
                 x={col * gridCellSize.width}
                 y={row * gridCellSize.height}
@@ -42,7 +42,7 @@ function ParkingLotTile({ row, col, configuration, gridCellSize, parkingImage, c
                 shadowBlur={5}
                 visible={occupied}
             />
-        </>
+        </React.Fragment>
     );
 }
 

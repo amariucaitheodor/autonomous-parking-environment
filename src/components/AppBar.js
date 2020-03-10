@@ -60,15 +60,15 @@ export default function Bar({ simulationOn }) {
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href={simulationOn? null : "#/surveillance"}
+                    href={simulationOn ? null : "#/surveillance"}
                     aria-label="go to cctv cameras"
                 >
                     <Visibility />
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href={simulationOn? null : "#/payment"}
-                    aria-label="go to user payment"
+                    href={simulationOn ? null : "#/public-interface/pricing"}
+                    aria-label="go to public interface"
                 >
                     <AccountCircle />
                 </IconButton>

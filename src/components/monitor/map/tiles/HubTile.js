@@ -12,7 +12,7 @@ function HubTile({ row, col, configuration, gridCellSize, hubImage, carImage }) 
     }
 
     return (
-        <>
+        <React.Fragment>
             <Rect
                 x={col * gridCellSize.width}
                 y={row * gridCellSize.height}
@@ -42,7 +42,7 @@ function HubTile({ row, col, configuration, gridCellSize, hubImage, carImage }) 
                 shadowBlur={5}
                 visible={occupied}
             />
-        </>
+        </React.Fragment>
     );
 }
 

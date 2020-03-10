@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default async function plan(problem) {
     const development = false;
-    const api = development ? 'http://solver.planning.domains' : 'https://pddl-planner-backend.herokuapp.com';
+    const api = development ? 'https://solver.planning.domains' : 'https://pddl-planner-backend.herokuapp.com';
     
     const options = {
         url: api + '/solve-and-validate',

@@ -6,22 +6,35 @@ import MonitorPanel from './monitor/MonitorPanel';
 // import Websockets from './Websockets';
 import SurveillanceInterface from './surveillance/SurveillanceInterface';
 import SurveillancePanel from './surveillance/SurveillancePanel';
-import PaymentInterface from './payment/PaymentInterface';
-import PaymentPanel from './payment/PaymentPanel';
+import PublicInterface from './public-interface/PublicInterface';
+import PublicPanel from './public-interface/PublicPanel';
 import plan from '../actions/generatePlan';
 import processCommands from '../actions/processPlan';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import deepPurple from '@material-ui/core/colors/deepPurple';
-import pink from '@material-ui/core/colors/pink';
 
 const darkTheme = createMuiTheme({
   palette: {
-    primary: deepPurple,
-    secondary: pink,
+    primary: {
+      main: '#6d4c41',
+    },
+    secondary: {
+      main: '#9e9d24',
+    },
     type: 'dark'
+  },
+});
+const lightTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#6d4c41',
+    },
+    secondary: {
+      main: '#9e9d24',
+    },
+    type: 'light'
   },
 });
 
@@ -73,14 +86,8 @@ class App extends React.Component {
       alreadyActivated: false,
       simulationButtonsDisabled: false,
     };
-    // Should be deep  cloned:
-    this.state.simulatorInitialConfiguration = [
-      [{ type: 'blocked' }, { type: 'parking', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'road' }, { type: 'parking' }],
-      [{ type: 'blocked' }, { type: 'parking' }, { type: 'road' }, { type: 'parking' }],
-      [{ type: 'hub', car: { license: 'SAG 985', status: null } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
-      [{ type: 'hub' }, { type: 'road' }, { type: 'road' }, { type: 'parking' }],
-      [{ type: 'hub', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'road' }, { type: 'road' }, { type: 'parking', car: { license: 'SAG 987', status: null } }]
-    ];
+    // Deep cloned:
+    this.state.simulatorInitialConfiguration = JSON.parse(JSON.stringify(this.state.simulatorConfiguration));
     this.state.robotInitialLocation = this.state.robotLocationSimulator;
 
     let calculatedSpaces = this.recalculateSpaces(this.state.parkingLotConfiguration);
@@ -282,7 +289,8 @@ class App extends React.Component {
   resetConfiguration() {
     this.changeRobotGridLocation({ newRow: this.state.robotInitialLocation.row, newColumn: this.state.robotInitialLocation.column });
     this.setState({
-      simulatorConfiguration: this.state.simulatorInitialConfiguration,
+      // Deep cloned:
+      simulatorConfiguration: JSON.parse(JSON.stringify(this.state.simulatorInitialConfiguration)),
       robotCommandsSimulator: []
     });
   }
@@ -296,12 +304,15 @@ class App extends React.Component {
           <CssBaseline />
           <AppBar
             simulationOn={this.state.simulationOn}
-            theme={darkTheme}
           />
           <Switch>
-            <Route path="/payment">
-              <PaymentInterface />
-              <PaymentPanel />
+            <Route path="/public-interface">
+              <ThemeProvider
+                theme={lightTheme}
+              >
+                <PublicInterface />
+                <PublicPanel />
+              </ThemeProvider>
             </Route>
             <Route path="/surveillance">
               <SurveillanceInterface />

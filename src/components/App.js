@@ -70,15 +70,11 @@ class App extends React.Component {
       alreadyActivated: false,
       simulationButtonsDisabled: false,
     };
+
     this.saveConfiguration();
 
-    let calculatedSpaces = this.recalculateSpaces(this.state.parkingLotConfiguration);
-    this.state.spacesTotalParking = calculatedSpaces.spacesTotal;
-    this.state.spacesAvailableParking = calculatedSpaces.spacesAvailable;
-
-    calculatedSpaces = this.recalculateSpaces(this.state.simulatorConfiguration);
-    this.state.spacesTotalSimulator = calculatedSpaces.spacesTotal;
-    this.state.spacesAvailableSimulator = calculatedSpaces.spacesAvailable;
+    this.updateConfiguration(this.state.parkingLotConfiguration, false);
+    this.updateConfiguration(this.state.simulatorConfiguration, true);
 
     this.simulatorLogSize = 7;
     this.parkingLogSize = 9;
@@ -94,6 +90,38 @@ class App extends React.Component {
     this.checkForResize = this.checkForResize.bind(this);
     this.changeTileType = this.changeTileType.bind(this);
     this.changeCarStatusOnTile = this.changeCarStatusOnTile.bind(this);
+  }
+
+  recalculateSpaces(configuration) {
+    let calculatedSpacesTotal = 0;
+    let calculatedSpacesAvailable = 0;
+    configuration.forEach(tileRow => {
+      tileRow.forEach(tile => {
+        if (tile.type === tileType.PARKING) {
+          calculatedSpacesTotal++;
+          if (tile.car === undefined) {
+            calculatedSpacesAvailable++;
+          }
+        }
+      })
+    });
+    return { spacesTotal: calculatedSpacesTotal, spacesAvailable: calculatedSpacesAvailable };
+  }
+
+  updateConfiguration(newConfiguration, forSimulator) {
+    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
+    if (forSimulator)
+      this.setState({
+        simulatorConfiguration: newConfiguration,
+        spacesTotalSimulator: calculatedSpaces.spacesTotal,
+        spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
+      });
+    else
+      this.setState({
+        parkingLotConfiguration: newConfiguration,
+        spacesTotalParking: calculatedSpaces.spacesTotal,
+        spacesAvailableParking: calculatedSpaces.spacesAvailable,
+      });
   }
 
   componentDidMount() {
@@ -116,7 +144,7 @@ class App extends React.Component {
     }
   }
 
-  addLog = (event, toSimulatorPanel) => {
+  addLog(event, toSimulatorPanel) {
     var newLogs = toSimulatorPanel ? this.state.logsSimulator : this.state.logsParking;
     if (newLogs.length === (toSimulatorPanel ? this.simulatorLogSize : this.parkingLogSize))
       newLogs.shift();
@@ -129,22 +157,6 @@ class App extends React.Component {
       this.setState({
         logsParking: newLogs
       });
-  }
-
-  recalculateSpaces(configuration) {
-    let calculatedSpacesTotal = 0;
-    let calculatedSpacesAvailable = 0;
-    configuration.forEach(tileRow => {
-      tileRow.forEach(tile => {
-        if (tile.type === tileType.PARKING) {
-          calculatedSpacesTotal++;
-          if (tile.car === undefined) {
-            calculatedSpacesAvailable++;
-          }
-        }
-      })
-    });
-    return { spacesTotal: calculatedSpacesTotal, spacesAvailable: calculatedSpacesAvailable };
   }
 
   changeCarStatusOnTile(position) {
@@ -168,12 +180,7 @@ class App extends React.Component {
     }
 
     newConfiguration[position.row][position.column] = { type: newConfiguration[position.row][position.column].type, car: newCar }
-    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
-    this.setState({
-      simulatorConfiguration: newConfiguration,
-      spacesTotalSimulator: calculatedSpaces.spacesTotal,
-      spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
-    });
+    this.updateConfiguration(newConfiguration, true);
   }
 
   changeTileType(position) {
@@ -196,36 +203,28 @@ class App extends React.Component {
         console.error(`Tried to change tile type in simulator, but existing type is unrecognized ${newConfiguration[position.row][position.column]}`)
         break;
     }
-    newConfiguration[position.row][position.column] = { type: newType }
-    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
-    this.setState({
-      simulatorConfiguration: newConfiguration,
-      spacesTotalSimulator: calculatedSpaces.spacesTotal,
-      spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
-    });
+    newConfiguration[position.row][position.column] = { type: newType };
+    this.updateConfiguration(newConfiguration, true);
   }
 
   liftCarFromTile(row, column, fromSimulator) {
     let newConfiguration = [...fromSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
     let carriedCar = newConfiguration[row][column].car;
-    newConfiguration[row][column] = { type: newConfiguration[row][column].type }
-    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
+    newConfiguration[row][column] = { type: newConfiguration[row][column].type };
+    this.updateConfiguration(newConfiguration, fromSimulator);
     if (fromSimulator)
       this.setState({
         carriedCarSimulator: carriedCar,
-        simulatorConfiguration: newConfiguration,
-        spacesTotalSimulator: calculatedSpaces.spacesTotal,
-        spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
       });
     else
       this.setState({
         carriedCarParking: carriedCar,
-        parkingLotConfiguration: newConfiguration,
-        spacesTotalParking: calculatedSpaces.spacesTotal,
-        spacesAvailableParking: calculatedSpaces.spacesAvailable,
       });
 
-    this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving", time: new Date() }, fromSimulator);
+    this.addLog({ 
+      title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, 
+      type: "moving", 
+      time: new Date() }, fromSimulator);
   }
 
   dropCarOnTile(row, column, toSimulator) {
@@ -240,8 +239,7 @@ class App extends React.Component {
     this.addLog({
       title: event + " " + (toSimulator ? this.state.carriedCarSimulator.license : this.state.carriedCarParking.license) + " at R" + row + "C" + column,
       type: eventType,
-      time: new Date()
-    }, toSimulator);
+      time: new Date()}, toSimulator);
 
     let newConfiguration = [...toSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
     newConfiguration[row][column] = {
@@ -251,20 +249,14 @@ class App extends React.Component {
         status: newConfiguration[row][column].type === tileType.HUB ? tileCarStatus.AWAITING_OWNER : tileCarStatus.IDLE
       }
     }
-    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
+    this.updateConfiguration(newConfiguration, toSimulator);
     if (toSimulator)
       this.setState({
         carriedCarSimulator: null,
-        simulatorConfiguration: newConfiguration,
-        spacesTotalSimulator: calculatedSpaces.spacesTotal,
-        spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
       });
     else
       this.setState({
         carriedCarParking: null,
-        parkingLotConfiguration: newConfiguration,
-        spacesTotalParking: calculatedSpaces.spacesTotal,
-        spacesAvailableParking: calculatedSpaces.spacesAvailable,
       });
   }
 
@@ -285,7 +277,10 @@ class App extends React.Component {
           simulationButtonsDisabled: false,
           alreadyActivated: false
         }, () => {
-          this.addLog({ title: "Robot is now on standby", type: "standby", time: new Date() }, true);
+          this.addLog({ 
+            title: "Robot is now on standby", 
+            type: "standby", 
+            time: new Date() }, true);
           this.checkForResize();
         });
       } else {
@@ -303,13 +298,22 @@ class App extends React.Component {
             alreadyActivated: false
           }, () => {
             this.setState({ alreadyActivated: true })
-            this.addLog({ title: "Planning succeeded", type: "success", time: new Date() }, true);
+            this.addLog({ 
+              title: "Planning succeeded", 
+              type: "success", 
+              time: new Date() }, true);
           });
         } else {
           if (commands.includes("goal can be simplified to TRUE. The empty plan solves it"))
-            this.addLog({ title: "There is nothing to do", type: "fail", time: new Date() }, true);
+            this.addLog({ 
+              title: "There is nothing to do", 
+              type: "fail", 
+              time: new Date() }, true);
           else
-            this.addLog({ title: "Planning failed", type: "fail", time: new Date() }, true);
+            this.addLog({ 
+              title: "Planning failed", 
+              type: "fail", 
+              time: new Date() }, true);
           this.setState({
             simulationButtonsDisabled: false,
           });
@@ -335,13 +339,14 @@ class App extends React.Component {
   }
 
   resetConfiguration() {
-    this.changeRobotGridLocation({ 
-      newRow: this.robotSavedLocation.row, 
-      newColumn: this.robotSavedLocation.column 
+    this.changeRobotGridLocation({
+      newRow: this.robotSavedLocation.row,
+      newColumn: this.robotSavedLocation.column
     });
+    // Deep cloned:
+    let newConfiguration = JSON.parse(JSON.stringify(this.simulatorSavedConfiguration));
+    this.updateConfiguration(newConfiguration, true);
     this.setState({
-      // Deep cloned:
-      simulatorConfiguration: JSON.parse(JSON.stringify(this.simulatorSavedConfiguration)),
       robotCommandsSimulator: []
     });
   }

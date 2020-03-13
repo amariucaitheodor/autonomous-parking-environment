@@ -1,8 +1,8 @@
-import domain from '../assets/planner/domain/domain.js';
+import domain from '../assets/planner/domain.js';
 import axios from 'axios';
 
 export default async function plan(problem) {
-    const development = true;
+    const development = false;
     const api = development ? 'https://solver.planning.domains' : 'https://pddl-planner-backend.herokuapp.com';
     
     const options = {

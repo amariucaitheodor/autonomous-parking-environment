@@ -1,3 +1,4 @@
+var domain = `
 ;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
 
 (define (domain finitech)
@@ -213,5 +214,5 @@
         )
     )
 
-)
-
+)`;
+export default domain;

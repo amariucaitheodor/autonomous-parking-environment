@@ -5,7 +5,7 @@ import useImage from 'use-image';
 import Map from './map/Map';
 import indigo from '@material-ui/core/colors/indigo';
 import { drawerWidth } from '../Configuration';
-const carURL = require('../../assets/images/racecar.png');
+const carURL = require('../../assets/monitor_icons/racecar.png');
 
 const useStyles = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,

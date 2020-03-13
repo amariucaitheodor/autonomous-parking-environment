@@ -7,10 +7,10 @@ import RoadTile from "./tiles/RoadTile";
 import DebugTile from "./tiles/DebugTile";
 import Robot from "./Robot";
 import { tileType } from '../../Configuration';
-const parkingURL = require('../../../assets/images/parking-sign.png');
-const switchURL = require('../../../assets/images/switch.png');
-const carStatusURL = require('../../../assets/images/carStatus.png');
-const hubURL = require('../../../assets/images/hub.png');
+const parkingURL = require('../../../assets/monitor_icons/parking-sign.png');
+const switchURL = require('../../../assets/monitor_icons/switch.png');
+const carStatusURL = require('../../../assets/monitor_icons/carStatus.png');
+const hubURL = require('../../../assets/monitor_icons/hub.png');
 
 function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
     const [parkingImage] = useImage(parkingURL);

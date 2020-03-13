@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -26,6 +26,7 @@ import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import ReactTimeAgo from 'react-time-ago';
 import { drawerWidth, tileCarStatus } from '../Configuration';
+import { noOfTests } from '../../assets/planner/tests/tests';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,8 +55,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ simulatorPanel, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ simulatorPanel, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
+  const [testToRun, setTestToRun] = useState(0);
 
   let robotStatus = null;
   if (carriedCar === null)
@@ -137,15 +139,28 @@ export default function MonitorPanel({ simulatorPanel, saveConfiguration, resetC
         {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Detail" : "Edit") : "Debug"} mode
       </Button >
       {simulatorPanel ?
-        <Button
-          className={"m-auto"}
-          startIcon={<Build />}
+        <ButtonGroup
           variant="contained"
           color="primary"
-          disabled={simulationButtonsDisabled}
-        >
-          Run test
-      </Button > :
+          aria-label="contained primary button group"
+          className={"m-auto"}>
+          <Button
+            className={"m-auto"}
+            startIcon={<Build />}
+            variant="contained"
+            color="primary"
+            disabled={simulationButtonsDisabled}
+            onClick={() => { runTest(testToRun) }}
+          >
+            Run test
+        </Button >
+          <Button
+            disabled={simulationButtonsDisabled}
+            onClick={() => { setTestToRun((testToRun + 1) % noOfTests) }}
+          >
+            {testToRun}
+          </Button >
+        </ButtonGroup> :
         null
       }
       {simulatorPanel ?

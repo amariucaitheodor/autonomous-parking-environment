@@ -6,14 +6,15 @@ import MonitorPanel from './monitor/MonitorPanel';
 // import Websockets from './monitor/Websockets';
 import SurveillanceInterface from './surveillance/SurveillanceInterface';
 import SurveillancePanel from './surveillance/SurveillancePanel';
-import PublicInterface from './public-interface/PublicInterface';
-import PublicPanel from './public-interface/PublicPanel';
+import PublicInterface from './public_interface/PublicInterface';
+import PublicPanel from './public_interface/PublicPanel';
 import plan from '../actions/generatePlan';
 import processCommands from '../actions/processPlan';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { lightTheme, darkTheme, tileType, tileCarStatus, drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from './Configuration';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import plannerTests from '../assets/planner/tests/tests';
 
 function randomLicensePlate() {
   const list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -46,8 +47,8 @@ class App extends React.Component {
       robotCommandsParking: [],
       debugModeParking: false,
       logsParking: [null, null, null, null, null, null, null, null, null],
-      spacesAvailableParking: null,
-      spacesTotalParking: null,
+      spacesAvailableParking: 4,
+      spacesTotalParking: 7,
       // Simulator Monitor configuration
       simulatorConfiguration: [
         [{ type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.BLOCKED }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }],
@@ -63,8 +64,8 @@ class App extends React.Component {
       robotCommandsSimulator: [],
       debugModeSimulator: false,
       logsSimulator: [null, null, null, null, null, null, null],
-      spacesAvailableSimulator: null,
-      spacesTotalSimulator: null,
+      spacesAvailableSimulator: 10,
+      spacesTotalSimulator: 10,
       // Simulator specific configuration
       simulationOn: false,
       alreadyActivated: false,
@@ -72,9 +73,6 @@ class App extends React.Component {
     };
 
     this.saveConfiguration();
-
-    this.updateConfiguration(this.state.parkingLotConfiguration, false);
-    this.updateConfiguration(this.state.simulatorConfiguration, true);
 
     this.simulatorLogSize = 7;
     this.parkingLogSize = 9;
@@ -90,6 +88,7 @@ class App extends React.Component {
     this.checkForResize = this.checkForResize.bind(this);
     this.changeTileType = this.changeTileType.bind(this);
     this.changeCarStatusOnTile = this.changeCarStatusOnTile.bind(this);
+    this.runTest = this.runTest.bind(this);
   }
 
   recalculateSpaces(configuration) {
@@ -122,6 +121,21 @@ class App extends React.Component {
         spacesTotalParking: calculatedSpaces.spacesTotal,
         spacesAvailableParking: calculatedSpaces.spacesAvailable,
       });
+  }
+
+  runTest(testNumber) {
+    // Reset configuration and robot position to test settings
+    this.changeRobotGridLocation({
+      newRow: plannerTests[testNumber].robotTestLocation.row,
+      newColumn: plannerTests[testNumber].robotTestLocation.column
+    });
+    let newConfiguration = JSON.parse(JSON.stringify(plannerTests[testNumber].testConfiguration));
+    this.updateConfiguration(newConfiguration, true);
+    this.setState({
+      robotCommandsSimulator: []
+    });
+
+    this.toggleSimulation(false);
   }
 
   componentDidMount() {
@@ -221,10 +235,11 @@ class App extends React.Component {
         carriedCarParking: carriedCar,
       });
 
-    this.addLog({ 
-      title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, 
-      type: "moving", 
-      time: new Date() }, fromSimulator);
+    this.addLog({
+      title: "Picked up " + carriedCar.license + " from R" + row + "C" + column,
+      type: "moving",
+      time: new Date()
+    }, fromSimulator);
   }
 
   dropCarOnTile(row, column, toSimulator) {
@@ -239,7 +254,8 @@ class App extends React.Component {
     this.addLog({
       title: event + " " + (toSimulator ? this.state.carriedCarSimulator.license : this.state.carriedCarParking.license) + " at R" + row + "C" + column,
       type: eventType,
-      time: new Date()}, toSimulator);
+      time: new Date()
+    }, toSimulator);
 
     let newConfiguration = [...toSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
     newConfiguration[row][column] = {
@@ -277,10 +293,11 @@ class App extends React.Component {
           simulationButtonsDisabled: false,
           alreadyActivated: false
         }, () => {
-          this.addLog({ 
-            title: "Robot is now on standby", 
-            type: "standby", 
-            time: new Date() }, true);
+          this.addLog({
+            title: "Robot is now on standby",
+            type: "standby",
+            time: new Date()
+          }, true);
           this.checkForResize();
         });
       } else {
@@ -298,22 +315,25 @@ class App extends React.Component {
             alreadyActivated: false
           }, () => {
             this.setState({ alreadyActivated: true })
-            this.addLog({ 
-              title: "Planning succeeded", 
-              type: "success", 
-              time: new Date() }, true);
+            this.addLog({
+              title: "Planning succeeded",
+              type: "success",
+              time: new Date()
+            }, true);
           });
         } else {
           if (commands.includes("goal can be simplified to TRUE. The empty plan solves it"))
-            this.addLog({ 
-              title: "There is nothing to do", 
-              type: "fail", 
-              time: new Date() }, true);
+            this.addLog({
+              title: "There is nothing to do",
+              type: "fail",
+              time: new Date()
+            }, true);
           else
-            this.addLog({ 
-              title: "Planning failed", 
-              type: "fail", 
-              time: new Date() }, true);
+            this.addLog({
+              title: "Planning failed",
+              type: "fail",
+              time: new Date()
+            }, true);
           this.setState({
             simulationButtonsDisabled: false,
           });
@@ -334,6 +354,8 @@ class App extends React.Component {
   }
 
   saveConfiguration() {
+    // console.log(JSON.stringify(this.state.robotLocationSimulator));
+    // console.log(JSON.stringify(this.state.simulatorConfiguration));
     this.robotSavedLocation = JSON.parse(JSON.stringify(this.state.robotLocationSimulator));
     this.simulatorSavedConfiguration = JSON.parse(JSON.stringify(this.state.simulatorConfiguration));
   }
@@ -431,6 +453,7 @@ class App extends React.Component {
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}
                 resetConfiguration={this.resetConfiguration}
                 saveConfiguration={this.saveConfiguration}
+                runTest={this.runTest}
               />
             </Route>
           </Switch>

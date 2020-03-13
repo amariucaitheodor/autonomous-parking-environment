@@ -3,7 +3,7 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import AppBar from './AppBar';
 import MonitorInterface from './monitor/MonitorInterface';
 import MonitorPanel from './monitor/MonitorPanel';
-// import Websockets from './Websockets';
+// import Websockets from './monitor/Websockets';
 import SurveillanceInterface from './surveillance/SurveillanceInterface';
 import SurveillancePanel from './surveillance/SurveillancePanel';
 import PublicInterface from './public-interface/PublicInterface';
@@ -12,34 +12,8 @@ import plan from '../actions/generatePlan';
 import processCommands from '../actions/processPlan';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { lightTheme, darkTheme, tileType, drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from './Configuration';
 import CssBaseline from '@material-ui/core/CssBaseline';
-
-const darkTheme = createMuiTheme({
-  palette: {
-    primary: {
-      main: '#6d4c41',
-    },
-    secondary: {
-      main: '#9e9d24',
-    },
-    type: 'dark'
-  },
-});
-const lightTheme = createMuiTheme({
-  palette: {
-    primary: {
-      main: '#6d4c41',
-    },
-    secondary: {
-      main: '#9e9d24',
-    },
-    type: 'light'
-  },
-});
-
-const drawerWidth = 315;
-const MATERIAL_UI_APP_BAR_HEIGHT = 64;
 
 class App extends React.Component {
   constructor() {
@@ -51,11 +25,11 @@ class App extends React.Component {
       monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [
-        [{ type: 'blockedTile' }, { type: 'parkingTile', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'roadTile' }, { type: 'parkingTile' }],
-        [{ type: 'blockedTile' }, { type: 'parkingTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
-        [{ type: 'hubTile', car: { license: 'SAG 985', status: null } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
-        [{ type: 'hubTile' }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
-        [{ type: 'hubTile', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 987', status: null } }]
+        [{ type: tileType.BLOCKED }, { type: tileType.PARKING, car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: tileType.ROAD }, { type: tileType.PARKING }],
+        [{ type: tileType.BLOCKED }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }],
+        [{ type: tileType.HUB, car: { license: 'SAG 985', status: null } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING }],
+        [{ type: tileType.HUB, car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: 'SAG 987', status: null } }]
       ],
       carriedCarParking: null,
       robotLocationParking: { column: 1, row: 4 },
@@ -66,14 +40,16 @@ class App extends React.Component {
       spacesTotalParking: null,
       // Simulator Monitor configuration
       simulatorConfiguration: [
-        [{ type: 'blockedTile' }, { type: 'parkingTile', car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: 'roadTile' }, { type: 'parkingTile' }],
-        [{ type: 'blockedTile' }, { type: 'parkingTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
-        [{ type: 'hubTile', car: { license: 'SAG 985', status: null } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
-        [{ type: 'hubTile' }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile' }],
-        [{ type: 'hubTile', car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: 'roadTile' }, { type: 'roadTile' }, { type: 'parkingTile', car: { license: 'SAG 987', status: null } }]
+        [{ type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.BLOCKED }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.BLOCKED }, { type: tileType.PARKING }, { type: tileType.ROAD }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.BLOCKED }, { type: tileType.PARKING }, { type: tileType.ROAD }],
+        [{ type: tileType.BLOCKED }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }],
       ],
       carriedCarSimulator: null,
-      robotLocationSimulator: { column: 1, row: 4 },
+      robotLocationSimulator: { column: 0, row: 0 },
       robotCommandsSimulator: [],
       debugModeSimulator: false,
       logsSimulator: [null, null, null, null, null, null, null],
@@ -109,6 +85,7 @@ class App extends React.Component {
     this.changeRobotGridLocation = this.changeRobotGridLocation.bind(this);
     this.resetConfiguration = this.resetConfiguration.bind(this);
     this.checkForResize = this.checkForResize.bind(this);
+    this.changeTileType = this.changeTileType.bind(this);
   }
 
   componentDidMount() {
@@ -151,7 +128,7 @@ class App extends React.Component {
     let calculatedSpacesAvailable = 0;
     configuration.forEach(tileRow => {
       tileRow.forEach(tile => {
-        if (tile.type === 'parkingTile') {
+        if (tile.type === tileType.PARKING) {
           calculatedSpacesTotal++;
           if (tile.car === undefined) {
             calculatedSpacesAvailable++;
@@ -160,6 +137,35 @@ class App extends React.Component {
       })
     });
     return { spacesTotal: calculatedSpacesTotal, spacesAvailable: calculatedSpacesAvailable };
+  }
+
+  changeTileType(position) {
+    let newConfiguration = [...this.state.simulatorConfiguration];
+    let newType = null;
+    switch (newConfiguration[position.row][position.column].type) {
+      case tileType.PARKING:
+        newType = tileType.ROAD;
+        break;
+      case tileType.ROAD:
+        newType = tileType.HUB;
+        break;
+      case tileType.HUB:
+        newType = tileType.BLOCKED;
+        break;
+      case tileType.BLOCKED:
+        newType = tileType.PARKING;
+        break;
+      default:
+        console.error(`Tried to change tile type in simulator, but existing type is unrecognized ${newConfiguration[position.row][position.column].type}`)
+        break;
+    }
+    newConfiguration[position.row][position.column] = { type: newType }
+    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
+    this.setState({
+      simulatorConfiguration: newConfiguration,
+      spacesTotalSimulator: calculatedSpaces.spacesTotal,
+      spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
+    });
   }
 
   removeCar(row, column, fromSimulator) {
@@ -344,6 +350,7 @@ class App extends React.Component {
             </Route>
             <Route path="/">
               <MonitorInterface
+                changeTileType={this.changeTileType}
                 simulatorInterface={true}
                 size={{ monitorHeight: this.state.monitorHeight, monitorWidth: this.state.monitorWidth }}
                 configuration={this.state.simulatorConfiguration}

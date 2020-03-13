@@ -7,7 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 export default function PersonalForm() {
   return (
-    <React.Fragment>
+    <>
       <Typography variant="h6" gutterBottom>
         Personal details
       </Typography>
@@ -91,6 +91,6 @@ export default function PersonalForm() {
           />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   );
 }

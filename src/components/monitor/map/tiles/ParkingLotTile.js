@@ -1,7 +1,7 @@
 import React from "react";
 import { Rect, Image } from "react-konva";
 
-function ParkingLotTile({ row, col, configuration, gridCellSize, parkingImage, carImage }) {
+function ParkingLotTile({ parkingLotOffset, row, col, configuration, gridCellSize, parkingImage, carImage }) {
 
     var occupied = false;
     var hubColor = [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"]; // neutral, green
@@ -12,10 +12,10 @@ function ParkingLotTile({ row, col, configuration, gridCellSize, parkingImage, c
     }
 
     return (
-        <React.Fragment>
+        <>
             <Rect
-                x={col * gridCellSize.width}
-                y={row * gridCellSize.height}
+                x={parkingLotOffset.x + col * gridCellSize.width}
+                y={parkingLotOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fillRadialGradientStartPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
@@ -26,23 +26,23 @@ function ParkingLotTile({ row, col, configuration, gridCellSize, parkingImage, c
                 strokeWidth={2}
             />
             <Image
-                x={col * gridCellSize.width}
-                y={row * gridCellSize.height + gridCellSize.height / 3.5}
+                x={parkingLotOffset.x + col * gridCellSize.width}
+                y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
                 width={gridCellSize.width}
                 height={gridCellSize.height / 2}
                 image={parkingImage}
                 shadowBlur={5}
             />
             <Image
-                x={col * gridCellSize.width}
-                y={row * gridCellSize.height}
+                x={parkingLotOffset.x + col * gridCellSize.width}
+                y={parkingLotOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 image={carImage}
                 shadowBlur={5}
                 visible={occupied}
             />
-        </React.Fragment>
+        </>
     );
 }
 

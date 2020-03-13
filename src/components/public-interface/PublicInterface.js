@@ -4,8 +4,7 @@ import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import Checkout from './Checkout/Checkout';
 import Pricing from './Pricing/Pricing';
-
-const drawerWidth = 315;
+import { drawerWidth } from '../Configuration';
 
 const useStyles = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,

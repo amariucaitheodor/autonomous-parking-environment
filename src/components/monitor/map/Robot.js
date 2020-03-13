@@ -4,7 +4,7 @@ import useImage from 'use-image';
 import async from 'async';
 const robotURL = require('../../../assets/images/robot.png');
 
-function Robot({ simulatorInterface, horizontalPaddingInGridCells, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, size, parkingLotOffset, toggleSimulation, changeRobotGridLocation }) {
+function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, parkingLotOffset, toggleSimulation, changeRobotGridLocation }) {
     const [robotImage] = useImage(robotURL);
     const simulatorRobotImageRef = React.useRef();
     const parkingRobotImageRef = React.useRef();
@@ -58,35 +58,12 @@ function Robot({ simulatorInterface, horizontalPaddingInGridCells, configuration
     }
 
     const propToGrid = (robotCanvasLocation) => {
-        // The center of tile (0, 0) is (- gridCellSize.width / 2, - gridCellSize.height / 2)
-        // parkingLotOffset is (gridCellSize.width / 2, gridCellSize.height / 2)
-        // Height cancels out, but for width we have additional computations to perform
-        console.log(horizontalPaddingInGridCells);
-        const cellColumn = Math.floor(
-            (robotCanvasLocation.x
-                + gridCellSize.width / 2
-                - gridCellSize.width / 2 * horizontalPaddingInGridCells
-            )
-            / size.width
-            * (configuration[0].length + horizontalPaddingInGridCells) // horizontal padding cells are variable (1 or 2)
-        );
-        const cellRow = Math.floor(
-            robotCanvasLocation.y
-            / size.height
-            * (configuration.length + 1) // vertical padding cells are always 1 height tall in total
-        );
+        var robotGridLocation = fromCanvasToGrid(robotCanvasLocation);
 
-        var isOnBlockingSpace = false;
-        if (configuration[cellRow] !== undefined &&
-            configuration[cellRow][cellColumn] !== undefined &&
-            configuration[cellRow][cellColumn].type === "blockedTile")
-            isOnBlockingSpace = true;
-
-        if ((cellColumn >= 0 && cellColumn < configuration[0].length) &&
-            (cellRow >= 0 && cellRow < configuration.length) &&
-            !isOnBlockingSpace) {
-            changeRobotGridLocation({ newColumn: cellColumn, newRow: cellRow });
-            var canvasLocation = fromGridToCanvas({ column: cellColumn, row: cellRow });
+        if ((robotGridLocation.column >= 0 && robotGridLocation.column < configuration[0].length) &&
+            (robotGridLocation.row >= 0 && robotGridLocation.row < configuration.length)) {
+            changeRobotGridLocation({ newColumn: robotGridLocation.column, newRow: robotGridLocation.row });
+            var canvasLocation = fromGridToCanvas({ column: robotGridLocation.column, row: robotGridLocation.row });
         }
         else {
             canvasLocation = fromGridToCanvas(robotLocation);
@@ -99,15 +76,8 @@ function Robot({ simulatorInterface, horizontalPaddingInGridCells, configuration
         });
     };
 
-    function fromGridToCanvas(position) {
-        return {
-            x: parkingLotOffset.x + position.column * gridCellSize.width,
-            y: parkingLotOffset.y + position.row * gridCellSize.height - gridCellSize.height / 50
-        };
-    }
-
     return (
-        <React.Fragment>
+        <>
             {/* Robot path */}
             < Arrow
                 points={pathStop}
@@ -142,7 +112,7 @@ function Robot({ simulatorInterface, horizontalPaddingInGridCells, configuration
                 image={carriedCar !== null ? carImage : robotImage}
                 shadowBlur={0.5}
             />
-        </React.Fragment>
+        </>
     );
 }
 

@@ -1,12 +1,11 @@
 import React from "react";
-import { Stage, Layer } from "react-konva";
+import { Stage } from "react-konva";
 import { makeStyles } from '@material-ui/core/styles';
 import useImage from 'use-image';
 import Map from './map/Map';
 import indigo from '@material-ui/core/colors/indigo';
+import { drawerWidth } from '../Configuration';
 const carURL = require('../../assets/images/racecar.png');
-
-const drawerWidth = 315;
 
 const useStyles = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,
@@ -16,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function MonitorInterface({ size, simulatorInterface, configuration, carriedCar, debugMode, robotCommands, toggleSimulation, robotLocation, simulationOn, changeRobotGridLocation, removeCar, addCar, alreadyActivated }) {
+function MonitorInterface({ size, simulatorInterface, changeTileType, configuration, carriedCar, debugMode, robotCommands, toggleSimulation, robotLocation, simulationOn, changeRobotGridLocation, removeCar, addCar, alreadyActivated }) {
     const classes = useStyles();
     const [carImage] = useImage(carURL);
 
@@ -44,8 +43,8 @@ function MonitorInterface({ size, simulatorInterface, configuration, carriedCar,
                 width={size.monitorWidth}
                 height={size.monitorHeight}
             >
-                <Layer>
                     <Map
+                        changeTileType={changeTileType}
                         horizontalPaddingInGridCells={horizontalPaddingInGridCells}
                         simulatorInterface={simulatorInterface}
                         configuration={configuration}
@@ -64,7 +63,6 @@ function MonitorInterface({ size, simulatorInterface, configuration, carriedCar,
                         carriedCar={carriedCar}
                         robotLocation={robotLocation}
                     />
-                </Layer>
             </Stage>
         </main>
     );

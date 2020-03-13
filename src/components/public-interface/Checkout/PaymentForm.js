@@ -5,7 +5,7 @@ import TextField from '@material-ui/core/TextField';
 
 export default function PaymentForm() {
   return (
-    <React.Fragment>
+    <>
       <Typography variant="h6" gutterBottom>
         Payment method
       </Typography>
@@ -39,6 +39,6 @@ export default function PaymentForm() {
           />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   );
 }

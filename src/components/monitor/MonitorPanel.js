@@ -7,6 +7,7 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import PlayCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import ZoomIn from '@material-ui/icons/ZoomIn';
+import Edit from '@material-ui/icons/Edit';
 import PauseCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import Replay from '@material-ui/icons/Replay';
 import Build from '@material-ui/icons/Build';
@@ -22,8 +23,7 @@ import HourglassEmpty from '@material-ui/icons/HourglassEmpty';
 import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import ReactTimeAgo from 'react-time-ago';
-
-const drawerWidth = 315;
+import { drawerWidth } from '../Configuration';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -127,17 +127,17 @@ export default function MonitorPanel({ simulatorPanel, resetConfiguration, space
       }
       <Button
         className={"m-auto"}
-        startIcon={<Build />}
+        startIcon={simulationOn ? <ZoomIn /> : <Edit />}
         variant="contained"
         color="primary"
         onClick={() => { toggleDebugMode(simulatorPanel); }}
       >
-        {debugMode ? "Disable" : "Enable"} debug mode
+        {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Detail" : "Edit") : "Debug"} mode
       </Button >
       {simulatorPanel ?
         <Button
           className={"m-auto"}
-          startIcon={<ZoomIn />}
+          startIcon={<Build />}
           variant="contained"
           color="primary"
           disabled={simulationButtonsDisabled}

@@ -34,7 +34,7 @@ export default function Review() {
   const classes = useStyles();
 
   return (
-    <React.Fragment>
+    <>
       <Typography variant="h6" gutterBottom>
         Order summary
       </Typography>
@@ -79,6 +79,6 @@ export default function Review() {
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   );
 }

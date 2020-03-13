@@ -9,8 +9,7 @@ import SportsEsports from '@material-ui/icons/SportsEsports';
 import LocalParking from '@material-ui/icons/LocalParking';
 import Visibility from '@material-ui/icons/Visibility';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-
-var drawerWidth = 315;
+import { drawerWidth } from './Configuration';
 
 const useStyles = makeStyles(theme => ({
     menuButtonLeft: {

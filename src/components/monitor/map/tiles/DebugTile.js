@@ -1,8 +1,8 @@
 import React from "react";
-import { Rect, Group, Text } from "react-konva";
+import { Rect, Text } from "react-konva";
+import { tileType } from '../../../Configuration';
 
-function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
-
+function DebugTile({ parkingLotOffset, configuration, tile, row, col, gridCellSize, debugName }) {
     var carStatus = "";
     var carLicensePlate = "";
     if (configuration[row][col].car !== undefined) {
@@ -15,9 +15,9 @@ function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
                 carStatus = "Status: Awaiting Delivery";
                 break;
             case null:
-                if (tile === "parkingTile")
+                if (tile.type === tileType.PARKING)
                     carStatus = "Status: Idle";
-                else if (tile === "hubTile")
+                else if (tile.type === tileType.HUB)
                     carStatus = "Status: Awaiting Owner";
                 break;
             default:
@@ -25,70 +25,12 @@ function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
         }
     }
 
-    // const color = 'rgba(220, 220, 220, 0.8)'
-    // const statusButton = {
-    //     position: 'absolute',
-    //     background: color,
-    //     top: mapTile.y * gridCellSize.height + gridCellSize.height * 1.1,
-    //     left: mapTile.x * gridCellSize.width + gridCellSize.width / 13,
-    //     width: gridCellSize.width * 0.95,
-    //     height: gridCellSize.height / 4
-    // }
-    // const typeButton = {
-    //     position: 'absolute',
-    //     background: color,
-    //     top: mapTile.y * gridCellSize.height + gridCellSize.height / 2,
-    //     left: mapTile.x * gridCellSize.width + gridCellSize.width / 13,
-    //     width: gridCellSize.width * 0.95,
-    //     height: gridCellSize.height / 4
-    // }
-
-    // TODO: replace portal with rect
-    // if (mapTile.type === "hubTile")
-    //     portalButtonGroup = <Portal>
-    //         <Button
-    //             variant="light"
-    //             style={typeButton}
-    //         >
-    //             {debugName}
-    //         </Button>
-    //         <Button
-    //             variant="light"
-    //             style={statusButton}
-    //         >
-    //             Available
-    //         </Button>
-    //     </Portal>;
-    // else if (mapTile.type === "parkingTile")
-    //     portalButtonGroup = <Portal>
-    //         <Button
-    //             variant="light"
-    //             style={typeButton}
-    //         >
-    //             {debugName}
-    //         </Button>
-    //         <Button
-    //             variant="light"
-    //             style={statusButton}
-    //         >
-    //             Available parking
-    //         </Button>
-    //     </Portal>;
-    // else
-    //     portalButtonGroup = <Portal>
-    //         <Button
-    //             variant="light"
-    //             style={typeButton}
-    //         >
-    //             {debugName}
-    //         </Button>
-    //     </Portal>;
-
+    // We pass parkingLotOffset to the tiles to eliminate nesting and thus be able to run in FastLayer
     return (
-        <Group>
+        <>
             <Rect
-                x={col * gridCellSize.width}
-                y={row * gridCellSize.height}
+                x={parkingLotOffset.x + col * gridCellSize.width}
+                y={parkingLotOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fill={"rgba(255, 255, 255, 0.35)"}
@@ -96,35 +38,43 @@ function DebugTile({ configuration, tile, row, col, gridCellSize, debugName }) {
                 stroke={"black"}
                 strokeWidth={2}
             />
-            {/* {portalButtonGroup} */}
             <Text
-                x={col * gridCellSize.width + gridCellSize.width / 15}
-                y={row * gridCellSize.height + gridCellSize.height / 12}
-                text={"R" + row + "C" + col + " (" + debugName + ")"}
+                x={parkingLotOffset.x + col * gridCellSize.width + gridCellSize.width / 15}
+                y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 12}
+                text={`R${row}C${col}`}
                 fontSize={20}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fontStyle={"bold"}
             />
             <Text
-                x={col * gridCellSize.width + gridCellSize.width / 15}
-                y={row * gridCellSize.height + gridCellSize.height / 1.25}
+                x={parkingLotOffset.x + col * gridCellSize.width + gridCellSize.width / 16}
+                y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
+                text={`(${debugName})`}
+                fontSize={18}
+                width={gridCellSize.width}
+                height={gridCellSize.height}
+                fontStyle={"bold"}
+            />
+            <Text
+                x={parkingLotOffset.x + col * gridCellSize.width + gridCellSize.width / 15}
+                y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 1.25}
                 text={carLicensePlate}
-                fontSize={20}
+                fontSize={18}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fontStyle={"bold"}
             />
             <Text
-                x={col * gridCellSize.width + gridCellSize.width / 15}
-                y={row * gridCellSize.height + gridCellSize.height / 1.55}
+                x={parkingLotOffset.x + col * gridCellSize.width + gridCellSize.width / 15}
+                y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 1.55}
                 text={carStatus}
-                fontSize={20}
+                fontSize={18}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fontStyle={"bold"}
             />
-        </Group>
+        </>
     );
 }
 

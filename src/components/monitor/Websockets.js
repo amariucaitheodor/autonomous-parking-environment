@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 const client = new W3CWebSocket('ws://127.0.0.1:8000');
 
-class Websockets extends Component {
-  componentWillMount() {
+class Websockets extends React.Component {
+  componentDidMount() {
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
@@ -12,7 +12,7 @@ class Websockets extends Component {
       console.log(message);
     };
   }
-  
+
   render() {
     return (
       <div>

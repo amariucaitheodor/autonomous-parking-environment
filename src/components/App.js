@@ -14,7 +14,7 @@ import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { lightTheme, darkTheme, tileType, tileCarStatus, drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from './Configuration';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import plannerTests from '../assets/planner/tests/tests';
+import plannerTests from '../assets/planner/tests';
 
 function randomLicensePlate() {
   const list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -133,9 +133,7 @@ class App extends React.Component {
     this.updateConfiguration(newConfiguration, true);
     this.setState({
       robotCommandsSimulator: []
-    });
-
-    this.toggleSimulation(false);
+    }, () => { this.toggleSimulation(false) });
   }
 
   componentDidMount() {
@@ -301,6 +299,11 @@ class App extends React.Component {
           this.checkForResize();
         });
       } else {
+        this.addLog({
+          title: "Starting to plan...",
+          type: "success",
+          time: new Date()
+        }, true);
         let commands = await plan(
           generateProblem(
             this.state.robotLocationSimulator,
@@ -325,6 +328,12 @@ class App extends React.Component {
           if (commands.includes("goal can be simplified to TRUE. The empty plan solves it"))
             this.addLog({
               title: "There is nothing to do",
+              type: "fail",
+              time: new Date()
+            }, true);
+          else if (commands.includes("Suspected timeout"))
+            this.addLog({
+              title: "Planning timed out",
               type: "fail",
               time: new Date()
             }, true);

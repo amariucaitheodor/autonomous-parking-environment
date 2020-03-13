@@ -1,5 +1,6 @@
 import Mustache from 'mustache';
 import { tileCarStatus } from '../components/Configuration';
+import problemTemplate from '../assets/planner/problemTemplate';
 
 function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
 
@@ -38,33 +39,7 @@ function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
         setup: tilesSetupString
     };
 
-    return Mustache.render(`
-    ;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
-    \n
-    (define (problem parking)    
-    (:domain finitech)    
-        
-    (:objects        
-        {{robot}}
-               
-        {{cars}}       
-                
-        {{tiles}}
-    )
-        
-    (:init        
-        {{scenario}}
-                
-        {{setup}}
-    )
-        
-    (:goal (and        
-        (not (exists (?c - car) (or            
-            (AwaitingParking ?c)            
-            (AwaitingDelivery ?c)        
-        )))    
-    ))\n)
-    `, plugins);
+    return Mustache.render(problemTemplate, plugins);
 }
 
 export default generateProblem;

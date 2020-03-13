@@ -26,7 +26,7 @@ import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import ReactTimeAgo from 'react-time-ago';
 import { drawerWidth, tileCarStatus } from '../Configuration';
-import { noOfTests } from '../../assets/planner/tests/tests';
+import { noOfTests } from '../../assets/planner/tests';
 
 const useStyles = makeStyles(theme => ({
   root: {

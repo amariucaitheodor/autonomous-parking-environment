@@ -1,5 +1,5 @@
 import React from "react";
-import { FastLayer, Layer, Group, Rect } from "react-konva";
+import { FastLayer, Layer, Group, Rect, Image } from "react-konva";
 import useImage from 'use-image';
 import ParkingLotTile from "./tiles/ParkingLotTile";
 import HubTile from "./tiles/HubTile";
@@ -8,11 +8,15 @@ import DebugTile from "./tiles/DebugTile";
 import Robot from "./Robot";
 import { tileType } from '../../Configuration';
 const parkingURL = require('../../../assets/images/parking-sign.png');
+const switchURL = require('../../../assets/images/switch.png');
+const carStatusURL = require('../../../assets/images/carStatus.png');
 const hubURL = require('../../../assets/images/hub.png');
 
-function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
+function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
     const [parkingImage] = useImage(parkingURL);
     const [hubImage] = useImage(hubURL);
+    const [switchImage] = useImage(switchURL);
+    const [carStatusImage] = useImage(carStatusURL);
 
     function fromCanvasToGrid(position) {
         // The upper left of tile (0, 0) is (- gridCellSize.width / 2, - gridCellSize.height / 2)
@@ -44,8 +48,6 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
     }
 
     function changeTileClicked(e) {
-        console.log(e.target.attrs);
-
         // Not entirely sure why this works
         var tilePosition = fromCanvasToGrid({
             x: e.target.attrs.x + gridCellSize.width / 2,
@@ -53,6 +55,16 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
         });
 
         changeTileType(tilePosition);
+    }
+
+    function changeCarStatusClicked(e) {
+        // Not entirely sure why this works
+        var tilePosition = fromCanvasToGrid({
+            x: e.target.attrs.x + gridCellSize.width / 2,
+            y: e.target.attrs.y
+        });
+
+        changeCarStatusOnTile(tilePosition);
     }
 
     let tiles = [];
@@ -125,8 +137,8 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
                     gridCellSize={gridCellSize}
                     carImage={carImage}
                     robotCommands={robotCommands}
-                    removeCar={removeCar}
-                    addCar={addCar}
+                    liftCarFromTile={liftCarFromTile}
+                    dropCarOnTile={dropCarOnTile}
                     parkingLotOffset={parkingLotOffset}
                     changeRobotGridLocation={changeRobotGridLocation}
                     // Simulation specific actions
@@ -167,7 +179,6 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
                                         tile={tile}
                                         row={rowIndex}
                                         col={colIndex}
-                                        configuration={configuration}
                                         gridCellSize={gridCellSize}
                                         debugName={debugName}
                                     />);
@@ -175,41 +186,63 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
                             })}
                     </FastLayer>
                     {/* Interactable buttons to change the type or car status of tiles */}
-                    {simulatorInterface ?
+                    {simulatorInterface && !simulationOn ?
                         <Layer>
-                            {
-                                configuration.map((tileRow, rowIndex) => {
-                                    return tileRow.map((tile, colIndex) => {
-                                        var carEditable = tile.type === tileType.PARKING || tile.type === tileType.HUB;
+                            <Group
+                                x={parkingLotOffset.x}
+                                y={parkingLotOffset.y}>
+                                {
+                                    configuration.map((tileRow, rowIndex) => {
+                                        return tileRow.map((tile, colIndex) => {
+                                            var carEditable = tile.type === tileType.PARKING || tile.type === tileType.HUB;
 
-                                        return (<Group
-                                            x={parkingLotOffset.x}
-                                            y={parkingLotOffset.y}>
-                                            {carEditable ?
-                                                <Rect
-                                                    x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
-                                                    y={rowIndex * gridCellSize.height + gridCellSize.height / 4}
-                                                    width={gridCellSize.width / 4}
-                                                    height={gridCellSize.height / 4}
-                                                    fill={"rgba(239, 153, 16, 0.35)"}
-                                                    stroke={"black"}
-                                                    strokeWidth={2}
-                                                /> :
-                                                null
-                                            }
-                                            <Rect
-                                                onClick={simulationOn ? null : changeTileClicked}
-                                                x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
-                                                y={rowIndex * gridCellSize.height}
-                                                width={gridCellSize.width / 4}
-                                                height={gridCellSize.height / 4}
-                                                fill={"rgba(239, 153, 16, 0.35)"}
-                                                stroke={"black"}
-                                                strokeWidth={2}
-                                            />
-                                        </Group>);
-                                    })
-                                })}
+                                            return (
+                                                <React.Fragment key={rowIndex + colIndex + rowIndex * configuration[0].length}>
+                                                    {carEditable ?
+                                                        <>
+                                                            <Rect
+                                                                onClick={simulationOn ? null : changeCarStatusClicked}
+                                                                x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
+                                                                y={rowIndex * gridCellSize.height + gridCellSize.height / 4}
+                                                                width={gridCellSize.width / 4}
+                                                                height={gridCellSize.height / 4}
+                                                                fill={"rgba(239, 153, 16, 0.35)"}
+                                                                stroke={"black"}
+                                                                strokeWidth={2}
+                                                            />
+                                                            <Image
+                                                                x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
+                                                                y={rowIndex * gridCellSize.height + gridCellSize.height / 4}
+                                                                width={gridCellSize.width / 4}
+                                                                height={gridCellSize.height / 4}
+                                                                image={carStatusImage}
+                                                                listening={false}
+                                                            />
+                                                        </> :
+                                                        null
+                                                    }
+                                                    <Rect
+                                                        onClick={simulationOn ? null : changeTileClicked}
+                                                        x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
+                                                        y={rowIndex * gridCellSize.height}
+                                                        width={gridCellSize.width / 4}
+                                                        height={gridCellSize.height / 4}
+                                                        fill={"rgba(239, 153, 16, 0.35)"}
+                                                        stroke={"black"}
+                                                        strokeWidth={2}
+                                                    />
+                                                    <Image
+                                                        x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
+                                                        y={rowIndex * gridCellSize.height}
+                                                        width={gridCellSize.width / 4}
+                                                        height={gridCellSize.height / 4}
+                                                        image={switchImage}
+                                                        listening={false}
+                                                    />
+                                                </React.Fragment>);
+                                        })
+                                    })}
+                            </Group>
                         </Layer> :
                         null
                     }

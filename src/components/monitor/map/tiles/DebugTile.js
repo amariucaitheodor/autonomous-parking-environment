@@ -1,30 +1,7 @@
 import React from "react";
 import { Rect, Text } from "react-konva";
-import { tileType } from '../../../Configuration';
 
-function DebugTile({ parkingLotOffset, configuration, tile, row, col, gridCellSize, debugName }) {
-    var carStatus = "";
-    var carLicensePlate = "";
-    if (configuration[row][col].car !== undefined) {
-        carLicensePlate = "License Plate: " + configuration[row][col].car.license;
-        switch (configuration[row][col].car.status) {
-            case "AwaitingParking":
-                carStatus = "Status: Awaiting Parking";
-                break;
-            case "AwaitingDelivery":
-                carStatus = "Status: Awaiting Delivery";
-                break;
-            case null:
-                if (tile.type === tileType.PARKING)
-                    carStatus = "Status: Idle";
-                else if (tile.type === tileType.HUB)
-                    carStatus = "Status: Awaiting Owner";
-                break;
-            default:
-                break;
-        }
-    }
-
+function DebugTile({ parkingLotOffset, tile, row, col, gridCellSize, debugName }) {
     // We pass parkingLotOffset to the tiles to eliminate nesting and thus be able to run in FastLayer
     return (
         <>
@@ -59,7 +36,7 @@ function DebugTile({ parkingLotOffset, configuration, tile, row, col, gridCellSi
             <Text
                 x={parkingLotOffset.x + col * gridCellSize.width + gridCellSize.width / 15}
                 y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 1.25}
-                text={carLicensePlate}
+                text={tile.car === undefined? null : `License: ${tile.car.license}`}
                 fontSize={18}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
@@ -68,7 +45,7 @@ function DebugTile({ parkingLotOffset, configuration, tile, row, col, gridCellSi
             <Text
                 x={parkingLotOffset.x + col * gridCellSize.width + gridCellSize.width / 15}
                 y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 1.55}
-                text={carStatus}
+                text={tile.car === undefined? null : tile.car.status.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
                 fontSize={18}
                 width={gridCellSize.width}
                 height={gridCellSize.height}

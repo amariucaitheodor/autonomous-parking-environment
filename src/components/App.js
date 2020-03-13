@@ -12,8 +12,18 @@ import plan from '../actions/generatePlan';
 import processCommands from '../actions/processPlan';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
-import { lightTheme, darkTheme, tileType, drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from './Configuration';
+import { lightTheme, darkTheme, tileType, tileCarStatus, drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from './Configuration';
 import CssBaseline from '@material-ui/core/CssBaseline';
+
+function randomLicensePlate() {
+  const list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  var res = "";
+  for (var i = 0; i < 6; i++) {
+    var rnd = Math.floor(Math.random() * list.length);
+    res = res + list.charAt(rnd);
+  }
+  return res;
+}
 
 class App extends React.Component {
   constructor() {
@@ -25,11 +35,11 @@ class App extends React.Component {
       monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [
-        [{ type: tileType.BLOCKED }, { type: tileType.PARKING, car: { license: 'SAG 984', status: 'AwaitingDelivery' } }, { type: tileType.ROAD }, { type: tileType.PARKING }],
+        [{ type: tileType.BLOCKED }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY } }, { type: tileType.ROAD }, { type: tileType.PARKING }],
         [{ type: tileType.BLOCKED }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }],
-        [{ type: tileType.HUB, car: { license: 'SAG 985', status: null } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: 'SAG 986', status: 'AwaitingDelivery' } }],
+        [{ type: tileType.HUB, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_OWNER } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY } }],
         [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING }],
-        [{ type: tileType.HUB, car: { license: 'SAG 988', status: 'AwaitingParking' } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: 'SAG 987', status: null } }]
+        [{ type: tileType.HUB, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_PARKING } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.IDLE } }]
       ],
       carriedCarParking: null,
       robotLocationParking: { column: 1, row: 4 },
@@ -56,15 +66,11 @@ class App extends React.Component {
       spacesAvailableSimulator: null,
       spacesTotalSimulator: null,
       // Simulator specific configuration
-      simulatorInitialConfiguration: null,
-      robotInitialLocation: null,
       simulationOn: false,
       alreadyActivated: false,
       simulationButtonsDisabled: false,
     };
-    // Deep cloned:
-    this.state.simulatorInitialConfiguration = JSON.parse(JSON.stringify(this.state.simulatorConfiguration));
-    this.state.robotInitialLocation = this.state.robotLocationSimulator;
+    this.saveConfiguration();
 
     let calculatedSpaces = this.recalculateSpaces(this.state.parkingLotConfiguration);
     this.state.spacesTotalParking = calculatedSpaces.spacesTotal;
@@ -80,12 +86,14 @@ class App extends React.Component {
     this.addLog = this.addLog.bind(this);
     this.toggleDebugMode = this.toggleDebugMode.bind(this);
     this.toggleSimulation = this.toggleSimulation.bind(this);
-    this.removeCar = this.removeCar.bind(this);
-    this.addCar = this.addCar.bind(this);
+    this.liftCarFromTile = this.liftCarFromTile.bind(this);
+    this.dropCarOnTile = this.dropCarOnTile.bind(this);
     this.changeRobotGridLocation = this.changeRobotGridLocation.bind(this);
     this.resetConfiguration = this.resetConfiguration.bind(this);
+    this.saveConfiguration = this.saveConfiguration.bind(this);
     this.checkForResize = this.checkForResize.bind(this);
     this.changeTileType = this.changeTileType.bind(this);
+    this.changeCarStatusOnTile = this.changeCarStatusOnTile.bind(this);
   }
 
   componentDidMount() {
@@ -139,6 +147,35 @@ class App extends React.Component {
     return { spacesTotal: calculatedSpacesTotal, spacesAvailable: calculatedSpacesAvailable };
   }
 
+  changeCarStatusOnTile(position) {
+    let newConfiguration = [...this.state.simulatorConfiguration];
+    var firstStatus = newConfiguration[position.row][position.column].type === tileType.PARKING ? tileCarStatus.AWAITING_DELIVERY : tileCarStatus.AWAITING_PARKING;
+    var secondStatus = newConfiguration[position.row][position.column].type === tileType.PARKING ? tileCarStatus.IDLE : tileCarStatus.AWAITING_OWNER;
+
+    let newCar = null;
+    if (newConfiguration[position.row][position.column].car === undefined) {
+      newCar = { license: randomLicensePlate(), status: firstStatus };
+    } else switch (newConfiguration[position.row][position.column].car.status) {
+      case firstStatus:
+        newCar = { license: randomLicensePlate(), status: secondStatus };
+        break;
+      case secondStatus:
+        newCar = undefined;
+        break;
+      default:
+        console.error(`Tried to change car status in simulator, but existing car status is unrecognized ${newConfiguration[position.row][position.column]}`)
+        break;
+    }
+
+    newConfiguration[position.row][position.column] = { type: newConfiguration[position.row][position.column].type, car: newCar }
+    let calculatedSpaces = this.recalculateSpaces(newConfiguration);
+    this.setState({
+      simulatorConfiguration: newConfiguration,
+      spacesTotalSimulator: calculatedSpaces.spacesTotal,
+      spacesAvailableSimulator: calculatedSpaces.spacesAvailable,
+    });
+  }
+
   changeTileType(position) {
     let newConfiguration = [...this.state.simulatorConfiguration];
     let newType = null;
@@ -156,7 +193,7 @@ class App extends React.Component {
         newType = tileType.PARKING;
         break;
       default:
-        console.error(`Tried to change tile type in simulator, but existing type is unrecognized ${newConfiguration[position.row][position.column].type}`)
+        console.error(`Tried to change tile type in simulator, but existing type is unrecognized ${newConfiguration[position.row][position.column]}`)
         break;
     }
     newConfiguration[position.row][position.column] = { type: newType }
@@ -168,7 +205,7 @@ class App extends React.Component {
     });
   }
 
-  removeCar(row, column, fromSimulator) {
+  liftCarFromTile(row, column, fromSimulator) {
     let newConfiguration = [...fromSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
     let carriedCar = newConfiguration[row][column].car;
     newConfiguration[row][column] = { type: newConfiguration[row][column].type }
@@ -191,7 +228,7 @@ class App extends React.Component {
     this.addLog({ title: "Picked up " + carriedCar.license + " from R" + row + "C" + column, type: "moving", time: new Date() }, fromSimulator);
   }
 
-  addCar(row, column, toSimulator) {
+  dropCarOnTile(row, column, toSimulator) {
     if (toSimulator) {
       var event = this.state.carriedCarSimulator.status.includes("Park") ? "Parked" : "Delivered";
       var eventType = this.state.carriedCarSimulator.status.includes("Park") ? "parking" : "delivery";
@@ -211,7 +248,7 @@ class App extends React.Component {
       type: newConfiguration[row][column].type,
       car: {
         license: toSimulator ? this.state.carriedCarSimulator.license : this.state.carriedCarParking.license,
-        status: null // after AwaitingParking car is simply idle, after AwaitingDelivery car is awaiting owner
+        status: newConfiguration[row][column].type === tileType.HUB ? tileCarStatus.AWAITING_OWNER : tileCarStatus.IDLE
       }
     }
     let calculatedSpaces = this.recalculateSpaces(newConfiguration);
@@ -292,11 +329,19 @@ class App extends React.Component {
       });
   }
 
+  saveConfiguration() {
+    this.robotSavedLocation = JSON.parse(JSON.stringify(this.state.robotLocationSimulator));
+    this.simulatorSavedConfiguration = JSON.parse(JSON.stringify(this.state.simulatorConfiguration));
+  }
+
   resetConfiguration() {
-    this.changeRobotGridLocation({ newRow: this.state.robotInitialLocation.row, newColumn: this.state.robotInitialLocation.column });
+    this.changeRobotGridLocation({ 
+      newRow: this.robotSavedLocation.row, 
+      newColumn: this.robotSavedLocation.column 
+    });
     this.setState({
       // Deep cloned:
-      simulatorConfiguration: JSON.parse(JSON.stringify(this.state.simulatorInitialConfiguration)),
+      simulatorConfiguration: JSON.parse(JSON.stringify(this.simulatorSavedConfiguration)),
       robotCommandsSimulator: []
     });
   }
@@ -335,8 +380,8 @@ class App extends React.Component {
                 robotLocation={this.state.robotLocationParking}
                 robotCommands={this.state.robotCommandsParking}
                 debugMode={this.state.debugModeParking}
-                removeCar={this.removeCar}
-                addCar={this.addCar}
+                liftCarFromTile={this.liftCarFromTile}
+                dropCarOnTile={this.dropCarOnTile}
               />
               <MonitorPanel
                 simulatorPanel={false}
@@ -350,7 +395,6 @@ class App extends React.Component {
             </Route>
             <Route path="/">
               <MonitorInterface
-                changeTileType={this.changeTileType}
                 simulatorInterface={true}
                 size={{ monitorHeight: this.state.monitorHeight, monitorWidth: this.state.monitorWidth }}
                 configuration={this.state.simulatorConfiguration}
@@ -359,12 +403,14 @@ class App extends React.Component {
                 robotLocation={this.state.robotLocationSimulator}
                 robotCommands={this.state.robotCommandsSimulator}
                 debugMode={this.state.debugModeSimulator}
-                removeCar={this.removeCar}
-                addCar={this.addCar}
+                liftCarFromTile={this.liftCarFromTile}
+                dropCarOnTile={this.dropCarOnTile}
                 // Simulator specific configuration
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
                 alreadyActivated={this.state.alreadyActivated}
+                changeTileType={this.changeTileType}
+                changeCarStatusOnTile={this.changeCarStatusOnTile}
               />
               <MonitorPanel
                 simulatorPanel={true}
@@ -379,6 +425,7 @@ class App extends React.Component {
                 toggleSimulation={this.toggleSimulation}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}
                 resetConfiguration={this.resetConfiguration}
+                saveConfiguration={this.saveConfiguration}
               />
             </Route>
           </Switch>

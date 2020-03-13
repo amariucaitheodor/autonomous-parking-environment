@@ -1,4 +1,5 @@
 import Mustache from 'mustache';
+import { tileCarStatus } from '../components/Configuration';
 
 function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
 
@@ -23,7 +24,7 @@ function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
                 carIndex++;
                 carsString = carsString.concat(`        Car${carIndex} - car\n`);
                 carsLocationsString = carsLocationsString.concat(`        (IsAt Car${carIndex} R${rowIndex}C${colIndex})\n`);
-                if (tile.car.status !== null)
+                if (tile.car.status !== tileCarStatus.AWAITING_OWNER && tile.car.status !== tileCarStatus.IDLE)
                     carsStatusesString = carsStatusesString.concat(`        (${tile.car.status} Car${carIndex})\n`);
             }
         })

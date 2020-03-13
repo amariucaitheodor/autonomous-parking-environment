@@ -1,12 +1,13 @@
 import React from "react";
 import { Rect, Image } from "react-konva";
+import {tileCarStatus} from '../../../Configuration';
 
 function ParkingLotTile({ parkingLotOffset, row, col, configuration, gridCellSize, parkingImage, carImage }) {
 
     var occupied = false;
     var hubColor = [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"]; // neutral, green
     if (configuration[row][col].car !== undefined) {
-        if (configuration[row][col].car.status === "AwaitingDelivery")
+        if (configuration[row][col].car.status === tileCarStatus.AWAITING_DELIVERY)
             hubColor = [0, "rgb(189, 130, 42)", 1, "rgb(210, 144, 45)"];
         occupied = true;
     }

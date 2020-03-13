@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-function MonitorInterface({ size, simulatorInterface, changeTileType, configuration, carriedCar, debugMode, robotCommands, toggleSimulation, robotLocation, simulationOn, changeRobotGridLocation, removeCar, addCar, alreadyActivated }) {
+function MonitorInterface({ size, simulatorInterface, changeCarStatusOnTile, changeTileType, configuration, carriedCar, debugMode, robotCommands, toggleSimulation, robotLocation, simulationOn, changeRobotGridLocation, liftCarFromTile, dropCarOnTile, alreadyActivated }) {
     const classes = useStyles();
     const [carImage] = useImage(carURL);
 
@@ -43,26 +43,27 @@ function MonitorInterface({ size, simulatorInterface, changeTileType, configurat
                 width={size.monitorWidth}
                 height={size.monitorHeight}
             >
-                    <Map
-                        changeTileType={changeTileType}
-                        horizontalPaddingInGridCells={horizontalPaddingInGridCells}
-                        simulatorInterface={simulatorInterface}
-                        configuration={configuration}
-                        carImage={carImage}
-                        debugMode={debugMode}
-                        gridCellSize={gridCellSize}
-                        simulationOn={simulationOn}
-                        alreadyActivated={alreadyActivated}
-                        robotCommands={robotCommands}
-                        removeCar={removeCar}
-                        addCar={addCar}
-                        parkingLotOffset={parkingLotOffset}
-                        size={{ height: size.monitorHeight, width: size.monitorWidth }}
-                        toggleSimulation={toggleSimulation}
-                        changeRobotGridLocation={changeRobotGridLocation}
-                        carriedCar={carriedCar}
-                        robotLocation={robotLocation}
-                    />
+                <Map
+                    changeCarStatusOnTile={changeCarStatusOnTile}
+                    changeTileType={changeTileType}
+                    horizontalPaddingInGridCells={horizontalPaddingInGridCells}
+                    simulatorInterface={simulatorInterface}
+                    configuration={configuration}
+                    carImage={carImage}
+                    debugMode={debugMode}
+                    gridCellSize={gridCellSize}
+                    simulationOn={simulationOn}
+                    alreadyActivated={alreadyActivated}
+                    robotCommands={robotCommands}
+                    liftCarFromTile={liftCarFromTile}
+                    dropCarOnTile={dropCarOnTile}
+                    parkingLotOffset={parkingLotOffset}
+                    size={{ height: size.monitorHeight, width: size.monitorWidth }}
+                    toggleSimulation={toggleSimulation}
+                    changeRobotGridLocation={changeRobotGridLocation}
+                    carriedCar={carriedCar}
+                    robotLocation={robotLocation}
+                />
             </Stage>
         </main>
     );

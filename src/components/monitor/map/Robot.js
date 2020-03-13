@@ -4,7 +4,7 @@ import useImage from 'use-image';
 import async from 'async';
 const robotURL = require('../../../assets/images/robot.png');
 
-function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, removeCar, addCar, parkingLotOffset, toggleSimulation, changeRobotGridLocation }) {
+function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, parkingLotOffset, toggleSimulation, changeRobotGridLocation }) {
     const [robotImage] = useImage(robotURL);
     const simulatorRobotImageRef = React.useRef();
     const parkingRobotImageRef = React.useRef();
@@ -34,9 +34,9 @@ function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configu
                 count++;
 
                 if (robotCommands[count - 1].pickupCar)
-                    removeCar(robotCommands[count - 1].row, robotCommands[count - 1].column, simulatorInterface);
+                    liftCarFromTile(robotCommands[count - 1].row, robotCommands[count - 1].column, simulatorInterface);
                 else if (robotCommands[count - 1].dropCar)
-                    addCar(robotCommands[count - 1].row, robotCommands[count - 1].column, simulatorInterface);
+                    dropCarOnTile(robotCommands[count - 1].row, robotCommands[count - 1].column, simulatorInterface);
 
                 simulatorRobotImageRef.current.to({
                     x: fromGridToCanvas(robotCommands[count]).x,
@@ -47,9 +47,9 @@ function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configu
             },
             function (_err) { // finally
                 if (robotCommands[count].pickupCar)
-                    removeCar(robotCommands[count].row, robotCommands[count].column, simulatorInterface);
+                    liftCarFromTile(robotCommands[count].row, robotCommands[count].column, simulatorInterface);
                 else if (robotCommands[count].dropCar)
-                    addCar(robotCommands[count].row, robotCommands[count].column, simulatorInterface);
+                    dropCarOnTile(robotCommands[count].row, robotCommands[count].column, simulatorInterface);
 
                 toggleSimulation(false);
                 changeRobotGridLocation({ newColumn: robotCommands[count].column, newRow: robotCommands[count].row });
@@ -109,6 +109,7 @@ function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configu
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 visible={!simulatorInterface}
+                listening={false}
                 image={carriedCar !== null ? carImage : robotImage}
                 shadowBlur={0.5}
             />

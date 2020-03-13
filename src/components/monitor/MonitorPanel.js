@@ -1,4 +1,5 @@
 import React from "react";
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
@@ -10,6 +11,7 @@ import ZoomIn from '@material-ui/icons/ZoomIn';
 import Edit from '@material-ui/icons/Edit';
 import PauseCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import Replay from '@material-ui/icons/Replay';
+import Save from '@material-ui/icons/Save';
 import Build from '@material-ui/icons/Build';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -23,7 +25,7 @@ import HourglassEmpty from '@material-ui/icons/HourglassEmpty';
 import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import ReactTimeAgo from 'react-time-ago';
-import { drawerWidth } from '../Configuration';
+import { drawerWidth, tileCarStatus } from '../Configuration';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,14 +54,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ simulatorPanel, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ simulatorPanel, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
 
   let robotStatus = null;
   if (carriedCar === null)
     robotStatus = simulationOn ? "Moving" : "Standby";
   else {
-    if (carriedCar.status === "AwaitingDelivery")
+    if (carriedCar.status === tileCarStatus.AWAITING_DELIVERY)
       robotStatus = "Delivering " + carriedCar.license;
     else
       robotStatus = "Parking " + carriedCar.license;
@@ -142,21 +144,32 @@ export default function MonitorPanel({ simulatorPanel, resetConfiguration, space
           color="primary"
           disabled={simulationButtonsDisabled}
         >
-          Run test suite
+          Run test
       </Button > :
         null
       }
       {simulatorPanel ?
-        <Button
-          className={"m-auto"}
-          startIcon={<Replay />}
+        <ButtonGroup
           variant="contained"
           color="primary"
-          disabled={simulationButtonsDisabled}
-          onClick={() => { resetConfiguration() }}
-        >
-          Reset Configuration
-        </Button > :
+          aria-label="contained primary button group"
+          className={"m-auto"}>
+          <Button
+            startIcon={<Save />}
+            disabled={simulationButtonsDisabled}
+            onClick={() => { saveConfiguration() }}
+          >
+            Save
+          </Button >
+          <Button
+            startIcon={<Replay />}
+            disabled={simulationButtonsDisabled}
+            onClick={() => { resetConfiguration() }}
+          >
+            Reset
+        </Button >
+        </ButtonGroup>
+        :
         null
       }
       {simulatorPanel ?

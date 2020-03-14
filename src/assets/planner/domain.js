@@ -1,30 +1,33 @@
-var domain = `
-;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
+var domain = `; Authors: Theodor Amariucai & Bora M. Alper
+; NOTE!!!! PRECONDITIONS SHOULD BE AS VERBOSE AS POSSIBLE TO INCREASE SOLVE TIME
 
 (define (domain finitech)
     (:requirements :adl :typing :negative-preconditions :strips)
 
     (:types
-        blockedTile - tile  ;; physically inaccessible 
-        roadTile - tile
-        parkingTile - tile
+        ; physically inacessible, plays no role:
+        inaccessibleTile - tile
+
+        ; cars are left/picked up from here by their owners:
         hubTile - tile
+
+        ; robot can move on movementTiles given certain conditions further defined in the actions section:
+        movementTile - tile
+        roadTile - movementTile
+        parkingTile - movementTile
         
-        car - dynamic  ;; cars can only be moved around with the help of the robot
+        ; Dynamic objects can move around, cars can only be moved by a robot:
+        car - dynamic
         robot - dynamic
     )
 
     (:predicates
-        ;; TODO: enforce that one and only one is true at a given time
-        (TemporarilyBlocked ?t - tile)
-
-        ;; The car is waiting to be parked
+        ; The car is AWAITING_PARKING or AWAITING_DELIVERY. 
+        ; Otherwise the car is AWAITING_OWNER or is IDLE, both of which are the same for us.
         (AwaitingParking ?c - car)
-        ;; The car is waiting for delivery
         (AwaitingDelivery ?c - car)
-        ;; Otherwise the car is waiting for its owner
-
-        ;; ?a IsToTheLeftOf/IsAbove ?b
+        
+        ; Map configuration
         (IsToTheLeftOf ?a - tile ?b - tile)
         (IsAbove ?a - tile ?b - tile)
 
@@ -33,15 +36,13 @@ var domain = `
         (IsCarrying ?r - robot ?c - car)
     )
 
-    ;;;;;; WE ASSUME HORIZONTAL TILES!
-
-    ;;;; Action Template - Delete and fill in own actions ;;;;
+    ;; Actions ;;
     (:action go-left
-        :parameters (?r - robot ?f - tile ?t - roadTile)
+        :parameters (?r - robot ?f - tile ?t - movementTile)
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?t ?f)
-            (not (TemporarilyBlocked ?t))
+            (not (exists (?c - car) (IsAt ?c ?t)))
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -50,11 +51,11 @@ var domain = `
     )
 
     (:action go-right
-        :parameters (?r - robot ?f - tile ?t - roadTile)
+        :parameters (?r - robot ?f - tile ?t - movementTile)
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?f ?t)
-            (not (TemporarilyBlocked ?t))
+            (not (exists (?c - car) (IsAt ?c ?t)))
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -62,12 +63,14 @@ var domain = `
         )
     )
 
+    ; You should only go up or down from an empty parking tile (f empty) or a road tile. Both are movementTiles
     (:action go-up
-        :parameters (?r - robot ?f - roadTile ?t - roadTile)
+        :parameters (?r - robot ?f - movementTile ?t - movementTile)
         :precondition (and
             (IsAt ?r ?f)
             (IsAbove ?t ?f)
-            (not (TemporarilyBlocked ?t))
+            (not (exists (?c - car) (IsAt ?c ?t)))
+            (not (exists (?c - car) (IsAt ?c ?f)))
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -76,11 +79,12 @@ var domain = `
     )
 
     (:action go-down
-        :parameters (?r - robot ?f - roadTile ?t - roadTile)
+        :parameters (?r - robot ?f - movementTile ?t - movementTile)
         :precondition (and
             (IsAt ?r ?f)
             (IsAbove ?f ?t)
-            (not (TemporarilyBlocked ?t))
+            (not (exists (?c - car) (IsAt ?c ?t)))
+            (not (exists (?c - car) (IsAt ?c ?f)))
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -88,18 +92,20 @@ var domain = `
         )
     )
 
-    ;; 1) scan
-    ;; 2) slide under
-    ;; 3) lift
-    (:action pickup-car-leftwards
-        :parameters (?r - robot ?f - roadTile ?t - hubTile ?c - car)
+    ; Lifting a car involves multiple steps: scan license plate, move underneath, lift by the wheels
+    ; Destination ?t - tile here will be either a hubTile or a parkingTile (not enforced)
+    (:action lift-car-leftwards
+        :parameters (?r - robot ?f - movementTile ?t - tile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
             (IsAt ?c ?t)
             (IsToTheLeftOf ?t ?f)
             
             (not (exists (?c2 - car) (and (IsCarrying ?r ?c2))))
-            (AwaitingParking ?c)
+            (or
+                (AwaitingParking ?c)
+                (AwaitingDelivery ?c)
+            )
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -111,14 +117,14 @@ var domain = `
     )
 
     (:action dropoff-car-leftwards
-        :parameters (?r - robot ?f - roadTile ?t - hubTile ?c - car)
+        :parameters (?r - robot ?f - movementTile ?t - hubTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?t ?f)
             
             (IsCarrying ?r ?c)
             (not (exists (?c2 - car) (IsAt ?c2 ?t)))
-            ;; Necessary? (AwaitingDelivery ?c)
+            (AwaitingDelivery ?c)
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -131,7 +137,7 @@ var domain = `
     )
 
     (:action park-car-rightwards
-        :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
+        :parameters (?r - robot ?f - movementTile ?t - parkingTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?f ?t)
@@ -150,7 +156,7 @@ var domain = `
     )
 
     (:action park-car-leftwards
-        :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
+        :parameters (?r - robot ?f - movementTile ?t - parkingTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?t ?f)
@@ -168,10 +174,8 @@ var domain = `
         )
     )
 
-    ;;;;
-
     (:action retrieve-car-rightwards
-        :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
+        :parameters (?r - robot ?f - movementTile ?t - parkingTile ?c - car)
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?f ?t)
@@ -191,28 +195,5 @@ var domain = `
             (IsCarrying ?r ?c)
         )
     )
-
-    (:action retrieve-car-leftwards
-        :parameters (?r - robot ?f - roadTile ?t - parkingTile ?c - car)
-        :precondition (and
-            (IsAt ?r ?f)
-            (IsToTheLeftOf ?t ?f)
-            
-            (AwaitingDelivery ?c)
-            (IsAt ?c ?t)
-            
-            (not (exists (?c2 - car) (and
-                (IsCarrying ?r ?c2)
-            )))
-        )
-        :effect (and
-            (not (IsAt ?r ?f))
-            (IsAt ?r ?t)
-            
-            (not (IsAt ?c ?t))
-            (IsCarrying ?r ?c)
-        )
-    )
-
 )`;
 export default domain;

@@ -21,8 +21,7 @@ export default function processCommands(steps, robotLocation) {
             action.name.includes("park-car-leftwards")) {
             newPathPoint = { dropCar: true, column: newPathPoint.column - 1, row: newPathPoint.row };
             path.push(newPathPoint)
-        } else if (action.name.includes("pickup-car-leftwards") ||
-            action.name.includes("retrieve-car-leftwards")) {
+        } else if (action.name.includes("lift-car-leftwards")) {
             newPathPoint = { pickupCar: true, column: newPathPoint.column - 1, row: newPathPoint.row };
             path.push(newPathPoint)
         } else if (action.name.includes("go-left")) {

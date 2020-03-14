@@ -28,7 +28,7 @@ const tileType = {
     PARKING: 'parkingTile',
     ROAD: 'roadTile',
     HUB: 'hubTile',
-    BLOCKED: 'blockedTile'
+    INACCESSIBLE: 'inaccessibleTile'
 };
 Object.freeze(tileType);
 

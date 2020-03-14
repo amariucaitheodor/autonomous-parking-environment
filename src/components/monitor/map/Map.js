@@ -166,8 +166,8 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
                                         case tileType.ROAD:
                                             debugName = "Road";
                                             break;
-                                        case tileType.BLOCKED:
-                                            debugName = "Blocked space";
+                                        case tileType.INACCESSIBLE:
+                                            debugName = "Inaccessible";
                                             break;
                                         default:
                                             break;

@@ -36,8 +36,8 @@ class App extends React.Component {
       monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [
-        [{ type: tileType.BLOCKED }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY } }, { type: tileType.ROAD }, { type: tileType.PARKING }],
-        [{ type: tileType.BLOCKED }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }],
+        [{ type: tileType.INACCESSIBLE }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY } }, { type: tileType.ROAD }, { type: tileType.PARKING }],
+        [{ type: tileType.INACCESSIBLE }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }],
         [{ type: tileType.HUB, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_OWNER } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY } }],
         [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING }],
         [{ type: tileType.HUB, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_PARKING } }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.IDLE } }]
@@ -51,13 +51,13 @@ class App extends React.Component {
       spacesTotalParking: 7,
       // Simulator Monitor configuration
       simulatorConfiguration: [
-        [{ type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.BLOCKED }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }],
+        [{ type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.INACCESSIBLE }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }],
         [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }],
         [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }],
         [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.ROAD }],
-        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.BLOCKED }, { type: tileType.PARKING }, { type: tileType.ROAD }],
-        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.BLOCKED }, { type: tileType.PARKING }, { type: tileType.ROAD }],
-        [{ type: tileType.BLOCKED }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.INACCESSIBLE }, { type: tileType.PARKING }, { type: tileType.ROAD }],
+        [{ type: tileType.HUB }, { type: tileType.ROAD }, { type: tileType.PARKING }, { type: tileType.INACCESSIBLE }, { type: tileType.PARKING }, { type: tileType.ROAD }],
+        [{ type: tileType.INACCESSIBLE }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }, { type: tileType.ROAD }],
       ],
       carriedCarSimulator: null,
       robotLocationSimulator: { column: 0, row: 0 },
@@ -206,9 +206,9 @@ class App extends React.Component {
         newType = tileType.HUB;
         break;
       case tileType.HUB:
-        newType = tileType.BLOCKED;
+        newType = tileType.INACCESSIBLE;
         break;
-      case tileType.BLOCKED:
+      case tileType.INACCESSIBLE:
         newType = tileType.PARKING;
         break;
       default:
@@ -325,9 +325,15 @@ class App extends React.Component {
             }, true);
           });
         } else {
-          if (commands.includes("goal can be simplified to TRUE. The empty plan solves it"))
+          if (commands.includes("The empty plan solves it"))
             this.addLog({
               title: "There is nothing to do",
+              type: "fail",
+              time: new Date()
+            }, true);
+          else if (commands.includes("No plan will solve it"))
+            this.addLog({
+              title: "Goal is impossible to reach",
               type: "fail",
               time: new Date()
             }, true);

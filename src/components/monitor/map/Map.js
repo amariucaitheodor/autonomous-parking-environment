@@ -5,15 +5,18 @@ import ParkingLotTile from "./tiles/ParkingLotTile";
 import HubTile from "./tiles/HubTile";
 import RoadTile from "./tiles/RoadTile";
 import DebugTile from "./tiles/DebugTile";
+import InaccessibleTile from './tiles/InaccessibleTile';
 import Robot from "./Robot";
 import { tileType } from '../../Configuration';
 const parkingURL = require('../../../assets/monitor_icons/parking-sign.png');
+const blockedURL = require('../../../assets/monitor_icons/blocked-sign.png');
 const switchURL = require('../../../assets/monitor_icons/switch.png');
-const carStatusURL = require('../../../assets/monitor_icons/carStatus.png');
+const carStatusURL = require('../../../assets/monitor_icons/car-status.png');
 const hubURL = require('../../../assets/monitor_icons/hub.png');
 
 function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
     const [parkingImage] = useImage(parkingURL);
+    const [blockedImage] = useImage(blockedURL);
     const [hubImage] = useImage(hubURL);
     const [switchImage] = useImage(switchURL);
     const [carStatusImage] = useImage(carStatusURL);
@@ -108,6 +111,16 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
                         gridCellSize={gridCellSize}
                         hubImage={hubImage}
                         carImage={carImage}
+                    />
+                    break;
+                case tileType.INACCESSIBLE:
+                    renderTile = <InaccessibleTile
+                        parkingLotOffset={parkingLotOffset}
+                        key={rowIndex + colIndex + rowIndex * configuration[0].length}
+                        row={rowIndex}
+                        col={colIndex}
+                        gridCellSize={gridCellSize}
+                        blockedImage={blockedImage}
                     />
                     break;
                 default:

@@ -5,10 +5,10 @@ import { tileCarStatus } from '../../../Configuration';
 function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize, hubImage, carImage }) {
 
     var occupied = false;
-    var hubColor = [0, "rgb(14, 82, 165)", 1, "rgb(19, 115, 236)"]; // neutral, blue
+    var hubTileColor = [0, "rgb(14, 82, 165)", 1, "rgb(19, 115, 236)"]; // neutral, blue
     if (configuration[row][col].car !== undefined) {
         if (configuration[row][col].car.status === tileCarStatus.AWAITING_PARKING)
-            hubColor = [0, "rgb(189, 130, 42)", 1, "rgb(210, 144, 45)"];
+            hubTileColor = [0, "rgb(189, 130, 42)", 1, "rgb(210, 144, 45)"];
         occupied = true;
     }
 
@@ -22,9 +22,9 @@ function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize, hubI
                 fillRadialGradientStartPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
-                fillRadialGradientColorStops={hubColor}
+                fillRadialGradientColorStops={hubTileColor}
                 stroke={"black"}
-                strokeWidth={2}
+                strokeWidth={0.5}
             />
             <Image
                 x={parkingLotOffset.x + col * gridCellSize.width}

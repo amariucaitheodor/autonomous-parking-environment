@@ -8,7 +8,7 @@ function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
     let tilesString = "";
     let tilesSetupString = "";
     let carsStatusesString = "";
-    let robotLocationString = `(IsAt Robot R${robotGridStaticLocation.row}C${robotGridStaticLocation.column})\n`;
+    let robotLocationString = `    (IsAt Robot R${robotGridStaticLocation.row}C${robotGridStaticLocation.column})\n`;
     let carsLocationsString = "";
 
     let carIndex = 0;

@@ -1,9 +1,8 @@
 import React from "react";
 import { Rect, Image } from "react-konva";
-import {tileCarStatus} from '../../../Configuration';
+import { tileCarStatus } from '../../../Configuration';
 
 function ParkingLotTile({ parkingLotOffset, row, col, configuration, gridCellSize, parkingImage, carImage }) {
-
     var occupied = false;
     var parkingLotTileColor = [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"]; // neutral, green
     if (configuration[row][col].car !== undefined) {

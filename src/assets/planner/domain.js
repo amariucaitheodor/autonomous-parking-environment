@@ -144,6 +144,7 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
             
             (not (exists (?c2 - car) (IsAt ?c2 ?t)))
             (IsCarrying ?r ?c)
+            (AwaitingParking ?c)
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -163,6 +164,7 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
             
             (not (exists (?c2 - car) (IsAt ?c2 ?t)))
             (IsCarrying ?r ?c)
+            (AwaitingParking ?c)
         )
         :effect (and
             (not (IsAt ?r ?f))

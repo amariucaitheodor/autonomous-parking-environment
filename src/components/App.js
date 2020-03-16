@@ -12,7 +12,7 @@ import plan from '../actions/generatePlan';
 import processCommands from '../actions/processPlan';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
-import { lightTheme, darkTheme, tileType, tileCarStatus, drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from './Configuration';
+import { lightTheme, darkTheme, tileType, tileCarStatus } from './Configuration';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import plannerTests from '../assets/planner/tests';
 
@@ -31,9 +31,8 @@ class App extends React.Component {
     super();
     this.state = {
       // General configuration
+      globalPlanView: true,
       resizableMonitor: true,
-      monitorWidth: window.innerWidth - drawerWidth,
-      monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [
         [{ type: tileType.INACCESSIBLE }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY } }, { type: tileType.ROAD }, { type: tileType.PARKING }],
@@ -85,10 +84,10 @@ class App extends React.Component {
     this.changeRobotGridLocation = this.changeRobotGridLocation.bind(this);
     this.resetConfiguration = this.resetConfiguration.bind(this);
     this.saveConfiguration = this.saveConfiguration.bind(this);
-    this.checkForResize = this.checkForResize.bind(this);
     this.changeTileType = this.changeTileType.bind(this);
     this.changeCarStatusOnTile = this.changeCarStatusOnTile.bind(this);
     this.runTest = this.runTest.bind(this);
+    this.toggleGlobalPlanView = this.toggleGlobalPlanView.bind(this);
   }
 
   recalculateSpaces(configuration) {
@@ -134,26 +133,6 @@ class App extends React.Component {
     this.setState({
       robotCommandsSimulator: []
     }, () => { this.toggleSimulation(false) });
-  }
-
-  componentDidMount() {
-    window.addEventListener("resize", this.checkForResize);
-  }
-
-  checkForResize() {
-    if (this.state.simulationOn || !this.state.resizableMonitor)
-      return;
-
-    if (window.innerHeight > MATERIAL_UI_APP_BAR_HEIGHT) {
-      this.setState({
-        monitorHeight: window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT
-      });
-    }
-    if (window.innerWidth > drawerWidth) {
-      this.setState({
-        monitorWidth: window.innerWidth - drawerWidth
-      });
-    }
   }
 
   addLog(event, toSimulatorPanel) {
@@ -280,6 +259,12 @@ class App extends React.Component {
     });
   }
 
+  toggleGlobalPlanView() {
+    this.setState({
+      globalPlanView: !this.state.globalPlanView
+    });
+  }
+
   async toggleSimulation(forced) {
     this.setState({ simulationButtonsDisabled: true }, async () => {
       if (this.state.simulationOn) {
@@ -296,12 +281,11 @@ class App extends React.Component {
             type: "standby",
             time: new Date()
           }, true);
-          this.checkForResize();
         });
       } else {
         this.addLog({
-          title: "Starting to plan...",
-          type: "success",
+          title: "Generating a plan...",
+          type: "planning",
           time: new Date()
         }, true);
         let commands = await plan(
@@ -415,7 +399,7 @@ class App extends React.Component {
               {/* <Websockets /> */}
               <MonitorInterface
                 simulatorInterface={false}
-                size={{ monitorHeight: this.state.monitorHeight, monitorWidth: this.state.monitorWidth }}
+                resizableMonitor={this.state.resizableMonitor}
                 configuration={this.state.parkingLotConfiguration}
                 carriedCar={this.state.carriedCarParking}
                 changeRobotGridLocation={this.changeRobotGridLocation}
@@ -424,6 +408,7 @@ class App extends React.Component {
                 debugMode={this.state.debugModeParking}
                 liftCarFromTile={this.liftCarFromTile}
                 dropCarOnTile={this.dropCarOnTile}
+                globalPlanView={this.state.globalPlanView}
               />
               <MonitorPanel
                 simulatorPanel={false}
@@ -433,12 +418,14 @@ class App extends React.Component {
                 debugMode={this.state.debugModeParking}
                 toggleDebugMode={this.toggleDebugMode}
                 logs={this.state.logsParking}
+                globalPlanView={this.state.globalPlanView}
+                toggleGlobalPlanView={this.toggleGlobalPlanView}
               />
             </Route>
             <Route path="/">
               <MonitorInterface
                 simulatorInterface={true}
-                size={{ monitorHeight: this.state.monitorHeight, monitorWidth: this.state.monitorWidth }}
+                resizableMonitor={this.state.resizableMonitor}
                 configuration={this.state.simulatorConfiguration}
                 carriedCar={this.state.carriedCarSimulator}
                 changeRobotGridLocation={this.changeRobotGridLocation}
@@ -453,6 +440,7 @@ class App extends React.Component {
                 alreadyActivated={this.state.alreadyActivated}
                 changeTileType={this.changeTileType}
                 changeCarStatusOnTile={this.changeCarStatusOnTile}
+                globalPlanView={this.state.globalPlanView}
               />
               <MonitorPanel
                 simulatorPanel={true}
@@ -469,6 +457,8 @@ class App extends React.Component {
                 resetConfiguration={this.resetConfiguration}
                 saveConfiguration={this.saveConfiguration}
                 runTest={this.runTest}
+                globalPlanView={this.state.globalPlanView}
+                toggleGlobalPlanView={this.toggleGlobalPlanView}
               />
             </Route>
           </Switch>

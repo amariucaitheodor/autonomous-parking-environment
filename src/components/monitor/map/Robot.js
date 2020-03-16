@@ -1,21 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Image, Arrow } from "react-konva";
 import useImage from 'use-image';
-import async from 'async';
 const robotURL = require('../../../assets/monitor_icons/robot.png');
 
-function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, parkingLotOffset, toggleSimulation, changeRobotGridLocation }) {
+function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, toggleSimulation, changeRobotGridLocation }) {
     const [robotImage] = useImage(robotURL);
     const simulatorRobotImageRef = React.useRef();
     const parkingRobotImageRef = React.useRef();
-    let pathStop = [];
-
-    for (var i = 0; i < robotCommands.length; i++) {
-        let xCoord = parkingLotOffset.x + robotCommands[i].column * gridCellSize.width + gridCellSize.width / 2;
-        let yCoord = parkingLotOffset.y + robotCommands[i].row * gridCellSize.height + gridCellSize.height / 2;
-        pathStop.push(xCoord);
-        pathStop.push(yCoord);
-    }
+    const [activePath, setActivePath] = useState([]);
+    const [localPathsProgress, setLocalPathsProgress] = useState(0);
+    console.log("Refreshing Robot")
 
     const setScale = (x, y) => {
         simulatorRobotImageRef.current.to({
@@ -25,37 +19,89 @@ function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configu
         });
     };
 
-    // TODO: STOP SIMULATION
-    if (simulationOn && !alreadyActivated) {
-        var count = 0;
-        async.whilst(
-            () => { return count < robotCommands.length - 1; },
-            function (callback) {
-                count++;
+    useEffect(() => {
+        let localPathsArray = [];
 
-                if (robotCommands[count - 1].pickupCar)
-                    liftCarFromTile(robotCommands[count - 1].row, robotCommands[count - 1].column, simulatorInterface);
-                else if (robotCommands[count - 1].dropCar)
-                    dropCarOnTile(robotCommands[count - 1].row, robotCommands[count - 1].column, simulatorInterface);
+        function initializeLocalPathsArray() {
+            let newPathStop = [];
+            for (var i = 0; i < robotCommands.length; i++) {
+                let xCoord = parkingLotOffset.x + robotCommands[i].column * gridCellSize.width + gridCellSize.width / 2;
+                let yCoord = parkingLotOffset.y + robotCommands[i].row * gridCellSize.height + gridCellSize.height / 2;
+                newPathStop.push(xCoord);
+                newPathStop.push(yCoord);
+                if (robotCommands[i].pickupCar || robotCommands[i].dropCar) {
+                    localPathsArray.push(newPathStop);
+                    newPathStop = [];
+                    let xCoord = parkingLotOffset.x + robotCommands[i].column * gridCellSize.width + gridCellSize.width / 2;
+                    let yCoord = parkingLotOffset.y + robotCommands[i].row * gridCellSize.height + gridCellSize.height / 2;
+                    newPathStop.push(xCoord);
+                    newPathStop.push(yCoord);
+                }
+            }
+            console.log("SETTING NEW LOCAL PATHS ARRAY INDEX")
+            setActivePath(localPathsArray[localPathsProgress]);
+        }
 
+        function initializeGlobalPath() {
+            let globalPath = [];
+            for (var i = 0; i < robotCommands.length; i++) {
+                let xCoord = parkingLotOffset.x + robotCommands[i].column * gridCellSize.width + gridCellSize.width / 2;
+                let yCoord = parkingLotOffset.y + robotCommands[i].row * gridCellSize.height + gridCellSize.height / 2;
+                globalPath.push(xCoord);
+                globalPath.push(yCoord);
+            }
+            setActivePath(globalPath);
+        }
+
+        function executeSimulation(index, givenCommmands) {
+            if (index > givenCommmands.length) {
+                toggleSimulation(false);
+                changeRobotGridLocation({
+                    newColumn: robotCommands[robotCommands.length - 1].column,
+                    newRow: robotCommands[robotCommands.length - 1].row
+                });
+                return;
+            }
+
+            if (robotCommands[index - 1].pickupCar || robotCommands[index - 1].dropCar) {
+                setLocalPathsProgress(localPathsProgress => localPathsProgress + 1);
+            }
+
+            if (givenCommmands[index - 1].pickupCar !== undefined)
+                liftCarFromTile(
+                    givenCommmands[index - 1].row,
+                    givenCommmands[index - 1].column,
+                    simulatorInterface
+                );
+            else if (givenCommmands[index - 1].dropCar !== undefined)
+                dropCarOnTile(
+                    givenCommmands[index - 1].row,
+                    givenCommmands[index - 1].column,
+                    simulatorInterface
+                );
+
+            if (index !== givenCommmands.length) {
                 simulatorRobotImageRef.current.to({
-                    x: fromGridToCanvas(robotCommands[count]).x,
-                    y: fromGridToCanvas(robotCommands[count]).y,
+                    x: fromGridToCanvas(givenCommmands[index]).x,
+                    y: fromGridToCanvas(givenCommmands[index]).y,
                     duration: 1
                 });
-                setTimeout(callback, 1050);
-            },
-            function (_err) { // finally
-                if (robotCommands[count].pickupCar)
-                    liftCarFromTile(robotCommands[count].row, robotCommands[count].column, simulatorInterface);
-                else if (robotCommands[count].dropCar)
-                    dropCarOnTile(robotCommands[count].row, robotCommands[count].column, simulatorInterface);
-
-                toggleSimulation(false);
-                changeRobotGridLocation({ newColumn: robotCommands[count].column, newRow: robotCommands[count].row });
             }
-        );
-    }
+
+            index += 1;
+            setTimeout(executeSimulation.bind({}, index, givenCommmands), 1050);
+        }
+
+        if (globalPlanView)
+            initializeGlobalPath();
+        else
+            initializeLocalPathsArray();
+
+        if (simulationOn && !alreadyActivated) {
+            setLocalPathsProgress(0);
+            executeSimulation(1, robotCommands);
+        }
+    }, [localPathsProgress, simulationOn, alreadyActivated, changeRobotGridLocation, dropCarOnTile, liftCarFromTile, fromGridToCanvas, globalPlanView, gridCellSize, parkingLotOffset, robotCommands, simulatorInterface, toggleSimulation]);
 
     const propToGrid = (robotCanvasLocation) => {
         var robotGridLocation = fromCanvasToGrid(robotCanvasLocation);
@@ -80,7 +126,7 @@ function Robot({ fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configu
         <>
             {/* Robot path */}
             < Arrow
-                points={pathStop}
+                points={activePath}
                 shadowBlur={0.5}
                 stroke={"black"}
                 strokeWidth={0.7}

@@ -22,8 +22,11 @@ import Check from '@material-ui/icons/Receipt';
 import MoveToInbox from '@material-ui/icons/MoveToInbox';
 import LocalShipping from '@material-ui/icons/LocalShipping';
 import HourglassEmpty from '@material-ui/icons/HourglassEmpty';
+import Pause from '@material-ui/icons/Pause';
 import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
+import LanguageIcon from '@material-ui/icons/Language';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import ReactTimeAgo from 'react-time-ago';
 import { drawerWidth, tileCarStatus } from '../Configuration';
 import { noOfTests } from '../../assets/planner/tests';
@@ -55,9 +58,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ simulatorPanel, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
+  console.log("Refreshing MonitorPanel")
 
   let robotStatus = null;
   if (carriedCar === null)
@@ -80,7 +84,8 @@ export default function MonitorPanel({ simulatorPanel, runTest, saveConfiguratio
                   (event.type === "moving" ? <LocalShipping /> :
                     (event.type === "success" ? <DoneOutline /> :
                       (event.type === "fail" ? <Close /> :
-                        (event.type === "standby" ? <HourglassEmpty /> : <Check />))))}
+                        (event.type === "planning" ? <HourglassEmpty /> :
+                          (event.type === "standby" ? <Pause /> : <Check />)))))}
               </Avatar>
             </ListItemAvatar>}
           <ListItemText
@@ -129,75 +134,75 @@ export default function MonitorPanel({ simulatorPanel, runTest, saveConfiguratio
         </Typography> :
         null
       }
-      <Button
-        className={"m-auto"}
-        startIcon={simulationOn ? <ZoomIn /> : <Edit />}
+      <ButtonGroup
         variant="contained"
         color="primary"
-        onClick={() => { toggleDebugMode(simulatorPanel); }}
-      >
-        {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Detail" : "Edit") : "Debug"} mode
-      </Button >
+        aria-label="edit grid button group"
+        className={"m-auto"}>
+        <Button
+          startIcon={simulationOn ? <ZoomIn /> : <Edit />}
+          onClick={() => { toggleDebugMode(simulatorPanel); }}
+        >
+          {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Detail" : "Edit") : "Debug"} mode
+        </Button >
+        <Button
+          onClick={() => { toggleGlobalPlanView() }}
+        >
+          {globalPlanView ? <LanguageIcon /> : <TrendingUpIcon />}
+        </Button>
+      </ButtonGroup>
       {simulatorPanel ?
-        <ButtonGroup
-          variant="contained"
-          color="primary"
-          aria-label="contained primary button group"
-          className={"m-auto"}>
-          <Button
-            className={"m-auto"}
-            startIcon={<Build />}
+        <>
+          <ButtonGroup
             variant="contained"
             color="primary"
-            disabled={simulationButtonsDisabled}
-            onClick={() => { runTest(testToRun) }}
-          >
-            Run test
-        </Button >
-          <Button
-            disabled={simulationButtonsDisabled}
-            onClick={() => { setTestToRun((testToRun + 1) % noOfTests) }}
-          >
-            {testToRun}
+            aria-label="save reset configuration button group"
+            className={"m-auto"}>
+            <Button
+              startIcon={<Save />}
+              disabled={simulationButtonsDisabled}
+              onClick={() => { saveConfiguration() }}
+            >
+              Save
           </Button >
-        </ButtonGroup> :
-        null
-      }
-      {simulatorPanel ?
-        <ButtonGroup
-          variant="contained"
-          color="primary"
-          aria-label="contained primary button group"
-          className={"m-auto"}>
-          <Button
-            startIcon={<Save />}
-            disabled={simulationButtonsDisabled}
-            onClick={() => { saveConfiguration() }}
-          >
-            Save
-          </Button >
-          <Button
-            startIcon={<Replay />}
-            disabled={simulationButtonsDisabled}
-            onClick={() => { resetConfiguration() }}
-          >
-            Reset
+            <Button
+              startIcon={<Replay />}
+              disabled={simulationButtonsDisabled}
+              onClick={() => { resetConfiguration() }}
+            >
+              Reset
         </Button >
-        </ButtonGroup>
-        :
-        null
-      }
-      {simulatorPanel ?
-        <Button
-          className={"mx-auto mb-3 mt-auto"}
-          startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
-          variant="contained"
-          color="primary"
-          disabled={simulationButtonsDisabled}
-          onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
-        >
-          {simulationOn ? "Simulating..." : "Start simulation"}
-        </Button > :
+          </ButtonGroup>
+          <ButtonGroup
+            variant="contained"
+            color="primary"
+            aria-label="test planner button group"
+            className={"m-auto"}>
+            <Button
+              startIcon={<Build />}
+              disabled={simulationButtonsDisabled}
+              onClick={() => { runTest(testToRun) }}
+            >
+              Run test
+        </Button >
+            <Button
+              disabled={simulationButtonsDisabled}
+              onClick={() => { setTestToRun((testToRun + 1) % noOfTests) }}
+            >
+              {testToRun}
+            </Button >
+          </ButtonGroup>
+          <Button
+            className={"mx-auto mb-3 mt-auto"}
+            variant="contained"
+            color="primary"
+            startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
+            disabled={simulationButtonsDisabled}
+            onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
+          >
+            {simulationOn ? "Simulating..." : "Start simulation"}
+          </Button>
+        </> :
         null
       }
     </Drawer>

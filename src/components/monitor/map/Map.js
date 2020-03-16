@@ -13,13 +13,16 @@ const blockedURL = require('../../../assets/monitor_icons/blocked-sign.png');
 const switchURL = require('../../../assets/monitor_icons/switch.png');
 const carStatusURL = require('../../../assets/monitor_icons/car-status.png');
 const hubURL = require('../../../assets/monitor_icons/hub.png');
+const carURL = require('../../../assets/monitor_icons/racecar.png');
 
-function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
+function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
     const [parkingImage] = useImage(parkingURL);
     const [blockedImage] = useImage(blockedURL);
     const [hubImage] = useImage(hubURL);
     const [switchImage] = useImage(switchURL);
     const [carStatusImage] = useImage(carStatusURL);
+    const [carImage] = useImage(carURL);
+    console.log("Refreshing Map")
 
     function fromCanvasToGrid(position) {
         // The upper left of tile (0, 0) is (- gridCellSize.width / 2, - gridCellSize.height / 2)
@@ -158,6 +161,7 @@ function Map({ simulatorInterface, horizontalPaddingInGridCells, changeTileType,
                     simulationOn={simulationOn}
                     toggleSimulation={toggleSimulation}
                     alreadyActivated={alreadyActivated}
+                    globalPlanView={globalPlanView}
                 />
             </Layer>
             {debugMode ?

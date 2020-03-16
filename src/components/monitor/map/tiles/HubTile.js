@@ -1,9 +1,11 @@
 import React from "react";
-import { Rect, Image } from "react-konva";
+import { Rect } from "react-konva";
 import { tileCarStatus } from '../../../Configuration';
+import GridImage from '../../../../assets/monitor_icons_components/GridImage';
+import HubImage from '../../../../assets/monitor_icons/hub.png';
+import CarImage from '../../../../assets/monitor_icons/racecar.png';
 
-function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize, hubImage, carImage }) {
-
+function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize }) {
     var occupied = false;
     var hubTileColor = [0, "rgb(14, 82, 165)", 1, "rgb(19, 115, 236)"]; // neutral, blue
     if (configuration[row][col].car !== undefined) {
@@ -26,20 +28,20 @@ function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize, hubI
                 stroke={"black"}
                 strokeWidth={0.5}
             />
-            <Image
+            <GridImage
                 x={parkingLotOffset.x + col * gridCellSize.width}
                 y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 4}
                 width={gridCellSize.width}
                 height={gridCellSize.height / 2}
-                image={hubImage}
+                src={HubImage}
                 shadowBlur={5}
             />
-            <Image
+            <GridImage
                 x={parkingLotOffset.x + col * gridCellSize.width}
                 y={parkingLotOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
-                image={carImage}
+                src={CarImage}
                 shadowBlur={5}
                 visible={occupied}
             />

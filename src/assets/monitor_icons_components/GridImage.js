@@ -1,37 +1,42 @@
 import React from 'react';
 import { Image } from "react-konva";
+import PropTypes from 'prop-types';
 
 export default class GridImage extends React.Component {
-    constructor(props) {
-        super(props);
+  state = {
+    image: null
+  };
 
-        this.state = {
-            image: new window.Image()
-        }
-    }
+  static propTypes = {
+    src: PropTypes.string.isRequired,
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+  };
 
-    componentDidMount() {
-        let newImage = this.state.image;
-        newImage.src = this.props.url;
-        newImage.onload = () => {
-            // need to update layer manually
-            this.imageNode.getLayer().batchDraw();
-        };
-        this.setState({ image: newImage });
-    }
+  componentDidMount() {
+    const image = new window.Image();
+    image.src = this.props.src;
+    image.onload = () => {
+      this.setState({
+        image: image
+      });
+    };
+  }
 
-    render() {
-        return (
-            <Image
-                x={this.props.x}
-                y={this.props.y}
-                width={this.props.width}
-                height={this.props.height}
-                image={this.state.image}
-                visible={this.props.occupied !== undefined ? true : this.props.occupied}
-                listening={this.props.listening !== undefined ? true : this.props.listening}
-                shadowBlur={5}
-            />
-        );
-    }
+  render() {
+    return (
+      <Image
+        x={this.props.x}
+        y={this.props.y}
+        width={this.props.width}
+        height={this.props.height}
+        image={this.state.image}
+        visible={this.props.visible !== undefined ? this.props.visible : true}
+        listening={this.props.listening !== undefined ? this.props.listening : true}
+        shadowBlur={this.props.shadowBlur !== undefined ? this.props.shadowBlur : 5}
+      />
+    );
+  }
 }

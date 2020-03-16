@@ -1,7 +1,9 @@
 import React from "react";
-import { Rect, Image } from "react-konva";
+import { Rect } from "react-konva";
+import GridImage from '../../../../assets/monitor_icons_components/GridImage';
+import InaccessibleTileImage from '../../../../assets/monitor_icons/blocked-sign.png';
 
-function InaccessibleTile({ parkingLotOffset, row, col, gridCellSize, blockedImage }) {
+function InaccessibleTile({ parkingLotOffset, row, col, gridCellSize }) {
     return (
         <>
             <Rect
@@ -16,12 +18,12 @@ function InaccessibleTile({ parkingLotOffset, row, col, gridCellSize, blockedIma
                 stroke={"black"}
                 strokeWidth={0.5}
             />
-            <Image
+            <GridImage
                 x={parkingLotOffset.x + col * gridCellSize.width}
                 y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
                 width={gridCellSize.width}
                 height={gridCellSize.height / 2}
-                image={blockedImage}
+                src={InaccessibleTileImage}
                 shadowBlur={5}
             />
         </>

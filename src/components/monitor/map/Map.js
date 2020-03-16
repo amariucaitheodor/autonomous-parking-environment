@@ -1,6 +1,5 @@
 import React from "react";
-import { FastLayer, Layer, Group, Rect, Image } from "react-konva";
-import useImage from 'use-image';
+import { FastLayer, Layer, Group, Rect } from "react-konva";
 import ParkingLotTile from "./tiles/ParkingLotTile";
 import HubTile from "./tiles/HubTile";
 import RoadTile from "./tiles/RoadTile";
@@ -8,20 +7,11 @@ import DebugTile from "./tiles/DebugTile";
 import InaccessibleTile from './tiles/InaccessibleTile';
 import Robot from "./Robot";
 import { tileType } from '../../Configuration';
-const parkingURL = require('../../../assets/monitor_icons/parking-sign.png');
-const blockedURL = require('../../../assets/monitor_icons/blocked-sign.png');
-const switchURL = require('../../../assets/monitor_icons/switch.png');
-const carStatusURL = require('../../../assets/monitor_icons/car-status.png');
-const hubURL = require('../../../assets/monitor_icons/hub.png');
-const carURL = require('../../../assets/monitor_icons/racecar.png');
+import GridImage from '../../../assets/monitor_icons_components/GridImage';
+import ChangeTileTypeImage from '../../../assets/monitor_icons/switch.png';
+import ChangeTileCarStatusImage from '../../../assets/monitor_icons/car-status.png';
 
 function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, size, toggleSimulation, changeRobotGridLocation, carriedCar, robotLocation }) {
-    const [parkingImage] = useImage(parkingURL);
-    const [blockedImage] = useImage(blockedURL);
-    const [hubImage] = useImage(hubURL);
-    const [switchImage] = useImage(switchURL);
-    const [carStatusImage] = useImage(carStatusURL);
-    const [carImage] = useImage(carURL);
     console.log("Refreshing Map")
 
     function fromCanvasToGrid(position) {
@@ -88,8 +78,6 @@ function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells,
                         col={colIndex}
                         configuration={configuration}
                         gridCellSize={gridCellSize}
-                        parkingImage={parkingImage}
-                        carImage={carImage}
                     />
                     break;
                 case tileType.HUB:
@@ -100,8 +88,6 @@ function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells,
                         col={colIndex}
                         configuration={configuration}
                         gridCellSize={gridCellSize}
-                        hubImage={hubImage}
-                        carImage={carImage}
                     />
                     break;
                 case tileType.ROAD:
@@ -112,8 +98,6 @@ function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells,
                         col={colIndex}
                         configuration={configuration}
                         gridCellSize={gridCellSize}
-                        hubImage={hubImage}
-                        carImage={carImage}
                     />
                     break;
                 case tileType.INACCESSIBLE:
@@ -123,7 +107,6 @@ function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells,
                         row={rowIndex}
                         col={colIndex}
                         gridCellSize={gridCellSize}
-                        blockedImage={blockedImage}
                     />
                     break;
                 default:
@@ -151,7 +134,6 @@ function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells,
                     carriedCar={carriedCar}
                     robotLocation={robotLocation}
                     gridCellSize={gridCellSize}
-                    carImage={carImage}
                     robotCommands={robotCommands}
                     liftCarFromTile={liftCarFromTile}
                     dropCarOnTile={dropCarOnTile}
@@ -227,13 +209,14 @@ function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells,
                                                                 stroke={"black"}
                                                                 strokeWidth={2}
                                                             />
-                                                            <Image
+                                                            <GridImage
                                                                 x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
                                                                 y={rowIndex * gridCellSize.height + gridCellSize.height / 4}
                                                                 width={gridCellSize.width / 4}
                                                                 height={gridCellSize.height / 4}
-                                                                image={carStatusImage}
+                                                                src={ChangeTileCarStatusImage}
                                                                 listening={false}
+                                                                shadowBlur={0}
                                                             />
                                                         </> :
                                                         null
@@ -248,13 +231,14 @@ function Map({ simulatorInterface, globalPlanView, horizontalPaddingInGridCells,
                                                         stroke={"black"}
                                                         strokeWidth={2}
                                                     />
-                                                    <Image
+                                                    <GridImage
                                                         x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
                                                         y={rowIndex * gridCellSize.height}
                                                         width={gridCellSize.width / 4}
                                                         height={gridCellSize.height / 4}
-                                                        image={switchImage}
+                                                        src={ChangeTileTypeImage}
                                                         listening={false}
+                                                        shadowBlur={0}
                                                     />
                                                 </React.Fragment>);
                                         })

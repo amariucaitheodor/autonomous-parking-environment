@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Image, Arrow } from "react-konva";
 import useImage from 'use-image';
 const robotURL = require('../../../assets/monitor_icons/robot.png');
+const carURL = require('../../../assets/monitor_icons/racecar.png');
 
-function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, carImage, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, toggleSimulation, changeRobotGridLocation }) {
-    const [robotImage] = useImage(robotURL);
+function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasToGrid, simulatorInterface, configuration, robotLocation, carriedCar, gridCellSize, simulationOn, alreadyActivated, robotCommands, liftCarFromTile, dropCarOnTile, toggleSimulation, changeRobotGridLocation }) {
     const simulatorRobotImageRef = React.useRef();
     const parkingRobotImageRef = React.useRef();
+    const [robotImage] = useImage(robotURL); // this causes a refresh
+    const [carImage] = useImage(carURL); // this causes second refresh
     const [activePath, setActivePath] = useState([]);
     const [localPathsProgress, setLocalPathsProgress] = useState(0);
     console.log("Refreshing Robot")
@@ -20,9 +22,10 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
     };
 
     useEffect(() => {
-        let localPathsArray = [];
+        console.log("UPDATED fromGridToCanvas to " + fromGridToCanvas({ row: 0, column: 0 }).x)
 
         function initializeLocalPathsArray() {
+            let localPathsArray = [];
             let newPathStop = [];
             for (var i = 0; i < robotCommands.length; i++) {
                 let xCoord = parkingLotOffset.x + robotCommands[i].column * gridCellSize.width + gridCellSize.width / 2;
@@ -38,7 +41,6 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
                     newPathStop.push(yCoord);
                 }
             }
-            console.log("SETTING NEW LOCAL PATHS ARRAY INDEX")
             setActivePath(localPathsArray[localPathsProgress]);
         }
 
@@ -82,8 +84,8 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
 
             if (index !== givenCommmands.length) {
                 simulatorRobotImageRef.current.to({
-                    x: fromGridToCanvas(givenCommmands[index]).x,
-                    y: fromGridToCanvas(givenCommmands[index]).y,
+                    x: parkingLotOffset.x + givenCommmands[index].column * gridCellSize.width,
+                    y: parkingLotOffset.y + givenCommmands[index].row * gridCellSize.height - gridCellSize.height / 50,
                     duration: 1
                 });
             }

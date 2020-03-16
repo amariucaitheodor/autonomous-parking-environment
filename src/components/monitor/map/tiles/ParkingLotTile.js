@@ -1,8 +1,11 @@
 import React from "react";
-import { Rect, Image } from "react-konva";
+import { Rect } from "react-konva";
 import { tileCarStatus } from '../../../Configuration';
+import GridImage from '../../../../assets/monitor_icons_components/GridImage';
+import ParkingTileImage from '../../../../assets/monitor_icons/parking-sign.png';
+import CarImage from '../../../../assets/monitor_icons/racecar.png';
 
-function ParkingLotTile({ parkingLotOffset, row, col, configuration, gridCellSize, parkingImage, carImage }) {
+function ParkingLotTile({ parkingLotOffset, row, col, configuration, gridCellSize }) {
     var occupied = false;
     var parkingLotTileColor = [0, "rgba(63,145,60)", 1, "rgba(103,233,98)"]; // neutral, green
     if (configuration[row][col].car !== undefined) {
@@ -25,20 +28,20 @@ function ParkingLotTile({ parkingLotOffset, row, col, configuration, gridCellSiz
                 stroke={"black"}
                 strokeWidth={0.5}
             />
-            <Image
+            <GridImage
                 x={parkingLotOffset.x + col * gridCellSize.width}
                 y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
                 width={gridCellSize.width}
                 height={gridCellSize.height / 2}
-                image={parkingImage}
+                src={ParkingTileImage}
                 shadowBlur={5}
             />
-            <Image
+            <GridImage
                 x={parkingLotOffset.x + col * gridCellSize.width}
                 y={parkingLotOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
-                image={carImage}
+                src={CarImage}
                 shadowBlur={5}
                 visible={occupied}
             />

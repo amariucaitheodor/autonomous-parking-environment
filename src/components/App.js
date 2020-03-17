@@ -31,7 +31,7 @@ class App extends React.Component {
     super();
     this.state = {
       // General configuration
-      globalPlanView: true,
+      globalPlanView: false,
       resizableMonitor: true,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [

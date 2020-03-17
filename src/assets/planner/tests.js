@@ -70,6 +70,20 @@ tests.push({
     ]
 })
 
+// This tests transferring vehicles to make space for others
+tests.push({
+    robotTestLocation: { "column": 0, "row": 0 },
+    testConfiguration: [
+        [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "FZYOQ9", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "FM7OGU", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "NMQZES", "status": "Idle" } }, { "type": "parkingTile", "car": { "license": "S6E1FY", "status": "Idle" } }, { "type": "parkingTile" }, { "type": "parkingTile" }],
+        [{ "type": "hubTile", "car": { "license": "888INM", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "inaccessibleTile" }, { "type": "inaccessibleTile" }, { "type": "inaccessibleTile" }],
+        [{ "type": "hubTile", "car": { "license": "0DWCRA", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "OBND2J", "status": "Idle" } }, { "type": "parkingTile" }, { "type": "parkingTile", "car": { "license": "9PBHU8", "status": "Idle" } }, { "type": "parkingTile" }],
+        [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "inaccessibleTile" }, { "type": "inaccessibleTile" }, { "type": "inaccessibleTile" }],
+        [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }]
+    ]
+})
+
 var noOfTests = tests.length
 export default tests;
 export { noOfTests };

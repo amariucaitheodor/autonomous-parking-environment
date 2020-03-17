@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, Arrow } from "react-konva";
+import { Image, Arrow, Layer } from "react-konva";
 import useImage from 'use-image';
 const robotURL = require('../../../assets/monitor_icons/robot.png');
 const carURL = require('../../../assets/monitor_icons/racecar.png');
@@ -125,7 +125,7 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
     };
 
     return (
-        <>
+        <Layer>
             {/* Robot path */}
             < Arrow
                 points={activePath}
@@ -141,7 +141,7 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 image={carriedCar !== null ? carImage : robotImage}
-                shadowBlur={0.5}
+                shadowBlur={5}
                 draggable={!simulationOn}
                 visible={simulatorInterface}
                 onDragStart={() => { setScale(1.2, 1.2) }}
@@ -159,9 +159,9 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
                 visible={!simulatorInterface}
                 listening={false}
                 image={carriedCar !== null ? carImage : robotImage}
-                shadowBlur={0.5}
+                shadowBlur={5}
             />
-        </>
+        </Layer>
     );
 }
 

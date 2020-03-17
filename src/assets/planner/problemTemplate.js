@@ -18,14 +18,10 @@ var problemTemplate = `;; Authors: Theodor Amariucai & Bora M. Alper (in no part
 )
 
 (:goal (and
-    (or
-        (not (exists (?c - car) (AwaitingDelivery ?c)))
-        ;(forall (?ht - hubTile) (exists (?c - car) (IsAt ?c ?ht)))
-    )
-    (or
-        (not (exists (?c - car) (AwaitingParking ?c)))
-        ;(forall (?pt - parkingTile) (exists (?c - car) (IsAt ?c ?pt)))
-    )
+    (not (exists (?c - car) (or
+        (AwaitingDelivery ?c)
+        (AwaitingParking ?c)
+    )))
 ))
 )`;
 export default problemTemplate;

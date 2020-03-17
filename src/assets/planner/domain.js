@@ -42,7 +42,10 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?t ?f)
-            (not (exists (?c - car) (IsAt ?c ?t)))
+            (or
+                (not (exists (?c - car) (IsAt ?c ?t)))
+                (not (exists (?c - car) (IsCarrying ?r ?c)))
+            )
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -55,7 +58,10 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
         :precondition (and
             (IsAt ?r ?f)
             (IsToTheLeftOf ?f ?t)
-            (not (exists (?c - car) (IsAt ?c ?t)))
+            (or
+                (not (exists (?c - car) (IsAt ?c ?t)))
+                (not (exists (?c - car) (IsCarrying ?r ?c)))
+            )
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -102,10 +108,6 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
             (IsToTheLeftOf ?t ?f)
             
             (not (exists (?c2 - car) (and (IsCarrying ?r ?c2))))
-            (or
-                (AwaitingParking ?c)
-                (AwaitingDelivery ?c)
-            )
         )
         :effect (and
             (not (IsAt ?r ?f))
@@ -113,6 +115,81 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
             (IsAt ?r ?t)
             
             (IsCarrying ?r ?c)
+        )
+    )
+
+    (:action lift-car-rightwards
+        :parameters (?r - robot ?f - movementTile ?t - tile ?c - car)
+        :precondition (and
+            (IsAt ?r ?f)
+            (IsAt ?c ?t)
+            (IsToTheLeftOf ?f ?t)
+            
+            (not (exists (?c2 - car) (and (IsCarrying ?r ?c2))))
+        )
+        :effect (and
+            (not (IsAt ?r ?f))
+            (not (IsAt ?c ?t))
+            (IsAt ?r ?t)
+            
+            (IsCarrying ?r ?c)
+        )
+    )
+
+    ; Can only transfer from parkingTiles for now, otherwise solver is overwhelmed
+    (:action transfer-car-rightwards
+        :parameters (?r - robot ?f - parkingTile ?t - parkingTile ?c - car)
+        :precondition (and
+            (IsAt ?r ?f)
+            (IsToTheLeftOf ?f ?t)
+            
+            (IsCarrying ?r ?c)
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
+        )
+        :effect (and
+            (not (IsAt ?r ?f))
+            (IsAt ?r ?t)
+            (IsAt ?c ?t)
+            
+            (not (IsCarrying ?r ?c))
+        )
+    )
+
+    (:action transfer-car-leftwards
+        :parameters (?r - robot ?f - parkingTile ?t - parkingTile ?c - car)
+        :precondition (and
+            (IsAt ?r ?f)
+            (IsToTheLeftOf ?t ?f)
+            
+            (IsCarrying ?r ?c)
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
+        )
+        :effect (and
+            (not (IsAt ?r ?f))
+            (IsAt ?r ?t)
+            (IsAt ?c ?t)
+            
+            (not (IsCarrying ?r ?c))
+        )
+    )
+
+    (:action dropoff-car-rightwards
+        :parameters (?r - robot ?f - movementTile ?t - hubTile ?c - car)
+        :precondition (and
+            (IsAt ?r ?f)
+            (IsToTheLeftOf ?f ?t)
+            
+            (IsCarrying ?r ?c)
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
+            (AwaitingDelivery ?c)
+        )
+        :effect (and
+            (not (IsAt ?r ?f))
+            (IsAt ?r ?t)
+            (IsAt ?c ?t)
+            
+            (not (IsCarrying ?r ?c))
+            (not (AwaitingDelivery ?c))
         )
     )
 
@@ -173,28 +250,6 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
             (not (IsCarrying ?r ?c))
             (IsAt ?c ?t)
             (not (AwaitingParking ?c))
-        )
-    )
-
-    (:action retrieve-car-rightwards
-        :parameters (?r - robot ?f - movementTile ?t - parkingTile ?c - car)
-        :precondition (and
-            (IsAt ?r ?f)
-            (IsToTheLeftOf ?f ?t)
-            
-            (AwaitingDelivery ?c)
-            (IsAt ?c ?t)
-            
-            (not (exists (?c2 - car) (and
-                (IsCarrying ?r ?c2)
-            )))
-        )
-        :effect (and
-            (not (IsAt ?r ?f))
-            (IsAt ?r ?t)
-            
-            (not (IsAt ?c ?t))
-            (IsCarrying ?r ?c)
         )
     )
 )`;

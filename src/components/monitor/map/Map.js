@@ -7,7 +7,6 @@ import InaccessibleTile from './tiles/InaccessibleTile';
 import { tileType } from '../../Configuration';
 
 function Map({ configuration, gridCellSize, parkingLotOffset }) {
-    console.log("Refreshing Map")
 
     let tiles = [];
     configuration.forEach((tileRow, rowIndex) => {

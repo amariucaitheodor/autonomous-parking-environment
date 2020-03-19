@@ -11,7 +11,6 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
     const [carImage] = useImage(carURL); // this causes second refresh
     const [activePath, setActivePath] = useState([]);
     const [localPathsProgress, setLocalPathsProgress] = useState(0);
-    console.log("Refreshing Robot")
 
     const setScale = (x, y) => {
         simulatorRobotImageRef.current.to({
@@ -56,14 +55,6 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
         }
 
         function executeSimulation(index, givenCommmands) {
-            if (index > givenCommmands.length) {
-                toggleSimulation(false);
-                changeRobotGridLocation({
-                    newColumn: robotCommands[robotCommands.length - 1].column,
-                    newRow: robotCommands[robotCommands.length - 1].row
-                });
-                return;
-            }
 
             if (robotCommands[index - 1].pickupCar || robotCommands[index - 1].dropCar) {
                 setLocalPathsProgress(localPathsProgress => localPathsProgress + 1);
@@ -91,6 +82,14 @@ function Robot({ globalPlanView, parkingLotOffset, fromGridToCanvas, fromCanvasT
             }
 
             index += 1;
+            if (index > givenCommmands.length || !simulationOn) {
+                toggleSimulation(false);
+                changeRobotGridLocation({
+                    newColumn: robotCommands[robotCommands.length - 1].column,
+                    newRow: robotCommands[robotCommands.length - 1].row
+                });
+                return;
+            }
             setTimeout(executeSimulation.bind({}, index, givenCommmands), 1050);
         }
 

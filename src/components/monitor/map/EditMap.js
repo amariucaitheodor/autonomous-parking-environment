@@ -7,7 +7,6 @@ import ChangeTileTypeImage from '../../../assets/monitor_icons/switch.png';
 import ChangeTileCarStatusImage from '../../../assets/monitor_icons/car-status.png';
 
 function EditMap({ simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, simulationOn }) {
-    console.log("Refreshing EditMap")
 
     function changeTileClicked(e) {
         // Not entirely sure why this works

@@ -1,8 +1,29 @@
 import Mustache from 'mustache';
-import { tileCarStatus } from '../components/Configuration';
+import { tileType, tileCarStatus } from '../components/Configuration';
 import problemTemplate from '../assets/planner/problemTemplate';
 
-function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
+function calculateCarsInProblem(configuration) {
+    let carsToBeDelivered = 0;
+    let carsToBeParked = 0;
+
+    configuration.forEach(tileRow => {
+        tileRow.forEach(tile => {
+            if (tile.type === tileType.HUB &&
+                (tile.car === undefined || tile.car.status !== tileCarStatus.AWAITING_OWNER))
+                carsToBeDelivered++;
+
+            if (tile.type === tileType.PARKING &&
+                (tile.car === undefined || tile.car.status !== tileCarStatus.IDLE))
+                carsToBeParked++;
+        })
+    });
+
+    return { carsToBeDelivered: carsToBeDelivered, carsToBeParked: carsToBeParked };
+}
+
+function generateProblem(robotGridStaticLocation, configuration) {
+
+    let carsInProblem = calculateCarsInProblem(configuration)
 
     let carsString = "";
     let tilesString = "";
@@ -12,7 +33,7 @@ function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
     let carsLocationsString = "";
 
     let carIndex = 0;
-    parkingLotConfiguration.forEach((tileRow, rowIndex) => {
+    configuration.forEach((tileRow, rowIndex) => {
         tileRow.forEach((tile, colIndex) => {
             tilesString = tilesString.concat(`        R${rowIndex}C${colIndex} - ${tile.type}\n`);
 
@@ -25,8 +46,16 @@ function generateProblem(robotGridStaticLocation, parkingLotConfiguration) {
                 carIndex++;
                 carsString = carsString.concat(`        Car${carIndex} - car\n`);
                 carsLocationsString = carsLocationsString.concat(`        (IsAt Car${carIndex} R${rowIndex}C${colIndex})\n`);
-                if (tile.car.status !== tileCarStatus.AWAITING_OWNER && tile.car.status !== tileCarStatus.IDLE)
+
+                if (tile.car.status === tileCarStatus.AWAITING_DELIVERY && carsInProblem.carsToBeDelivered > 0) {
                     carsStatusesString = carsStatusesString.concat(`        (${tile.car.status} Car${carIndex})\n`);
+                    carsInProblem.carsToBeDelivered--;
+                }
+
+                if (tile.car.status === tileCarStatus.AWAITING_PARKING && carsInProblem.carsToBeParked > 0) {
+                    carsStatusesString = carsStatusesString.concat(`        (${tile.car.status} Car${carIndex})\n`);
+                    carsInProblem.carsToBeParked--;
+                }
             }
         })
     });

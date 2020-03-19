@@ -19,6 +19,7 @@ import ListItemAvatar from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Check from '@material-ui/icons/Receipt';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import MoveToInbox from '@material-ui/icons/MoveToInbox';
 import LocalShipping from '@material-ui/icons/LocalShipping';
 import HourglassEmpty from '@material-ui/icons/HourglassEmpty';
@@ -27,7 +28,10 @@ import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import LanguageIcon from '@material-ui/icons/Language';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
+import SpeedIcon from '@material-ui/icons/Speed';
 import ReactTimeAgo from 'react-time-ago';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { drawerWidth, tileCarStatus } from '../Configuration';
 import { noOfTests } from '../../assets/planner/tests';
 
@@ -58,10 +62,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, globalPlanView, agileMode, toggleAgileMode, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
-  console.log("Refreshing MonitorPanel")
 
   let robotStatus = null;
   if (carriedCar === null)
@@ -74,20 +77,49 @@ export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, glo
   }
 
   function generateLogs() {
-    return logs.map((event, index) =>
-      React.cloneElement(
+    return logs.map((event, index) => {
+      let logIcon = null;
+      if (event !== null)
+        switch (event.type) {
+          case "parking":
+            logIcon = <MoveToInbox />;
+            break;
+          case "moving":
+            logIcon = <LocalShipping />;
+            break;
+          case "success":
+            logIcon = <DoneOutline />;
+            break;
+          case "fail":
+            logIcon = <Close />;
+            break;
+          case "planning":
+            logIcon = <HourglassEmpty />;
+            break;
+          case "transfer":
+            logIcon = <SwapHorizIcon />;
+            break;
+          case "settings":
+            logIcon = <SettingsIcon />;
+            break;
+          case "standby":
+            logIcon = <Pause />;
+            break;
+          default:
+            logIcon = <Check />;
+            break;
+        }
+
+      return React.cloneElement(
         <ListItem>
-          {event === null ? <Box m={3.25} /> :
-            <ListItemAvatar>
-              <Avatar>
-                {event.type === "parking" ? <MoveToInbox /> :
-                  (event.type === "moving" ? <LocalShipping /> :
-                    (event.type === "success" ? <DoneOutline /> :
-                      (event.type === "fail" ? <Close /> :
-                        (event.type === "planning" ? <HourglassEmpty /> :
-                          (event.type === "standby" ? <Pause /> : <Check />)))))}
-              </Avatar>
-            </ListItemAvatar>}
+          {
+            event === null ?
+              <Box m={3.25} /> :
+              <ListItemAvatar>
+                <Avatar>
+                  {logIcon}
+                </Avatar>
+              </ListItemAvatar>}
           <ListItemText
             primary={event === null ? null : event.title}
             secondary={event === null ? null : <ReactTimeAgo date={event.time} />}
@@ -95,7 +127,8 @@ export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, glo
         </ListItem>,
         {
           key: index,
-        }),
+        });
+    }
     );
   }
 
@@ -192,16 +225,25 @@ export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, glo
               {testToRun}
             </Button >
           </ButtonGroup>
-          <Button
-            className={"mx-auto mb-3 mt-auto"}
+          <ButtonGroup
             variant="contained"
             color="primary"
-            startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
-            disabled={simulationButtonsDisabled}
-            onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
-          >
-            {simulationOn ? "Simulating..." : "Start simulation"}
-          </Button>
+            aria-label="run simulation button group"
+            className={"mx-auto mb-3 mt-auto"}>
+            <Button
+              startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
+              disabled={simulationButtonsDisabled}
+              onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
+            >
+              {simulationOn ? "Simulating..." : "Start simulation"}
+            </Button>
+            <Button
+              onClick={() => { toggleAgileMode() }}
+              disabled={simulationButtonsDisabled}
+            >
+              {agileMode ? <SpeedIcon /> : <EmojiObjectsIcon />}
+            </Button>
+          </ButtonGroup>
         </> :
         null
       }

@@ -1,4 +1,4 @@
-var problemTemplate = `;; Authors: Theodor Amariucai & Bora M. Alper (in no particular order)
+var problemTemplate = `;; Authors: Theodor Amariucai & Bora M. Alper
 \n
 (define (problem parking)    
 (:domain finitech)    

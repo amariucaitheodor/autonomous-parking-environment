@@ -31,8 +31,10 @@ class App extends React.Component {
     super();
     this.state = {
       // General configuration
+      agileMode: true,
       globalPlanView: false,
       resizableMonitor: true,
+      showLoader: false,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [
         [{ type: tileType.INACCESSIBLE }, { type: tileType.PARKING, car: { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY } }, { type: tileType.ROAD }, { type: tileType.PARKING }],
@@ -88,6 +90,7 @@ class App extends React.Component {
     this.changeCarStatusOnTile = this.changeCarStatusOnTile.bind(this);
     this.runTest = this.runTest.bind(this);
     this.toggleGlobalPlanView = this.toggleGlobalPlanView.bind(this);
+    this.toggleAgileMode = this.toggleAgileMode.bind(this);
   }
 
   recalculateSpaces(configuration) {
@@ -213,33 +216,45 @@ class App extends React.Component {
       });
 
     this.addLog({
-      title: "Picked up " + carriedCar.license + " from R" + row + "C" + column,
+      title: `Lifted ${carriedCar.license} (R${row}C${column})`,
       type: "moving",
       time: new Date()
     }, fromSimulator);
   }
 
   dropCarOnTile(row, column, toSimulator) {
-    if (toSimulator) {
-      var event = this.state.carriedCarSimulator.status.includes("Park") ? "Parked" : "Delivered";
-      var eventType = this.state.carriedCarSimulator.status.includes("Park") ? "parking" : "delivery";
-    } else {
-      event = this.state.carriedCarParking.status.includes("Park") ? "Parked" : "Delivered";
-      eventType = this.state.carriedCarParking.status.includes("Park") ? "parking" : "delivery";
+    let carriedCar = toSimulator ? this.state.carriedCarSimulator : this.state.carriedCcarriedCarParkingarSimulator;
+    let newConfiguration = [...toSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
+
+    if (carriedCar.status === "AwaitingParking") {
+      var event = "Parked";
+      var eventType = "parking";
+    } else if (carriedCar.status === "Idle") {
+      event = "Transferred";
+      eventType = "transfer";
+    } else if (carriedCar.status === "AwaitingDelivery") {
+      if (newConfiguration[row][column].type === tileType.PARKING) {
+        event = "Transferred";
+        eventType = "transfer";
+      } else {
+        event = "Delivered";
+        eventType = "delivery";
+      }
     }
 
     this.addLog({
-      title: event + " " + (toSimulator ? this.state.carriedCarSimulator.license : this.state.carriedCarParking.license) + " at R" + row + "C" + column,
+      title: `${event} ${carriedCar.license} (R${row}C${column})`,
       type: eventType,
       time: new Date()
     }, toSimulator);
 
-    let newConfiguration = [...toSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
     newConfiguration[row][column] = {
       type: newConfiguration[row][column].type,
       car: {
-        license: toSimulator ? this.state.carriedCarSimulator.license : this.state.carriedCarParking.license,
-        status: newConfiguration[row][column].type === tileType.HUB ? tileCarStatus.AWAITING_OWNER : tileCarStatus.IDLE
+        license: carriedCar.license,
+        status: newConfiguration[row][column].type === tileType.HUB ?
+          tileCarStatus.AWAITING_OWNER :
+          (carriedCar.status === tileCarStatus.AWAITING_DELIVERY ? tileCarStatus.AWAITING_DELIVERY : tileCarStatus.IDLE)
       }
     }
     this.updateConfiguration(newConfiguration, toSimulator);
@@ -262,6 +277,24 @@ class App extends React.Component {
   toggleGlobalPlanView() {
     this.setState({
       globalPlanView: !this.state.globalPlanView
+    }, () => {
+      this.addLog({
+        title: this.state.globalPlanView ? "View is now GLOBAL" : "View is now LOCAL",
+        type: "settings",
+        time: new Date()
+      }, true);
+    });
+  }
+
+  toggleAgileMode() {
+    this.setState({
+      agileMode: !this.state.agileMode
+    }, () => {
+      this.addLog({
+        title: this.state.agileMode ? "Planner is now FAST" : "Planner is now OPTIMAL",
+        type: "settings",
+        time: new Date()
+      }, true);
     });
   }
 
@@ -269,7 +302,17 @@ class App extends React.Component {
     this.setState({ simulationButtonsDisabled: true }, async () => {
       if (this.state.simulationOn) {
         if (forced) {
-          // not working
+          this.setState({
+            simulationOn: false,
+            simulationButtonsDisabled: false,
+            alreadyActivated: false
+          }, () => {
+            this.addLog({
+              title: "Simulation was interrupted",
+              type: "standby",
+              time: new Date()
+            }, true);
+          });
         }
         else this.setState({
           simulationOn: false,
@@ -288,12 +331,16 @@ class App extends React.Component {
           type: "planning",
           time: new Date()
         }, true);
+
+        this.setState({ showLoader: true });
+
         let commands = await plan(
           generateProblem(
             this.state.robotLocationSimulator,
             this.state.simulatorConfiguration
           )
         );
+
         if (typeof commands !== "string") {
           this.setState({
             robotCommandsSimulator: processCommands(commands, this.state.robotLocationSimulator),
@@ -337,6 +384,7 @@ class App extends React.Component {
             simulationButtonsDisabled: false,
           });
         }
+        this.setState({ showLoader: false });
       }
     });
   }
@@ -434,6 +482,7 @@ class App extends React.Component {
                 debugMode={this.state.debugModeSimulator}
                 liftCarFromTile={this.liftCarFromTile}
                 dropCarOnTile={this.dropCarOnTile}
+                showLoader={this.state.showLoader}
                 // Simulator specific configuration
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
@@ -451,6 +500,8 @@ class App extends React.Component {
                 toggleDebugMode={this.toggleDebugMode}
                 logs={this.state.logsSimulator}
                 // Simulator specific configuration
+                agileMode={this.state.agileMode}
+                toggleAgileMode={this.toggleAgileMode}
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}

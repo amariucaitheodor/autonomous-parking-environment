@@ -3,6 +3,7 @@ import { Stage } from "react-konva";
 import Map from './map/Map';
 import EditMap from './map/EditMap';
 import Robot from './map/Robot';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import indigo from '@material-ui/core/colors/indigo';
 import { drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from '../Configuration';
 
@@ -142,6 +143,12 @@ class MonitorInterface extends React.Component {
                         simulationOn={this.props.simulationOn}
                     />
                 </Stage>
+                {
+                    this.props.showLoader ?
+                        <LinearProgress style={{ position: "fixed", left: 0, right: 0, bottom: 0 }} variant="query" />
+                        :
+                        null
+                }
             </main>
         );
     }

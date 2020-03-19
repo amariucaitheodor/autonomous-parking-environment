@@ -28,20 +28,6 @@ tests.push({
     ]
 });
 
-// This tests partial planning events (delivering 5/6 cars)
-tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
-    testConfiguration: [
-        [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
-        [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "OL21TP", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "parkingTile" }, { "type": "roadTile" }],
-        [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "Z8RU84", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "parkingTile" }, { "type": "roadTile" }],
-        [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "QO3E79", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "parkingTile" }, { "type": "roadTile" }],
-        [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "68A36X", "status": "AwaitingDelivery" } }, { "type": "inaccessibleTile" }, { "type": "parkingTile" }, { "type": "roadTile" }],
-        [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "O7O7U2", "status": "AwaitingDelivery" } }, { "type": "inaccessibleTile" }, { "type": "parkingTile", "car": { "license": "2QHARK", "status": "AwaitingDelivery" } }, { "type": "roadTile" }],
-        [{ "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }]
-    ]
-});
-
 // This tests stacking vehicles behind others
 tests.push({
     robotTestLocation: { "column": 0, "row": 0 },
@@ -83,6 +69,34 @@ tests.push({
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }]
     ]
 })
+
+// This tests a partial planning event where 3/4 cars are delivered
+tests.push({
+    robotTestLocation: { "column": 0, "row": 0 },
+    testConfiguration: [
+        [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "HJ9N7E", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "FU2PWD", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "ZUWTFA", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "LW8M7W", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "GVQEMV", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "F9EQ0T", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "VYXBMW", "status": "AwaitingOwner" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "9JS87D", "status": "AwaitingDelivery" } }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "YTHQ3D", "status": "AwaitingOwner" } }, { "type": "roadTile" }, { "type": "parkingTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }]
+    ]
+});
+
+// This tests a more advanced partial planning event where 3/5 cars are parked, and a transfer is required
+tests.push({
+    robotTestLocation: { "column": 0, "row": 0 },
+    testConfiguration: [
+        [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "BNIZWM", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "7RBB2M", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "2JZ29I", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "FQ6DPV", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "JC01D4", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "MUO4XI", "status": "AwaitingDelivery" } }, { "type": "parkingTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "4UMSCH", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "D1T370", "status": "Idle" } }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "89DUS9", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "T8KZ4K", "status": "Idle" } }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
+        [{ "type": "hubTile", "car": { "license": "3W6F47", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }]
+    ]
+});
 
 var noOfTests = tests.length
 export default tests;

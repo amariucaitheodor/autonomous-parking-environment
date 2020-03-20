@@ -31,7 +31,7 @@ class App extends React.Component {
     super();
     this.state = {
       // General configuration
-      solver: "BALANCED",
+      solver: "AGILE",
       globalPlanView: false,
       resizableMonitor: true,
       showLoader: false,
@@ -289,14 +289,11 @@ class App extends React.Component {
   changeSolver() {
     let newSolver = null;
     switch (this.state.solver) {
-      case "BALANCED":
+      case "OPTIMAL":
         newSolver = "AGILE";
         break;
       case "AGILE":
         newSolver = "OPTIMAL";
-        break;
-      case "OPTIMAL":
-        newSolver = "BALANCED";
         break;
       default:
         console.error("Unrecognized solver mode");
@@ -343,7 +340,7 @@ class App extends React.Component {
         });
       } else {
         this.addLog({
-          title: "Generating a plan...",
+          title: "Generating plan...",
           type: "planning",
           time: new Date()
         }, true);

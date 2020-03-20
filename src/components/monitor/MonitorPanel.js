@@ -30,7 +30,6 @@ import LanguageIcon from '@material-ui/icons/Language';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
-import SpeedIcon from '@material-ui/icons/Speed';
 import ReactTimeAgo from 'react-time-ago';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { drawerWidth, tileCarStatus } from '../Configuration';
@@ -243,8 +242,7 @@ export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, glo
               disabled={simulationButtonsDisabled}
             >
               {
-                solverMode === "AGILE" ? <FlashOnIcon /> :
-                  (solverMode === "BALANCED" ? <SpeedIcon/> : <EmojiObjectsIcon />)
+                solverMode === "AGILE" ? <FlashOnIcon /> : <EmojiObjectsIcon />
               }
             </Button>
           </ButtonGroup>

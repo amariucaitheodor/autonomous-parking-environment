@@ -28,6 +28,7 @@ import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import LanguageIcon from '@material-ui/icons/Language';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import FlashOnIcon from '@material-ui/icons/FlashOn';
 import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import SpeedIcon from '@material-ui/icons/Speed';
 import ReactTimeAgo from 'react-time-ago';
@@ -62,7 +63,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, globalPlanView, agileMode, toggleAgileMode, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, globalPlanView, solverMode, changeSolver, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
 
@@ -238,10 +239,13 @@ export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, glo
               {simulationOn ? "Simulating..." : "Start simulation"}
             </Button>
             <Button
-              onClick={() => { toggleAgileMode() }}
+              onClick={() => { changeSolver() }}
               disabled={simulationButtonsDisabled}
             >
-              {agileMode ? <SpeedIcon /> : <EmojiObjectsIcon />}
+              {
+                solverMode === "AGILE" ? <FlashOnIcon /> :
+                  (solverMode === "BALANCED" ? <SpeedIcon/> : <EmojiObjectsIcon />)
+              }
             </Button>
           </ButtonGroup>
         </> :

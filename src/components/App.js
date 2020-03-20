@@ -31,7 +31,7 @@ class App extends React.Component {
     super();
     this.state = {
       // General configuration
-      agileMode: true,
+      solver: "BALANCED",
       globalPlanView: false,
       resizableMonitor: true,
       showLoader: false,
@@ -90,7 +90,7 @@ class App extends React.Component {
     this.changeCarStatusOnTile = this.changeCarStatusOnTile.bind(this);
     this.runTest = this.runTest.bind(this);
     this.toggleGlobalPlanView = this.toggleGlobalPlanView.bind(this);
-    this.toggleAgileMode = this.toggleAgileMode.bind(this);
+    this.changeSolver = this.changeSolver.bind(this);
   }
 
   recalculateSpaces(configuration) {
@@ -279,19 +279,35 @@ class App extends React.Component {
       globalPlanView: !this.state.globalPlanView
     }, () => {
       this.addLog({
-        title: this.state.globalPlanView ? "View is now GLOBAL" : "View is now LOCAL",
+        title: this.state.globalPlanView ? "View has changed to global" : "View has changed to local",
         type: "settings",
         time: new Date()
       }, true);
     });
   }
 
-  toggleAgileMode() {
+  changeSolver() {
+    let newSolver = null;
+    switch (this.state.solver) {
+      case "BALANCED":
+        newSolver = "AGILE";
+        break;
+      case "AGILE":
+        newSolver = "OPTIMAL";
+        break;
+      case "OPTIMAL":
+        newSolver = "BALANCED";
+        break;
+      default:
+        console.error("Unrecognized solver mode");
+        return;
+    }
+
     this.setState({
-      agileMode: !this.state.agileMode
+      solver: newSolver
     }, () => {
       this.addLog({
-        title: this.state.agileMode ? "Planner is now FAST" : "Planner is now OPTIMAL",
+        title: `Solver was set to ${newSolver}`,
         type: "settings",
         time: new Date()
       }, true);
@@ -338,7 +354,8 @@ class App extends React.Component {
           generateProblem(
             this.state.robotLocationSimulator,
             this.state.simulatorConfiguration
-          )
+          ),
+          this.state.solver
         );
 
         if (typeof commands !== "string") {
@@ -500,8 +517,8 @@ class App extends React.Component {
                 toggleDebugMode={this.toggleDebugMode}
                 logs={this.state.logsSimulator}
                 // Simulator specific configuration
-                agileMode={this.state.agileMode}
-                toggleAgileMode={this.toggleAgileMode}
+                solverMode={this.state.solver}
+                changeSolver={this.changeSolver}
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}

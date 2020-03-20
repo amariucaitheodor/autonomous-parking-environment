@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/operations-monitor/static/js/main.a350b0fe.chunk.js",
+    "main.js": "/operations-monitor/static/js/main.de96147a.chunk.js",
     "runtime-main.js": "/operations-monitor/static/js/runtime-main.ea1b8e5b.js",
     "static/css/2.8ced67b3.chunk.css": "/operations-monitor/static/css/2.8ced67b3.chunk.css",
-    "static/js/2.b6f12792.chunk.js": "/operations-monitor/static/js/2.b6f12792.chunk.js",
+    "static/js/2.b095737f.chunk.js": "/operations-monitor/static/js/2.b095737f.chunk.js",
     "index.html": "/operations-monitor/index.html",
-    "precache-manifest.c11480603ee2baedfc10e580667fe53c.js": "/operations-monitor/precache-manifest.c11480603ee2baedfc10e580667fe53c.js",
+    "precache-manifest.abe56141eb114743a452da2faa541340.js": "/operations-monitor/precache-manifest.abe56141eb114743a452da2faa541340.js",
     "service-worker.js": "/operations-monitor/service-worker.js",
-    "static/js/2.b6f12792.chunk.js.LICENSE.txt": "/operations-monitor/static/js/2.b6f12792.chunk.js.LICENSE.txt",
+    "static/js/2.b095737f.chunk.js.LICENSE.txt": "/operations-monitor/static/js/2.b095737f.chunk.js.LICENSE.txt",
     "static/media/racecar.png": "/operations-monitor/static/media/racecar.32c01eca.png"
   },
   "entrypoints": [
     "static/js/runtime-main.ea1b8e5b.js",
     "static/css/2.8ced67b3.chunk.css",
-    "static/js/2.b6f12792.chunk.js",
-    "static/js/main.a350b0fe.chunk.js"
+    "static/js/2.b095737f.chunk.js",
+    "static/js/main.de96147a.chunk.js"
   ]
 }

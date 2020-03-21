@@ -9,7 +9,7 @@ import Button from '@material-ui/core/Button';
 import PlayCircleFilled from '@material-ui/icons/PlayCircleFilled';
 import ZoomIn from '@material-ui/icons/ZoomIn';
 import Edit from '@material-ui/icons/Edit';
-import PauseCircleFilled from '@material-ui/icons/PlayCircleFilled';
+import PauseCircleFilled from '@material-ui/icons/PauseCircleFilled';
 import Replay from '@material-ui/icons/Replay';
 import Save from '@material-ui/icons/Save';
 import Build from '@material-ui/icons/Build';
@@ -28,8 +28,6 @@ import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import LanguageIcon from '@material-ui/icons/Language';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import FlashOnIcon from '@material-ui/icons/FlashOn';
-import EmojiObjectsIcon from '@material-ui/icons/EmojiObjects';
 import ReactTimeAgo from 'react-time-ago';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { drawerWidth, tileCarStatus } from '../Configuration';
@@ -62,7 +60,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, globalPlanView, solverMode, changeSolver, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
 
@@ -225,30 +223,20 @@ export default function MonitorPanel({ simulatorPanel, toggleGlobalPlanView, glo
               {testToRun}
             </Button >
           </ButtonGroup>
-          <ButtonGroup
+          <Button
             variant="contained"
             color="primary"
             aria-label="run simulation button group"
-            className={"mx-auto mb-3 mt-auto"}>
-            <Button
-              startIcon={simulationButtonsDisabled ? <PauseCircleFilled /> : <PlayCircleFilled />}
-              disabled={simulationButtonsDisabled}
-              onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
-            >
-              {simulationOn ? "Simulating..." : "Start simulation"}
-            </Button>
-            <Button
-              onClick={() => { changeSolver() }}
-              disabled={simulationButtonsDisabled}
-            >
-              {
-                solverMode === "AGILE" ? <FlashOnIcon /> : <EmojiObjectsIcon />
-              }
-            </Button>
-          </ButtonGroup>
+            className={"mx-auto mb-3 mt-auto"}
+            disabled={showLoader}
+            startIcon={simulationOn ? <PauseCircleFilled /> : <PlayCircleFilled /> }
+            onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
+          >
+            {simulationOn ? "Pause simulation" : "Start simulation"}
+          </Button>
         </> :
         null
       }
-    </Drawer>
+    </Drawer >
   );
 }

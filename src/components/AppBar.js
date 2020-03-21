@@ -45,17 +45,17 @@ export default function Bar({ simulationOn }) {
                 </Typography>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href="#/parking"
-                    aria-label="go to parking lot"
-                >
-                    <LocalParking />
-                </IconButton>
-                <IconButton
-                    className={clsx(classes.menuButtonRight)}
                     href="#/"
                     aria-label="go to simulator"
                 >
                     <SportsEsports />
+                </IconButton>
+                <IconButton
+                    className={clsx(classes.menuButtonRight)}
+                    href="#/parking"
+                    aria-label="go to parking lot"
+                >
+                    <LocalParking />
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}

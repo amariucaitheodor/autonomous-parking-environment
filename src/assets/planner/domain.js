@@ -173,6 +173,22 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
         )
     )
 
+    (:action dropoff-car-inplace
+        :parameters (?r - robot ?t - hubTile ?c - car)
+        :precondition (and
+            (IsAt ?r ?t)
+            
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
+            (IsCarrying ?r ?c)
+            (AwaitingDelivery ?c)
+        )
+        :effect (and
+            (not (IsCarrying ?r ?c))
+            (IsAt ?c ?t)
+            (not (AwaitingDelivery ?c))
+        )
+    )
+
     (:action dropoff-car-rightwards
         :parameters (?r - robot ?f - movementTile ?t - hubTile ?c - car)
         :precondition (and
@@ -210,6 +226,22 @@ var domain = `; Authors: Theodor Amariucai & Bora M. Alper
             
             (not (IsCarrying ?r ?c))
             (not (AwaitingDelivery ?c))
+        )
+    )
+
+    (:action park-car-inplace
+        :parameters (?r - robot ?t - parkingTile ?c - car)
+        :precondition (and
+            (IsAt ?r ?t)
+            
+            (not (exists (?c2 - car) (IsAt ?c2 ?t)))
+            (IsCarrying ?r ?c)
+            (AwaitingParking ?c)
+        )
+        :effect (and
+            (not (IsCarrying ?r ?c))
+            (IsAt ?c ?t)
+            (not (AwaitingParking ?c))
         )
     )
 

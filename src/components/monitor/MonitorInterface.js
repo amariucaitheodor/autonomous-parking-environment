@@ -114,6 +114,7 @@ class MonitorInterface extends React.Component {
                         parkingLotOffset={this.state.visualGridOffset}
                     />
                     <Robot
+                        changeRobotIsCarrying={this.props.changeRobotIsCarrying}
                         fromCanvasToGrid={this.fromCanvasToGrid}
                         fromGridToCanvas={this.fromGridToCanvas}
                         globalPlanView={this.props.globalPlanView}

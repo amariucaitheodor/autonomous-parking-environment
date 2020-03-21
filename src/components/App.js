@@ -31,7 +31,6 @@ class App extends React.Component {
     super();
     this.state = {
       // General configuration
-      solver: "AGILE",
       globalPlanView: false,
       resizableMonitor: true,
       showLoader: false,
@@ -90,7 +89,7 @@ class App extends React.Component {
     this.changeCarStatusOnTile = this.changeCarStatusOnTile.bind(this);
     this.runTest = this.runTest.bind(this);
     this.toggleGlobalPlanView = this.toggleGlobalPlanView.bind(this);
-    this.changeSolver = this.changeSolver.bind(this);
+    this.changeRobotIsCarrying = this.changeRobotIsCarrying.bind(this);
   }
 
   recalculateSpaces(configuration) {
@@ -175,6 +174,22 @@ class App extends React.Component {
 
     newConfiguration[position.row][position.column] = { type: newConfiguration[position.row][position.column].type, car: newCar }
     this.updateConfiguration(newConfiguration, true);
+  }
+
+  changeRobotIsCarrying() {
+    if (this.state.simulatorConfiguration[this.state.robotLocationSimulator.row][this.state.robotLocationSimulator.column].car !== undefined)
+      return;
+
+    let newCar = null;
+    if (this.state.carriedCarSimulator === null) {
+      newCar = { license: randomLicensePlate(), status: tileCarStatus.AWAITING_DELIVERY };
+    } else if (this.state.carriedCarSimulator.status === tileCarStatus.AWAITING_DELIVERY) {
+      newCar = { license: randomLicensePlate(), status: tileCarStatus.AWAITING_PARKING };
+    }
+
+    this.setState({
+      carriedCarSimulator: newCar
+    });
   }
 
   changeTileType(position) {
@@ -286,31 +301,6 @@ class App extends React.Component {
     });
   }
 
-  changeSolver() {
-    let newSolver = null;
-    switch (this.state.solver) {
-      case "OPTIMAL":
-        newSolver = "AGILE";
-        break;
-      case "AGILE":
-        newSolver = "OPTIMAL";
-        break;
-      default:
-        console.error("Unrecognized solver mode");
-        return;
-    }
-
-    this.setState({
-      solver: newSolver
-    }, () => {
-      this.addLog({
-        title: `Solver was set to ${newSolver}`,
-        type: "settings",
-        time: new Date()
-      }, true);
-    });
-  }
-
   async toggleSimulation(forced) {
     this.setState({ simulationButtonsDisabled: true }, async () => {
       if (this.state.simulationOn) {
@@ -350,9 +340,9 @@ class App extends React.Component {
         let commands = await plan(
           generateProblem(
             this.state.robotLocationSimulator,
-            this.state.simulatorConfiguration
-          ),
-          this.state.solver
+            this.state.simulatorConfiguration,
+            this.state.carriedCarSimulator
+          )
         );
 
         if (typeof commands !== "string") {
@@ -498,6 +488,7 @@ class App extends React.Component {
                 dropCarOnTile={this.dropCarOnTile}
                 showLoader={this.state.showLoader}
                 // Simulator specific configuration
+                changeRobotIsCarrying={this.changeRobotIsCarrying}
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
                 alreadyActivated={this.state.alreadyActivated}
@@ -514,8 +505,7 @@ class App extends React.Component {
                 toggleDebugMode={this.toggleDebugMode}
                 logs={this.state.logsSimulator}
                 // Simulator specific configuration
-                solverMode={this.state.solver}
-                changeSolver={this.changeSolver}
+                showLoader={this.state.showLoader}
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}

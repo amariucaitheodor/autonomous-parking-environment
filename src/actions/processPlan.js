@@ -2,8 +2,8 @@ export default function processCommands(steps, robotLocation) {
     let newPathPoint = { column: robotLocation.column, row: robotLocation.row };
     let path = [newPathPoint];
     steps.forEach(action => {
-        let command = action.name === undefined? action : action.name;
-        
+        let command = action.name === undefined ? action : action.name;
+
         if (command.includes("go-up")) {
             newPathPoint = { column: newPathPoint.column, row: newPathPoint.row - 1 };
             path.push(newPathPoint)
@@ -15,6 +15,10 @@ export default function processCommands(steps, robotLocation) {
             path.push(newPathPoint)
         } else if (command.includes("go-left")) {
             newPathPoint = { column: newPathPoint.column - 1, row: newPathPoint.row };
+            path.push(newPathPoint)
+        } else if (command.includes("park-car-inplace") ||
+            command.includes("dropoff-car-inplace")) {
+            newPathPoint = { dropCar: true, column: newPathPoint.column, row: newPathPoint.row };
             path.push(newPathPoint)
         } else if (command.includes("dropoff-car-rightwards") ||
             command.includes("park-car-rightwards") ||

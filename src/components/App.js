@@ -70,6 +70,7 @@ class App extends React.Component {
       simulationOn: false,
       alreadyActivated: false,
       simulationButtonsDisabled: false,
+      simulatorLocalPathsProgress: null
     };
 
     this.saveConfiguration();
@@ -224,6 +225,7 @@ class App extends React.Component {
     if (fromSimulator)
       this.setState({
         carriedCarSimulator: carriedCar,
+        simulatorLocalPathsProgress: this.state.simulatorLocalPathsProgress + 1
       });
     else
       this.setState({
@@ -241,20 +243,26 @@ class App extends React.Component {
     let carriedCar = toSimulator ? this.state.carriedCarSimulator : this.state.carriedCcarriedCarParkingarSimulator;
     let newConfiguration = [...toSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
 
-    if (carriedCar.status === "AwaitingParking") {
-      var event = "Parked";
-      var eventType = "parking";
-    } else if (carriedCar.status === "Idle") {
-      event = "Transferred";
-      eventType = "transfer";
-    } else if (carriedCar.status === "AwaitingDelivery") {
-      if (newConfiguration[row][column].type === tileType.PARKING) {
+    switch (carriedCar.status) {
+      case "AwaitingParking":
+        var event = "Parked";
+        var eventType = "parking";
+        break;
+      case "Idle":
         event = "Transferred";
         eventType = "transfer";
-      } else {
-        event = "Delivered";
-        eventType = "delivery";
-      }
+        break;
+      case "AwaitingDelivery":
+        if (newConfiguration[row][column].type === tileType.PARKING) {
+          event = "Transferred";
+          eventType = "transfer";
+        } else {
+          event = "Delivered";
+          eventType = "delivery";
+        }
+        break;
+      default:
+        console.error("Unknown carriedCar status when posting new log on car dropped");
     }
 
     this.addLog({
@@ -276,6 +284,7 @@ class App extends React.Component {
     if (toSimulator)
       this.setState({
         carriedCarSimulator: null,
+        simulatorLocalPathsProgress: this.state.simulatorLocalPathsProgress + 1
       });
     else
       this.setState({
@@ -304,30 +313,17 @@ class App extends React.Component {
   async toggleSimulation(forced) {
     this.setState({ simulationButtonsDisabled: true }, async () => {
       if (this.state.simulationOn) {
-        if (forced) {
-          this.setState({
-            simulationOn: false,
-            simulationButtonsDisabled: false,
-            alreadyActivated: false
-          }, () => {
-            this.addLog({
-              title: "Simulation was interrupted",
-              type: "standby",
-              time: new Date()
-            }, true);
-          });
-        }
-        else this.setState({
+        this.setState({
           simulationOn: false,
           simulationButtonsDisabled: false,
-          alreadyActivated: false
-        }, () => {
-          this.addLog({
-            title: "Robot is now on standby",
-            type: "standby",
-            time: new Date()
-          }, true);
+          alreadyActivated: false,
+          robotCommandsSimulator: [],
         });
+        this.addLog({
+          title: forced ? "Manual interruption triggered" : "Robot is now on standby",
+          type: "standby",
+          time: new Date()
+        }, true);
       } else {
         this.addLog({
           title: "Generating plan...",
@@ -346,11 +342,20 @@ class App extends React.Component {
         );
 
         if (typeof commands !== "string") {
+          var processedCommands = processCommands(commands, this.state.robotLocationSimulator);
+
+          this.totalLocalPaths = 0;
+          processedCommands.forEach(processedCommand => {
+            if (processedCommand.pickupCar || processedCommand.dropCar)
+              this.totalLocalPaths++;
+          });
+
           this.setState({
-            robotCommandsSimulator: processCommands(commands, this.state.robotLocationSimulator),
+            robotCommandsSimulator: processedCommands,
             simulationOn: true,
             simulationButtonsDisabled: true,
-            alreadyActivated: false
+            alreadyActivated: false,
+            simulatorLocalPathsProgress: 0
           }, () => {
             this.setState({ alreadyActivated: true })
             this.addLog({
@@ -495,6 +500,7 @@ class App extends React.Component {
                 changeTileType={this.changeTileType}
                 changeCarStatusOnTile={this.changeCarStatusOnTile}
                 globalPlanView={this.state.globalPlanView}
+                simulatorLocalPathsProgress={this.state.simulatorLocalPathsProgress}
               />
               <MonitorPanel
                 simulatorPanel={true}
@@ -514,6 +520,8 @@ class App extends React.Component {
                 runTest={this.runTest}
                 globalPlanView={this.state.globalPlanView}
                 toggleGlobalPlanView={this.toggleGlobalPlanView}
+                simulatorLocalPathsProgress={this.state.simulatorLocalPathsProgress}
+                totalLocalPaths={this.totalLocalPaths}
               />
             </Route>
           </Switch>

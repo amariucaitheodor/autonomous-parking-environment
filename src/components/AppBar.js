@@ -41,7 +41,7 @@ export default function Bar({ simulationOn }) {
         >
             <Toolbar>
                 <Typography className={classes.title} variant="h6" noWrap align="left">
-                    Finitech Operations Monitor
+                    Autonomous Parking Environment
                 </Typography>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}

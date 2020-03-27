@@ -60,18 +60,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
 
   let robotStatus = null;
   if (carriedCar === null)
-    robotStatus = simulationOn ? "Moving" : "Standby";
-  else {
-    if (carriedCar.status === tileCarStatus.AWAITING_DELIVERY)
+    robotStatus = simulationOn ? "Advancing" : "On Standby";
+  else switch (carriedCar.status) {
+    case tileCarStatus.AWAITING_DELIVERY:
       robotStatus = "Delivering " + carriedCar.license;
-    else
+      break;
+    case tileCarStatus.AWAITING_PARKING:
       robotStatus = "Parking " + carriedCar.license;
+      break;
+    default:
+      console.error("Unknown carriedCar status when updating Monitor Panel");
+      break;
   }
 
   function generateLogs() {
@@ -157,7 +162,7 @@ export default function MonitorPanel({ showLoader, simulatorPanel, toggleGlobalP
         {"Available Parking Spaces: " + spacesAvailable}
       </Typography>
       <Typography variant='h6' className={"m-auto "} >
-        {"Status: " + robotStatus}
+        {robotStatus + (simulatorPanel && simulationOn ? ` (${simulatorLocalPathsProgress + 1}/${totalLocalPaths})` : "")}
       </Typography>
       {!simulatorPanel ?
         <Typography color='error' variant='h6' className={"m-auto "} >
@@ -229,7 +234,7 @@ export default function MonitorPanel({ showLoader, simulatorPanel, toggleGlobalP
             aria-label="run simulation button group"
             className={"mx-auto mb-3 mt-auto"}
             disabled={showLoader}
-            startIcon={simulationOn ? <PauseCircleFilled /> : <PlayCircleFilled /> }
+            startIcon={simulationOn ? <PauseCircleFilled /> : <PlayCircleFilled />}
             onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
           >
             {simulationOn ? "Pause simulation" : "Start simulation"}

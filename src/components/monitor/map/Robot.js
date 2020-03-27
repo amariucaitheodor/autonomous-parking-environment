@@ -10,10 +10,9 @@ class Robot extends React.Component {
         this.parkingRobotImageRef = createRef();
 
         this.state = {
-            activePath: null,
-            globalPath: null,
-            localPaths: null,
-            localPathsProgress: null,
+            activePath: [],
+            globalPath: [],
+            localPaths: []
         }
     }
 
@@ -56,7 +55,7 @@ class Robot extends React.Component {
             this.props.changeRobotGridLocation({ newColumn: robotGridLocation.column, newRow: robotGridLocation.row });
             var canvasLocation = this.props.fromGridToCanvas({ column: robotGridLocation.column, row: robotGridLocation.row });
         } else {
-            canvasLocation = this.props.fromGridToCanvas(this.props.robotLocation);
+            canvasLocation = this.props.cavasRobotLocation;
         }
 
         this.simulatorRobotImageRef.current.to({
@@ -95,20 +94,12 @@ class Robot extends React.Component {
         this.setState({
             localPaths: localPathsArray,
             globalPath: newGlobalPath,
-            activePath: initialize ? localPathsArray[0] :
-                (this.props.globalPlanView ? newGlobalPath : localPathsArray[this.state.localPathsProgress]),
-            localPathsProgress: initialize ? 0 : this.state.localPathsProgress
+            activePath: this.props.globalPlanView ? newGlobalPath : localPathsArray[this.props.simulatorLocalPathsProgress]
         });
     }
 
     simulationTimer = null;
     executeSimulation(index, givenCommmands) {
-        if (this.props.robotCommands[index - 1].pickupCar || this.props.robotCommands[index - 1].dropCar) {
-            this.setState({
-                localPathsProgress: this.state.localPathsProgress + 1
-            })
-        }
-
         if (givenCommmands[index - 1].pickupCar !== undefined)
             this.props.liftCarFromTile(
                 givenCommmands[index - 1].row,
@@ -124,8 +115,8 @@ class Robot extends React.Component {
 
         if (index !== givenCommmands.length) {
             this.simulatorRobotImageRef.current.to({
-                x: this.props.parkingLotOffset.x + givenCommmands[index].column * this.props.gridCellSize.width,
-                y: this.props.parkingLotOffset.y + givenCommmands[index].row * this.props.gridCellSize.height - this.props.gridCellSize.height / 50,
+                x: this.props.fromGridToCanvas(givenCommmands[index]).x,
+                y: this.props.fromGridToCanvas(givenCommmands[index]).y,
                 duration: 1
             });
         }
@@ -133,19 +124,15 @@ class Robot extends React.Component {
         index += 1;
         if (index > givenCommmands.length || !this.props.simulationOn) {
             this.props.toggleSimulation(false);
-            this.props.changeRobotGridLocation({
-                newColumn: this.props.robotCommands[this.props.robotCommands.length - 1].column,
-                newRow: this.props.robotCommands[this.props.robotCommands.length - 1].row
-            });
             return;
         }
         this.simulationTimer = setTimeout(this.executeSimulation.bind({}, index, givenCommmands), 1050);
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.localPathsProgress !== this.state.localPathsProgress && !this.props.globalPlanView) {
+    componentDidUpdate(prevProps) {
+        if (prevProps.simulatorLocalPathsProgress !== this.props.simulatorLocalPathsProgress && !this.props.globalPlanView) {
             this.setState({
-                activePath: this.state.localPaths[this.state.localPathsProgress]
+                activePath: this.state.localPaths[this.props.simulatorLocalPathsProgress]
             });
         }
 
@@ -155,7 +142,7 @@ class Robot extends React.Component {
 
         if (prevProps.globalPlanView !== this.props.globalPlanView) {
             this.setState({
-                activePath: this.props.globalPlanView ? this.state.globalPath : this.state.localPaths[this.state.localPathsProgress]
+                activePath: this.props.globalPlanView ? this.state.globalPath : this.state.localPaths[this.props.simulatorLocalPathsProgress]
             });
         }
 
@@ -165,6 +152,7 @@ class Robot extends React.Component {
                 this.executeSimulation(1, this.props.robotCommands);
             } else {
                 clearTimeout(this.simulationTimer);
+                this.updatePaths(true);
                 this.propToGrid({
                     x: this.simulatorRobotImageRef.current.attrs.x,
                     y: this.simulatorRobotImageRef.current.attrs.y
@@ -186,8 +174,8 @@ class Robot extends React.Component {
                 {/* Simulator robot is asyncronous, hence two robot images! */}
                 <Image
                     ref={this.simulatorRobotImageRef}
-                    x={this.props.fromGridToCanvas(this.props.robotLocation).x}
-                    y={this.props.fromGridToCanvas(this.props.robotLocation).y}
+                    x={this.props.cavasRobotLocation.x}
+                    y={this.props.cavasRobotLocation.y}
                     width={this.props.gridCellSize.width}
                     height={this.props.gridCellSize.height}
                     image={this.props.carriedCar !== null ? this.state.carImage : this.state.robotImage}
@@ -203,8 +191,8 @@ class Robot extends React.Component {
                 />
                 <Image
                     ref={this.parkingRobotImageRef}
-                    x={this.props.fromGridToCanvas(this.props.robotLocation).x}
-                    y={this.props.fromGridToCanvas(this.props.robotLocation).y}
+                    x={this.props.cavasRobotLocation.x}
+                    y={this.props.cavasRobotLocation.y}
                     width={this.props.gridCellSize.width}
                     height={this.props.gridCellSize.height}
                     visible={!this.props.simulatorInterface}

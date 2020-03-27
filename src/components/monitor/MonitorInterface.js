@@ -114,6 +114,7 @@ class MonitorInterface extends React.Component {
                         parkingLotOffset={this.state.visualGridOffset}
                     />
                     <Robot
+                        simulatorLocalPathsProgress={this.props.simulatorLocalPathsProgress}
                         changeRobotIsCarrying={this.props.changeRobotIsCarrying}
                         fromCanvasToGrid={this.fromCanvasToGrid}
                         fromGridToCanvas={this.fromGridToCanvas}
@@ -121,7 +122,7 @@ class MonitorInterface extends React.Component {
                         parkingLotOffset={this.state.visualGridOffset}
                         simulatorInterface={this.props.simulatorInterface}
                         configuration={this.props.configuration}
-                        robotLocation={this.props.robotLocation}
+                        cavasRobotLocation={this.fromGridToCanvas(this.props.robotLocation)}
                         carriedCar={this.props.carriedCar}
                         gridCellSize={this.state.gridCellSize}
                         simulationOn={this.props.simulationOn}

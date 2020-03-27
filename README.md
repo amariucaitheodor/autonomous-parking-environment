@@ -1,17 +1,17 @@
-# Finitech Operations Monitor ![](https://github.com/Finitech-SDP/operations-monitor/workflows/Node.js%20CI/badge.svg)
-
-## Monitor
-- Parking lot real-time visual updates for operators and receptionists to more efficiently manage the parking spaces and communicate essential information and statistics
+# Finitech Autonomous Parking Environment ![](https://github.com/Finitech-SDP/operations-monitor/workflows/Node.js%20CI/badge.svg)
 
 ## Simulator
 - Autonomous parking simulation using an [adaptation](https://github.com/theodor1289/pddl-planner-backend) of an [open-source](https://bitbucket.org/planning-researchers/cloud-solver/src/master/) project, [Solver.Planning.Domains](http://solver.planning.domains/). It is an artificial intelligence system for automated planning, and consists of an initial state, actions, and a goal state. By applying the actions over the initial state and all child states, a goal can be found.
 - Thoroughly tested in various different scenarios (available at `src/assets/planner/tests.js`)
 
+## Monitor
+- Parking lot real-time visual updates for operators and receptionists to more efficiently manage the parking spaces and communicate essential information and statistics
+
 ## Surveillance
 - Live stream from parking lot CCTV cameras
 
-## Miscellaneous
-- Template user interfaces for client interaction at hubs
+## Parking Hub Client Interface
+- Clients using our system have a variety of storage options to choose from, as well as a clean UI to interact with
 
 ## This project is a member of the architecture shown below, which I helped develop as part of [FinitechSDP](https://github.com/Finitech-SDP) (University of Edinburgh project) 2019-2020
 ![architecture](finitech-system-architecture.png)

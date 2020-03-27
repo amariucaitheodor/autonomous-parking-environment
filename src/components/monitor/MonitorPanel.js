@@ -24,6 +24,7 @@ import MoveToInbox from '@material-ui/icons/MoveToInbox';
 import LocalShipping from '@material-ui/icons/LocalShipping';
 import HourglassEmpty from '@material-ui/icons/HourglassEmpty';
 import Pause from '@material-ui/icons/Pause';
+import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import DoneOutline from '@material-ui/icons/DoneOutline';
 import Close from '@material-ui/icons/Close';
 import LanguageIcon from '@material-ui/icons/Language';
@@ -108,6 +109,9 @@ export default function MonitorPanel({ totalLocalPaths, simulatorLocalPathsProgr
           case "standby":
             logIcon = <Pause />;
             break;
+          case "external":
+            logIcon = <PriorityHighIcon />;
+            break;
           default:
             logIcon = <Check />;
             break;
@@ -179,7 +183,7 @@ export default function MonitorPanel({ totalLocalPaths, simulatorLocalPathsProgr
           startIcon={simulationOn ? <ZoomIn /> : <Edit />}
           onClick={() => { toggleDebugMode(simulatorPanel); }}
         >
-          {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Detail" : "Edit") : "Debug"} mode
+          {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Live" : "Edit") : "Debug"} mode
         </Button >
         <Button
           onClick={() => { toggleGlobalPlanView() }}
@@ -235,7 +239,7 @@ export default function MonitorPanel({ totalLocalPaths, simulatorLocalPathsProgr
             className={"mx-auto mb-3 mt-auto"}
             disabled={showLoader}
             startIcon={simulationOn ? <PauseCircleFilled /> : <PlayCircleFilled />}
-            onClick={() => { simulationOn ? toggleSimulation(true) : toggleSimulation(false) }}
+            onClick={() => { simulationOn ? toggleSimulation("Manual interruption triggered") : toggleSimulation() }}
           >
             {simulationOn ? "Pause simulation" : "Start simulation"}
           </Button>

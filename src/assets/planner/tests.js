@@ -2,7 +2,7 @@ var tests = [];
 
 // This tests that the robot uses available parking tiles as valid movement options
 tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
+    robotTestLocation: { "col": 0, "row": 0 },
     testConfiguration: [
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
         [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "parkingTile" }, { "type": "roadTile" }, { "type": "parkingTile" }, { "type": "roadTile" }],
@@ -16,7 +16,7 @@ tests.push({
 
 // This tests that the robot performs well under stress, with few empty spots and many actions to be made
 tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
+    robotTestLocation: { "col": 0, "row": 0 },
     testConfiguration: [
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
         [{ "type": "hubTile", "car": { "license": "7SUYQD", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "MNJYOP", "status": "Idle" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "XGJSEJ", "status": "AwaitingDelivery" } }, { "type": "roadTile" }],
@@ -30,7 +30,7 @@ tests.push({
 
 // This tests stacking vehicles behind others
 tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
+    robotTestLocation: { "col": 0, "row": 0 },
     testConfiguration: [
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
         [{ "type": "hubTile", "car": { "license": "ZIGI6M", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "445UKF", "status": "Idle" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "P7924W", "status": "Idle" } }, { "type": "roadTile" }],
@@ -44,7 +44,7 @@ tests.push({
 
 // This tests clearing vehicles stacked behind others
 tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
+    robotTestLocation: { "col": 0, "row": 0 },
     testConfiguration: [
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
         [{ "type": "hubTile" }, { "type": "roadTile" }, { "type": "parkingTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
@@ -58,7 +58,7 @@ tests.push({
 
 // This tests transferring vehicles to make space for others
 tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
+    robotTestLocation: { "col": 0, "row": 0 },
     testConfiguration: [
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
         [{ "type": "hubTile", "car": { "license": "FZYOQ9", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
@@ -72,7 +72,7 @@ tests.push({
 
 // This tests a partial planning event where 3/4 cars are delivered
 tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
+    robotTestLocation: { "col": 0, "row": 0 },
     testConfiguration: [
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
         [{ "type": "hubTile", "car": { "license": "HJ9N7E", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "FU2PWD", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
@@ -86,7 +86,7 @@ tests.push({
 
 // This tests a more advanced partial planning event where 3/5 cars are parked, and a transfer is required
 tests.push({
-    robotTestLocation: { "column": 0, "row": 0 },
+    robotTestLocation: { "col": 0, "row": 0 },
     testConfiguration: [
         [{ "type": "roadTile" }, { "type": "roadTile" }, { "type": "inaccessibleTile" }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],
         [{ "type": "hubTile", "car": { "license": "BNIZWM", "status": "AwaitingParking" } }, { "type": "roadTile" }, { "type": "parkingTile", "car": { "license": "7RBB2M", "status": "AwaitingDelivery" } }, { "type": "roadTile" }, { "type": "roadTile" }, { "type": "roadTile" }],

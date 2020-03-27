@@ -36,7 +36,7 @@ function generateProblem(robotGridStaticLocation, configuration, carriedCar) {
     let tilesString = "";
     let tilesSetupString = "";
     let carsStatusesString = "";
-    let robotLocationString = `    (IsAt Robot R${robotGridStaticLocation.row}C${robotGridStaticLocation.column})\n`;
+    let robotLocationString = `    (IsAt Robot R${robotGridStaticLocation.row}C${robotGridStaticLocation.col})\n`;
     let carsLocationsString = "";
     let carIndex = 0;
 

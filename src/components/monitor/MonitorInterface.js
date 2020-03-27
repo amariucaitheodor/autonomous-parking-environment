@@ -71,7 +71,7 @@ class MonitorInterface extends React.Component {
 
     fromGridToCanvas(position) {
         return {
-            x: this.state.visualGridOffset.x + position.column * this.state.gridCellSize.width,
+            x: this.state.visualGridOffset.x + position.col * this.state.gridCellSize.width,
             y: this.state.visualGridOffset.y + position.row * this.state.gridCellSize.height - this.state.gridCellSize.height / 50
         };
     }
@@ -95,7 +95,7 @@ class MonitorInterface extends React.Component {
             * (this.props.configuration.length + 1) // vertical padding cells are always 1 height tall in total
         );
 
-        return { row: cellRow, column: cellColumn };
+        return { row: cellRow, col: cellColumn };
     }
 
     render() {
@@ -134,6 +134,7 @@ class MonitorInterface extends React.Component {
                         changeRobotGridLocation={this.props.changeRobotGridLocation}
                     />
                     <EditMap
+                        simulationButtonsDisabled={this.props.simulationButtonsDisabled}
                         fromCanvasToGrid={this.fromCanvasToGrid}
                         parkingLotOffset={this.state.visualGridOffset}
                         simulatorInterface={this.props.simulatorInterface}
@@ -143,6 +144,9 @@ class MonitorInterface extends React.Component {
                         changeCarStatusOnTile={this.props.changeCarStatusOnTile}
                         debugMode={this.props.debugMode}
                         simulationOn={this.props.simulationOn}
+                        carRetrievedReplan={this.props.carRetrievedReplan}
+                        carRequestedReplan={this.props.carRequestedReplan}
+                        carArrivedReplan={this.props.carArrivedReplan}
                     />
                 </Stage>
                 {

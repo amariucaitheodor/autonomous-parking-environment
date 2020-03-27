@@ -137,7 +137,8 @@ class App extends React.Component {
     let newConfiguration = JSON.parse(JSON.stringify(plannerTests[testNumber].testConfiguration));
     this.updateConfiguration(newConfiguration, true);
     this.setState({
-      robotCommandsSimulator: []
+      robotCommandsSimulator: [],
+      carriedCarSimulator: plannerTests[testNumber].carriedCar,
     }, () => { this.toggleSimulation() });
   }
 
@@ -181,7 +182,8 @@ class App extends React.Component {
   }
 
   changeRobotIsCarrying() {
-    if (this.state.simulatorConfiguration[this.state.robotLocationSimulator.row][this.state.robotLocationSimulator.col].car !== undefined)
+    if (this.state.simulatorConfiguration[this.state.robotLocationSimulator.row][this.state.robotLocationSimulator.col].car !== undefined ||
+      this.state.simulationOn)
       return;
 
     let newCar = null;

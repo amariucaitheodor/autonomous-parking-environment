@@ -5,6 +5,9 @@ import { tileType, tileCarStatus } from '../../Configuration';
 import GridImage from '../../../assets/monitor_icons_components/GridImage';
 import ChangeTileTypeImage from '../../../assets/monitor_icons/switch.png';
 import ChangeTileCarStatusImage from '../../../assets/monitor_icons/car-status.png';
+import RequestCarImage from '../../../assets/monitor_icons/request-car.png';
+import ArriveCarImage from '../../../assets/monitor_icons/enter-car.png';
+import LeaveCarImage from '../../../assets/monitor_icons/exit-car.png';
 
 function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedReplan, carArrivedReplan, simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, simulationOn }) {
 
@@ -120,7 +123,7 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                                                         y={rowIndex * gridCellSize.height}
                                                         width={gridCellSize.width / 4}
                                                         height={gridCellSize.height / 4}
-                                                        src={ChangeTileTypeImage}
+                                                        src={simulationButtonsDisabled ? null : ChangeTileTypeImage}
                                                         listening={false}
                                                         shadowBlur={0}
                                                     />
@@ -144,8 +147,16 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                                                 tile.car.status === tileCarStatus.IDLE;
                                             var hasCarAwaitingOwner = tile.car !== undefined &&
                                                 tile.car.status === tileCarStatus.AWAITING_OWNER;
-                                            var isAvailableHub = tile.type === tileType.HUB && tile.car === undefined;
+                                            var isAvailableHub = tile.type === tileType.HUB &&
+                                                tile.car === undefined;
                                             var replanPosition = { row: rowIndex, col: colIndex };
+
+                                            if (hasCarIdle)
+                                                var replanButtonImage = RequestCarImage;
+                                            else if (hasCarAwaitingOwner) {
+                                                replanButtonImage = LeaveCarImage;
+                                            } else if (isAvailableHub)
+                                                replanButtonImage = ArriveCarImage;
 
                                             return (
                                                 <React.Fragment key={rowIndex + colIndex + rowIndex * configuration[0].length}>
@@ -167,10 +178,10 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                                                             />
                                                             <GridImage
                                                                 x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
-                                                                y={rowIndex * gridCellSize.height + gridCellSize.height / 4}
+                                                                y={rowIndex * gridCellSize.height + gridCellSize.height / 3.65}
                                                                 width={gridCellSize.width / 4}
-                                                                height={gridCellSize.height / 4}
-                                                                src={ChangeTileCarStatusImage}
+                                                                height={gridCellSize.height / 5}
+                                                                src={replanButtonImage}
                                                                 listening={false}
                                                                 shadowBlur={0}
                                                             />

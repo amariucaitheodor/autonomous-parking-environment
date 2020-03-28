@@ -52,21 +52,24 @@ export default function Bar({ simulationOn }) {
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href="#/parking"
+                    href={"#/parking"}
+                    disabled={simulationOn}
                     aria-label="go to parking lot"
                 >
                     <LocalParking />
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href={simulationOn ? null : "#/surveillance"}
+                    href={"#/surveillance"}
+                    disabled={simulationOn}
                     aria-label="go to cctv cameras"
                 >
                     <Visibility />
                 </IconButton>
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
-                    href={simulationOn ? null : "#/public-interface/pricing"}
+                    href={"#/public-interface/pricing"}
+                    disabled={simulationOn}
                     aria-label="go to public interface"
                 >
                     <AccountCircle />

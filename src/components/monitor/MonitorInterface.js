@@ -47,9 +47,6 @@ class MonitorInterface extends React.Component {
     }
 
     checkForResize() {
-        if (!this.props.resizableMonitor)
-            return;
-
         let newParameters = this.calculateNewParameters();
         this.setState({
             stageHeight: newParameters.stageHeight,

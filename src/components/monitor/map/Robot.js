@@ -2,6 +2,7 @@ import React, { createRef } from "react";
 import { Image, Arrow, Layer } from "react-konva";
 import RobotImage from '../../../assets/monitor_icons/robot.png';
 import CarImage from '../../../assets/monitor_icons/racecar.png';
+import Konva from "konva";
 
 class Robot extends React.Component {
     constructor() {
@@ -44,15 +45,16 @@ class Robot extends React.Component {
         });
     };
 
-    propToGrid = (robotCanvasLocation) => {
+    propToGrid = (robotCanvasLocation, { carEnteringHubAsRobotLeavesException }) => {
         var robotGridLocation = this.props.fromCanvasToGrid(robotCanvasLocation);
 
         if ((robotGridLocation.col >= 0 && robotGridLocation.col < this.props.configuration[0].length) &&
             (robotGridLocation.row >= 0 && robotGridLocation.row < this.props.configuration.length) &&
             (this.props.configuration[robotGridLocation.row][robotGridLocation.col].car === null ||
                 this.props.configuration[robotGridLocation.row][robotGridLocation.col].car === undefined ||
-                this.props.carriedCar === null)) {
-            this.props.changeRobotGridLocation({ newColumn: robotGridLocation.col, newRow: robotGridLocation.row });
+                this.props.carriedCar === null ||
+                carEnteringHubAsRobotLeavesException)) {
+            this.props.changeRobotGridLocation({ col: robotGridLocation.col, row: robotGridLocation.row });
             var canvasLocation = this.props.fromGridToCanvas({ col: robotGridLocation.col, row: robotGridLocation.row });
         } else {
             canvasLocation = this.props.cavasRobotLocation;
@@ -122,6 +124,7 @@ class Robot extends React.Component {
             this.simulatorRobotImageRef.current.to({
                 x: this.props.fromGridToCanvas(givenCommmands[index]).x,
                 y: this.props.fromGridToCanvas(givenCommmands[index]).y,
+                easing: Konva.Easings.EaseInOut,
                 duration: 1
             });
         }
@@ -135,6 +138,18 @@ class Robot extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        if (prevProps.simulatorInterface === false) {
+            return;
+        } else if (this.props.simulatorInterface === false) {
+            // Default to no paths for the parking lot interface as this feature (parking lot interface) was cancelled by team.
+            this.setState({
+                localPaths: [],
+                globalPath: [],
+                activePath: []
+            });
+            return;
+        }
+
         if (prevProps.simulationOn !== this.props.simulationOn) {
             if (this.props.simulationOn) {
                 this.updatePaths();
@@ -146,10 +161,13 @@ class Robot extends React.Component {
                     globalPath: [],
                     activePath: []
                 });
+                // Only when simulation is stopped because of a replan, a robot might be 
+                // leaving a hub with a car as another car enters, thus allow robot carrying
+                // car to be propped to a grid cell already containing a car.
                 this.propToGrid({
                     x: this.simulatorRobotImageRef.current.attrs.x,
                     y: this.simulatorRobotImageRef.current.attrs.y
-                });
+                }, { robotLeavingHubAsCarEnters: true });
             }
         } else if (this.props.simulationOn && this.props.simulatorLocalPathsProgress !== this.state.localPaths.length) {
             if (prevProps.gridCellSize !== this.props.gridCellSize) {
@@ -183,7 +201,7 @@ class Robot extends React.Component {
                     stroke={"black"}
                     strokeWidth={0.7}
                 />
-                {/* Simulator robot is asyncronous, hence two robot images! */}
+                {/* Simulator robot is asynchronous, hence two robot images! */}
                 <Image
                     ref={this.simulatorRobotImageRef}
                     x={this.props.cavasRobotLocation.x}

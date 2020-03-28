@@ -3,7 +3,6 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import AppBar from './AppBar';
 import MonitorInterface from './monitor/MonitorInterface';
 import MonitorPanel from './monitor/MonitorPanel';
-// import Websockets from './monitor/Websockets';
 import SurveillanceInterface from './surveillance/SurveillanceInterface';
 import SurveillancePanel from './surveillance/SurveillancePanel';
 import PublicInterface from './public_interface/PublicInterface';
@@ -32,7 +31,6 @@ class App extends React.Component {
     this.state = {
       // General configuration
       globalPlanView: false,
-      resizableMonitor: true,
       showLoader: false,
       // Parking Lot Monitor configuration
       parkingLotConfiguration: [
@@ -114,7 +112,7 @@ class App extends React.Component {
     return { spacesTotal: calculatedSpacesTotal, spacesAvailable: calculatedSpacesAvailable };
   }
 
-  updateConfiguration(newConfiguration, forSimulator) {
+  updateConfiguration(newConfiguration, { forSimulator }) {
     let calculatedSpaces = this.recalculateSpaces(newConfiguration);
     if (forSimulator)
       this.setState({
@@ -133,18 +131,18 @@ class App extends React.Component {
   runTest(testNumber) {
     // Reset configuration and robot position to test settings
     this.changeRobotGridLocation({
-      newRow: plannerTests[testNumber].robotTestLocation.row,
-      newColumn: plannerTests[testNumber].robotTestLocation.col
+      row: plannerTests[testNumber].robotTestLocation.row,
+      col: plannerTests[testNumber].robotTestLocation.col
     });
     let newConfiguration = JSON.parse(JSON.stringify(plannerTests[testNumber].testConfiguration));
-    this.updateConfiguration(newConfiguration, true);
+    this.updateConfiguration(newConfiguration, { forSimulator: true });
     this.setState({
       robotCommandsSimulator: [],
       carriedCarSimulator: plannerTests[testNumber].carriedCar,
     }, () => { this.toggleSimulation() });
   }
 
-  addLog(event, toSimulatorPanel) {
+  addLog(event, { toSimulatorPanel }) {
     var newLogs = toSimulatorPanel ? this.state.logsSimulator : this.state.logsParking;
     if (newLogs.length === (toSimulatorPanel ? this.simulatorLogSize : this.parkingLogSize))
       newLogs.shift();
@@ -180,7 +178,7 @@ class App extends React.Component {
     }
 
     newConfiguration[position.row][position.col] = { type: newConfiguration[position.row][position.col].type, car: newCar }
-    this.updateConfiguration(newConfiguration, true);
+    this.updateConfiguration(newConfiguration, { forSimulator: true });
   }
 
   changeRobotIsCarrying() {
@@ -221,7 +219,7 @@ class App extends React.Component {
         break;
     }
     newConfiguration[position.row][position.col] = { type: newType };
-    this.updateConfiguration(newConfiguration, true);
+    this.updateConfiguration(newConfiguration, { forSimulator: true });
   }
 
   liftCarFromTile(tilePosition, fromSimulator) {
@@ -243,7 +241,7 @@ class App extends React.Component {
       title: `Lifted ${carriedCar.license} (R${tilePosition.row}C${tilePosition.col})`,
       type: "moving",
       time: new Date()
-    }, fromSimulator);
+    }, { toSimulatorPanel: fromSimulator });
   }
 
   dropCarOnTile(tilePosition, toSimulator) {
@@ -276,7 +274,7 @@ class App extends React.Component {
       title: `${event} ${carriedCar.license} (R${tilePosition.row}C${tilePosition.col})`,
       type: eventType,
       time: new Date()
-    }, toSimulator);
+    }, { toSimulatorPanel: toSimulator });
 
     newConfiguration[tilePosition.row][tilePosition.col] = {
       type: newConfiguration[tilePosition.row][tilePosition.col].type,
@@ -299,9 +297,9 @@ class App extends React.Component {
       });
   }
 
-  changeRobotGridLocation({ newRow, newColumn }) {
+  changeRobotGridLocation(newLocation) {
     this.setState({
-      robotLocationSimulator: { col: newColumn, row: newRow }
+      robotLocationSimulator: { col: newLocation.col, row: newLocation.row }
     });
   }
 
@@ -336,13 +334,13 @@ class App extends React.Component {
           title: stopStatus,
           type: "standby",
           time: new Date()
-        }, true);
+        }, { toSimulatorPanel: true });
       } else {
         this.addLog({
           title: "Generating plan...",
           type: "planning",
           time: new Date()
-        }, true);
+        }, { toSimulatorPanel: true });
 
         this.setState({ showLoader: true });
 
@@ -375,7 +373,7 @@ class App extends React.Component {
               title: "Planning succeeded",
               type: "success",
               time: new Date()
-            }, true);
+            }, { toSimulatorPanel: true });
           });
         } else {
           if (commands.includes("The empty plan solves it"))
@@ -383,31 +381,31 @@ class App extends React.Component {
               title: "There is nothing to do",
               type: "fail",
               time: new Date()
-            }, true);
+            }, { toSimulatorPanel: true });
           else if (commands.includes("No plan will solve it"))
             this.addLog({
               title: "Goal is impossible to reach",
               type: "fail",
               time: new Date()
-            }, true);
+            }, { toSimulatorPanel: true });
           else if (commands.includes("Parse status: err"))
             this.addLog({
               title: "Failed to parse the plan",
               type: "fail",
               time: new Date()
-            }, true);
+            }, { toSimulatorPanel: true });
           else if (commands.includes("Suspected timeout"))
             this.addLog({
               title: "Planning timed out",
               type: "fail",
               time: new Date()
-            }, true);
+            }, { toSimulatorPanel: true });
           else
             this.addLog({
               title: "Planning failed",
               type: "fail",
               time: new Date()
-            }, true);
+            }, { toSimulatorPanel: true });
           this.setState({
             simulationButtonsDisabled: false,
           });
@@ -424,13 +422,13 @@ class App extends React.Component {
     newConfiguration[replanPosition.row][replanPosition.col] = {
       type: newConfiguration[replanPosition.row][replanPosition.col].type
     };
-    this.updateConfiguration(newConfiguration, true);
+    this.updateConfiguration(newConfiguration, { forSimulator: true });
 
     this.addLog({
       title: `Owner retrieved ${carLicenseRetrieved} (R${replanPosition.row}C${replanPosition.col})`,
       type: "external",
       time: new Date()
-    }, true);
+    }, { toSimulatorPanel: true });
     this.toggleSimulation("Stopped to replan");
     this.toggleSimulation();
   }
@@ -446,13 +444,13 @@ class App extends React.Component {
         status: tileCarStatus.AWAITING_DELIVERY
       }
     };
-    this.updateConfiguration(newConfiguration, true);
+    this.updateConfiguration(newConfiguration, { forSimulator: true });
 
     this.addLog({
       title: `Requested ${carRequestedLicense} (R${replanPosition.row}C${replanPosition.col})`,
       type: "external",
       time: new Date()
-    }, true);
+    }, { toSimulatorPanel: true });
     this.toggleSimulation("Stopped to replan");
     this.toggleSimulation();
   }
@@ -468,13 +466,13 @@ class App extends React.Component {
         status: tileCarStatus.AWAITING_PARKING
       }
     }
-    this.updateConfiguration(newConfiguration, true);
+    this.updateConfiguration(newConfiguration, { forSimulator: true });
 
     this.addLog({
       title: `${newLicense} arrived at (R${replanPosition.row}C${replanPosition.col})`,
       type: "external",
       time: new Date()
-    }, true);
+    }, { toSimulatorPanel: true });
     this.toggleSimulation("Stopped to replan");
     this.toggleSimulation();
   }
@@ -500,12 +498,12 @@ class App extends React.Component {
 
   resetConfiguration() {
     this.changeRobotGridLocation({
-      newRow: this.robotSavedLocation.row,
-      newColumn: this.robotSavedLocation.col
+      row: this.robotSavedLocation.row,
+      col: this.robotSavedLocation.col
     });
     // Deep cloned:
     let newConfiguration = JSON.parse(JSON.stringify(this.simulatorSavedConfiguration));
-    this.updateConfiguration(newConfiguration, true);
+    this.updateConfiguration(newConfiguration, { forSimulator: true });
     this.setState({
       robotCommandsSimulator: []
     });
@@ -535,10 +533,8 @@ class App extends React.Component {
               <SurveillancePanel />
             </Route>
             <Route path="/parking">
-              {/* <Websockets /> */}
               <MonitorInterface
                 simulatorInterface={false}
-                resizableMonitor={this.state.resizableMonitor}
                 configuration={this.state.parkingLotConfiguration}
                 carriedCar={this.state.carriedCarParking}
                 changeRobotGridLocation={this.changeRobotGridLocation}
@@ -564,7 +560,6 @@ class App extends React.Component {
             <Route path="/">
               <MonitorInterface
                 simulatorInterface={true}
-                resizableMonitor={this.state.resizableMonitor}
                 configuration={this.state.simulatorConfiguration}
                 carriedCar={this.state.carriedCarSimulator}
                 changeRobotGridLocation={this.changeRobotGridLocation}

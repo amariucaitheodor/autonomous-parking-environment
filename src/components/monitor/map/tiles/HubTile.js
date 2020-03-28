@@ -5,7 +5,7 @@ import GridImage from '../../../../assets/monitor_icons_components/GridImage';
 import HubImage from '../../../../assets/monitor_icons/hub.png';
 import CarImage from '../../../../assets/monitor_icons/racecar.png';
 
-function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize }) {
+function HubTile({ visualGridOffset, row, col, configuration, gridCellSize }) {
     var occupied = false;
     var hubTileColor = [0, "rgb(14, 82, 165)", 1, "rgb(19, 115, 236)"]; // neutral, blue
     if (configuration[row][col].car !== undefined) {
@@ -17,8 +17,8 @@ function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize }) {
     return (
         <>
             <Rect
-                x={parkingLotOffset.x + col * gridCellSize.width}
-                y={parkingLotOffset.y + row * gridCellSize.height}
+                x={visualGridOffset.x + col * gridCellSize.width}
+                y={visualGridOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fillRadialGradientStartPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
@@ -29,16 +29,16 @@ function HubTile({ parkingLotOffset, row, col, configuration, gridCellSize }) {
                 strokeWidth={0.5}
             />
             <GridImage
-                x={parkingLotOffset.x + col * gridCellSize.width}
-                y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 4}
+                x={visualGridOffset.x + col * gridCellSize.width}
+                y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 4}
                 width={gridCellSize.width}
                 height={gridCellSize.height / 2}
                 src={HubImage}
                 shadowBlur={5}
             />
             <GridImage
-                x={parkingLotOffset.x + col * gridCellSize.width}
-                y={parkingLotOffset.y + row * gridCellSize.height}
+                x={visualGridOffset.x + col * gridCellSize.width}
+                y={visualGridOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 src={CarImage}

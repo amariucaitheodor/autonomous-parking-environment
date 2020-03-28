@@ -6,18 +6,18 @@ import RoadTile from "./tiles/RoadTile";
 import InaccessibleTile from './tiles/InaccessibleTile';
 import { tileType } from '../../Configuration';
 
-function Map({ configuration, gridCellSize, parkingLotOffset }) {
+function Map({ configuration, gridCellSize, visualGridOffset }) {
 
     let tiles = [];
     configuration.forEach((tileRow, rowIndex) => {
         tileRow.forEach((tile, colIndex) => {
             let renderTile = null;
 
-            // We pass parkingLotOffset to the tiles to eliminate nesting and thus be able to run in FastLayer
+            // We pass visualGridOffset to the tiles to eliminate nesting and thus be able to run in FastLayer
             switch (tile.type) {
                 case tileType.PARKING:
                     renderTile = <ParkingLotTile
-                        parkingLotOffset={parkingLotOffset}
+                        visualGridOffset={visualGridOffset}
                         key={rowIndex + colIndex + rowIndex * configuration[0].length}
                         row={rowIndex}
                         col={colIndex}
@@ -27,7 +27,7 @@ function Map({ configuration, gridCellSize, parkingLotOffset }) {
                     break;
                 case tileType.HUB:
                     renderTile = <HubTile
-                        parkingLotOffset={parkingLotOffset}
+                        visualGridOffset={visualGridOffset}
                         key={rowIndex + colIndex + rowIndex * configuration[0].length}
                         row={rowIndex}
                         col={colIndex}
@@ -37,7 +37,7 @@ function Map({ configuration, gridCellSize, parkingLotOffset }) {
                     break;
                 case tileType.ROAD:
                     renderTile = <RoadTile
-                        parkingLotOffset={parkingLotOffset}
+                        visualGridOffset={visualGridOffset}
                         key={rowIndex + colIndex + rowIndex * configuration[0].length}
                         row={rowIndex}
                         col={colIndex}
@@ -47,7 +47,7 @@ function Map({ configuration, gridCellSize, parkingLotOffset }) {
                     break;
                 case tileType.INACCESSIBLE:
                     renderTile = <InaccessibleTile
-                        parkingLotOffset={parkingLotOffset}
+                        visualGridOffset={visualGridOffset}
                         key={rowIndex + colIndex + rowIndex * configuration[0].length}
                         row={rowIndex}
                         col={colIndex}

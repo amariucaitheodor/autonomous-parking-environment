@@ -1,11 +1,11 @@
 import React from "react";
 import { Rect } from "react-konva";
 
-function RoadTile({ parkingLotOffset, row, col, gridCellSize, }) {
+function RoadTile({ visualGridOffset, row, col, gridCellSize, }) {
     return (
         <Rect
-            x={parkingLotOffset.x + col * gridCellSize.width}
-            y={parkingLotOffset.y + row * gridCellSize.height}
+            x={visualGridOffset.x + col * gridCellSize.width}
+            y={visualGridOffset.y + row * gridCellSize.height}
             width={gridCellSize.width}
             height={gridCellSize.height}
             fill={"rgb(240, 240, 240)"}

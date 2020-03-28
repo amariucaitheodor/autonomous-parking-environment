@@ -61,13 +61,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
 
   let robotStatus = null;
   if (carriedCar === null)
-    robotStatus = simulationOn ? "Advancing" : "On Standby";
+    robotStatus = simulationOn ?
+      (robotTargetSimulator === null ? '' : `Advancing to R${robotTargetSimulator.row}C${robotTargetSimulator.col}`) :
+      "On Standby";
   else switch (carriedCar.status) {
     case tileCarStatus.AWAITING_DELIVERY:
       robotStatus = "Delivering " + carriedCar.license;
@@ -75,8 +77,11 @@ export default function MonitorPanel({ totalLocalPaths, simulatorLocalPathsProgr
     case tileCarStatus.AWAITING_PARKING:
       robotStatus = "Parking " + carriedCar.license;
       break;
+      case tileCarStatus.IDLE:
+        robotStatus = "Transferring " + carriedCar.license;
+        break;
     default:
-      console.error("Unknown carriedCar status when updating Monitor Panel");
+      console.error(`Unknown carriedCar status when updating Monitor Panel: ${carriedCar.status}`);
       break;
   }
 

@@ -67,6 +67,7 @@ class App extends React.Component {
       spacesAvailableSimulator: 10,
       spacesTotalSimulator: 10,
       // Simulator specific configuration
+      robotTargetSimulator: null,
       simulationOn: false,
       alreadyActivated: false,
       simulationButtonsDisabled: false,
@@ -94,6 +95,7 @@ class App extends React.Component {
     this.carRequestedReplan = this.carRequestedReplan.bind(this);
     this.carRetrievedReplan = this.carRetrievedReplan.bind(this);
     this.carArrivedReplan = this.carArrivedReplan.bind(this);
+    this.changeRobotTarget = this.changeRobotTarget.bind(this);
   }
 
   recalculateSpaces(configuration) {
@@ -303,6 +305,12 @@ class App extends React.Component {
     });
   }
 
+  changeRobotTarget(newTarget) {
+    this.setState({
+      robotTargetSimulator: { col: newTarget.col - 1, row: newTarget.row - 1 }
+    });
+  }
+
   toggleGlobalPlanView() {
     this.setState({
       globalPlanView: !this.state.globalPlanView
@@ -379,6 +387,12 @@ class App extends React.Component {
           else if (commands.includes("No plan will solve it"))
             this.addLog({
               title: "Goal is impossible to reach",
+              type: "fail",
+              time: new Date()
+            }, true);
+          else if (commands.includes("Parse status: err"))
+            this.addLog({
+              title: "Failed to parse the plan",
               type: "fail",
               time: new Date()
             }, true);
@@ -561,6 +575,7 @@ class App extends React.Component {
                 dropCarOnTile={this.dropCarOnTile}
                 showLoader={this.state.showLoader}
                 // Simulator specific configuration
+                changeRobotTarget={this.changeRobotTarget}
                 changeRobotIsCarrying={this.changeRobotIsCarrying}
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
@@ -573,6 +588,7 @@ class App extends React.Component {
                 carRequestedReplan={this.carRequestedReplan}
                 carArrivedReplan={this.carArrivedReplan}
                 simulationButtonsDisabled={this.state.simulationButtonsDisabled}
+                robotTargetSimulator={this.state.robotTargetSimulator}
               />
               <MonitorPanel
                 simulatorPanel={true}
@@ -594,6 +610,7 @@ class App extends React.Component {
                 toggleGlobalPlanView={this.toggleGlobalPlanView}
                 simulatorLocalPathsProgress={this.state.simulatorLocalPathsProgress}
                 totalLocalPaths={this.totalLocalPaths}
+                robotTargetSimulator={this.state.robotTargetSimulator}
               />
             </Route>
           </Switch>

@@ -39,7 +39,7 @@ class MonitorInterface extends React.Component {
             stageWidth: newParameters.stageWidth,
             horizontalPaddingInGridCells: newParameters.horizontalPadding,
             gridCellSize: newParameters.gridCellSize,
-            visualGridOffset: newParameters.visualGridOffset
+            visualGridOffset: newParameters.visualGridOffset,
         };
         this.checkForResize = this.checkForResize.bind(this);
         this.fromGridToCanvas = this.fromGridToCanvas.bind(this);
@@ -111,15 +111,16 @@ class MonitorInterface extends React.Component {
                     <Map
                         configuration={this.props.configuration}
                         gridCellSize={this.state.gridCellSize}
-                        parkingLotOffset={this.state.visualGridOffset}
+                        visualGridOffset={this.state.visualGridOffset}
                     />
                     <Robot
+                        changeRobotTarget={this.props.changeRobotTarget}
                         simulatorLocalPathsProgress={this.props.simulatorLocalPathsProgress}
                         changeRobotIsCarrying={this.props.changeRobotIsCarrying}
                         fromCanvasToGrid={this.fromCanvasToGrid}
                         fromGridToCanvas={this.fromGridToCanvas}
                         globalPlanView={this.props.globalPlanView}
-                        parkingLotOffset={this.state.visualGridOffset}
+                        visualGridOffset={this.state.visualGridOffset}
                         simulatorInterface={this.props.simulatorInterface}
                         configuration={this.props.configuration}
                         cavasRobotLocation={this.fromGridToCanvas(this.props.robotLocation)}
@@ -136,7 +137,7 @@ class MonitorInterface extends React.Component {
                     <EditMap
                         simulationButtonsDisabled={this.props.simulationButtonsDisabled}
                         fromCanvasToGrid={this.fromCanvasToGrid}
-                        parkingLotOffset={this.state.visualGridOffset}
+                        visualGridOffset={this.state.visualGridOffset}
                         simulatorInterface={this.props.simulatorInterface}
                         configuration={this.props.configuration}
                         gridCellSize={this.state.gridCellSize}
@@ -147,6 +148,7 @@ class MonitorInterface extends React.Component {
                         carRetrievedReplan={this.props.carRetrievedReplan}
                         carRequestedReplan={this.props.carRequestedReplan}
                         carArrivedReplan={this.props.carArrivedReplan}
+                        robotTargetSimulator={this.props.robotTargetSimulator}
                     />
                 </Stage>
                 {

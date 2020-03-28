@@ -3,12 +3,12 @@ import { Rect } from "react-konva";
 import GridImage from '../../../../assets/monitor_icons_components/GridImage';
 import InaccessibleTileImage from '../../../../assets/monitor_icons/blocked-sign.png';
 
-function InaccessibleTile({ parkingLotOffset, row, col, gridCellSize }) {
+function InaccessibleTile({ visualGridOffset, row, col, gridCellSize }) {
     return (
         <>
             <Rect
-                x={parkingLotOffset.x + col * gridCellSize.width}
-                y={parkingLotOffset.y + row * gridCellSize.height}
+                x={visualGridOffset.x + col * gridCellSize.width}
+                y={visualGridOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fillRadialGradientStartPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
@@ -19,8 +19,8 @@ function InaccessibleTile({ parkingLotOffset, row, col, gridCellSize }) {
                 strokeWidth={0.5}
             />
             <GridImage
-                x={parkingLotOffset.x + col * gridCellSize.width}
-                y={parkingLotOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
+                x={visualGridOffset.x + col * gridCellSize.width}
+                y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
                 width={gridCellSize.width}
                 height={gridCellSize.height / 2}
                 src={InaccessibleTileImage}

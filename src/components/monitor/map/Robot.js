@@ -68,8 +68,8 @@ class Robot extends React.Component {
     updatePaths = () => {
         let newGlobalPath = [];
         for (var i = 0; i < this.props.robotCommands.length; i++) {
-            let xCoord = this.props.parkingLotOffset.x + this.props.robotCommands[i].col * this.props.gridCellSize.width + this.props.gridCellSize.width / 2;
-            let yCoord = this.props.parkingLotOffset.y + this.props.robotCommands[i].row * this.props.gridCellSize.height + this.props.gridCellSize.height / 2;
+            let xCoord = this.props.visualGridOffset.x + this.props.robotCommands[i].col * this.props.gridCellSize.width + this.props.gridCellSize.width / 2;
+            let yCoord = this.props.visualGridOffset.y + this.props.robotCommands[i].row * this.props.gridCellSize.height + this.props.gridCellSize.height / 2;
             newGlobalPath.push(xCoord);
             newGlobalPath.push(yCoord);
         }
@@ -77,25 +77,28 @@ class Robot extends React.Component {
         let localPathsArray = [];
         let newPathStop = [];
         for (i = 0; i < this.props.robotCommands.length; i++) {
-            let xCoord = this.props.parkingLotOffset.x + this.props.robotCommands[i].col * this.props.gridCellSize.width + this.props.gridCellSize.width / 2;
-            let yCoord = this.props.parkingLotOffset.y + this.props.robotCommands[i].row * this.props.gridCellSize.height + this.props.gridCellSize.height / 2;
+            let xCoord = this.props.visualGridOffset.x + this.props.robotCommands[i].col * this.props.gridCellSize.width + this.props.gridCellSize.width / 2;
+            let yCoord = this.props.visualGridOffset.y + this.props.robotCommands[i].row * this.props.gridCellSize.height + this.props.gridCellSize.height / 2;
             newPathStop.push(xCoord);
             newPathStop.push(yCoord);
             if (this.props.robotCommands[i].pickupCar || this.props.robotCommands[i].dropCar) {
                 localPathsArray.push(newPathStop);
                 newPathStop = [];
-                let xCoord = this.props.parkingLotOffset.x + this.props.robotCommands[i].col * this.props.gridCellSize.width + this.props.gridCellSize.width / 2;
-                let yCoord = this.props.parkingLotOffset.y + this.props.robotCommands[i].row * this.props.gridCellSize.height + this.props.gridCellSize.height / 2;
+                let xCoord = this.props.visualGridOffset.x + this.props.robotCommands[i].col * this.props.gridCellSize.width + this.props.gridCellSize.width / 2;
+                let yCoord = this.props.visualGridOffset.y + this.props.robotCommands[i].row * this.props.gridCellSize.height + this.props.gridCellSize.height / 2;
                 newPathStop.push(xCoord);
                 newPathStop.push(yCoord);
             }
         }
 
+        var currentLocalPath = localPathsArray[this.props.simulatorLocalPathsProgress];
         this.setState({
             localPaths: localPathsArray,
             globalPath: newGlobalPath,
-            activePath: this.props.globalPlanView ? newGlobalPath : localPathsArray[this.props.simulatorLocalPathsProgress]
+            activePath: this.props.globalPlanView ? newGlobalPath : currentLocalPath
         });
+        var targetGridLocation = this.props.fromCanvasToGrid({ x: currentLocalPath[currentLocalPath.length - 2], y: currentLocalPath[currentLocalPath.length - 1] });
+        this.props.changeRobotTarget(targetGridLocation);
     }
 
     simulationTimer = null;
@@ -132,32 +135,39 @@ class Robot extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (prevProps.simulatorLocalPathsProgress !== this.props.simulatorLocalPathsProgress && !this.props.globalPlanView) {
-            this.setState({
-                activePath: this.state.localPaths[this.props.simulatorLocalPathsProgress]
-            });
-        }
-
-        if (prevProps.gridCellSize !== this.props.gridCellSize) {
-            this.updatePaths();
-        }
-
-        if (prevProps.globalPlanView !== this.props.globalPlanView) {
-            this.setState({
-                activePath: this.props.globalPlanView ? this.state.globalPath : this.state.localPaths[this.props.simulatorLocalPathsProgress]
-            });
-        }
-
         if (prevProps.simulationOn !== this.props.simulationOn) {
             if (this.props.simulationOn) {
                 this.updatePaths();
                 this.executeSimulation(1, this.props.robotCommands);
             } else {
                 clearTimeout(this.simulationTimer);
-                this.updatePaths();
+                this.setState({
+                    localPaths: [],
+                    globalPath: [],
+                    activePath: []
+                });
                 this.propToGrid({
                     x: this.simulatorRobotImageRef.current.attrs.x,
                     y: this.simulatorRobotImageRef.current.attrs.y
+                });
+            }
+        } else if (this.props.simulationOn && this.props.simulatorLocalPathsProgress !== this.state.localPaths.length) {
+            if (prevProps.gridCellSize !== this.props.gridCellSize) {
+                this.updatePaths();
+            }
+
+            if (prevProps.simulatorLocalPathsProgress !== this.props.simulatorLocalPathsProgress && !this.props.globalPlanView) {
+                var currentLocalPath = this.state.localPaths[this.props.simulatorLocalPathsProgress];
+                this.setState({
+                    activePath: currentLocalPath
+                });
+                var targetGridLocation = this.props.fromCanvasToGrid({ x: currentLocalPath[currentLocalPath.length - 2], y: currentLocalPath[currentLocalPath.length - 1] });
+                this.props.changeRobotTarget(targetGridLocation);
+            }
+
+            if (prevProps.globalPlanView !== this.props.globalPlanView) {
+                this.setState({
+                    activePath: this.props.globalPlanView ? this.state.globalPath : this.state.localPaths[this.props.simulatorLocalPathsProgress]
                 });
             }
         }

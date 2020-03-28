@@ -9,7 +9,7 @@ import RequestCarImage from '../../../assets/monitor_icons/request-car.png';
 import ArriveCarImage from '../../../assets/monitor_icons/enter-car.png';
 import LeaveCarImage from '../../../assets/monitor_icons/exit-car.png';
 
-function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedReplan, carArrivedReplan, simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, parkingLotOffset, simulationOn }) {
+function EditMap({ robotTargetSimulator, simulationButtonsDisabled, carRetrievedReplan, carRequestedReplan, carArrivedReplan, simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, visualGridOffset, simulationOn }) {
 
     function changeTileClicked(e) {
         // Not entirely sure why this works
@@ -60,7 +60,7 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                                     }
 
                                     return (<DebugTile
-                                        parkingLotOffset={parkingLotOffset}
+                                        visualGridOffset={visualGridOffset}
                                         key={rowIndex + colIndex + rowIndex * configuration[0].length}
                                         tile={tile}
                                         row={rowIndex}
@@ -75,8 +75,8 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                     {simulatorInterface && !simulationButtonsDisabled ?
                         <Layer>
                             <Group
-                                x={parkingLotOffset.x}
-                                y={parkingLotOffset.y}>
+                                x={visualGridOffset.x}
+                                y={visualGridOffset.y}>
                                 {
                                     configuration.map((tileRow, rowIndex) => {
                                         return tileRow.map((tile, colIndex) => {
@@ -138,8 +138,8 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                     {simulatorInterface && simulationOn ?
                         <Layer>
                             <Group
-                                x={parkingLotOffset.x}
-                                y={parkingLotOffset.y}>
+                                x={visualGridOffset.x}
+                                y={visualGridOffset.y}>
                                 {
                                     configuration.map((tileRow, rowIndex) => {
                                         return tileRow.map((tile, colIndex) => {
@@ -149,6 +149,9 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                                                 tile.car.status === tileCarStatus.AWAITING_OWNER;
                                             var isAvailableHub = tile.type === tileType.HUB &&
                                                 tile.car === undefined;
+                                            if (robotTargetSimulator)
+                                                isAvailableHub = isAvailableHub && (robotTargetSimulator.col !== colIndex ||
+                                                    robotTargetSimulator.row !== rowIndex);
                                             var replanPosition = { row: rowIndex, col: colIndex };
 
                                             if (hasCarIdle)
@@ -177,7 +180,7 @@ function EditMap({ simulationButtonsDisabled, carRetrievedReplan, carRequestedRe
                                                                 strokeWidth={2}
                                                             />
                                                             <GridImage
-                                                                x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 4}
+                                                                x={(colIndex + 1) * gridCellSize.width - gridCellSize.width / 3.9}
                                                                 y={rowIndex * gridCellSize.height + gridCellSize.height / 3.65}
                                                                 width={gridCellSize.width / 4}
                                                                 height={gridCellSize.height / 5}

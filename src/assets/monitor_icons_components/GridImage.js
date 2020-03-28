@@ -3,27 +3,43 @@ import { Image } from "react-konva";
 import PropTypes from 'prop-types';
 
 export default class GridImage extends React.Component {
+  
+// https://codesandbox.io/s/github/konvajs/site/tree/master/react-demos/images
   state = {
     image: null
   };
 
-  static propTypes = {
-    src: PropTypes.string.isRequired,
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-  };
-
   componentDidMount() {
-    const image = new window.Image();
-    image.src = this.props.src;
-    image.onload = () => {
-      this.setState({
-        image: image
-      });
-    };
+    this.loadImage();
   }
+
+  componentDidUpdate(oldProps) {
+    if (oldProps.src !== this.props.src) {
+      this.loadImage();
+    }
+  }
+
+  componentWillUnmount() {
+    this.image.removeEventListener('load', this.handleLoad);
+  }
+
+  loadImage() {
+    // save to "this" to remove "load" handler on unmount
+    this.image = new window.Image();
+    this.image.src = this.props.src;
+    this.image.addEventListener('load', this.handleLoad);
+  }
+
+  handleLoad = () => {
+    // after setState react-konva will update canvas and redraw the layer
+    // because "image" property is changed
+    this.setState({
+      image: this.image
+    });
+    // if you keep same image object during source updates
+    // you will have to update layer manually:
+    // this.imageNode.getLayer().batchDraw();
+  };
 
   render() {
     return (
@@ -40,3 +56,11 @@ export default class GridImage extends React.Component {
     );
   }
 }
+
+GridImage.propTypes = {
+  src: PropTypes.string.isRequired,
+  x: PropTypes.number.isRequired,
+  y: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+};

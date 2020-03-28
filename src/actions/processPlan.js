@@ -11,9 +11,6 @@ export default function processCommands(steps, robotLocation) {
             path.push({ col: path[previousActionIndex].col + 1, row: path[previousActionIndex].row })
         } else if (command.includes("go-left")) {
             path.push({ col: path[previousActionIndex].col - 1, row: path[previousActionIndex].row })
-        } else if (command.includes("park-car-inplace") ||
-            command.includes("dropoff-car-inplace")) {
-            path.push({ dropCar: true, col: path[previousActionIndex].col, row: path[previousActionIndex].row })
         } else if (command.includes("dropoff-car-rightwards") ||
             command.includes("park-car-rightwards") ||
             command.includes("transfer-car-rightwards")) {

@@ -53,7 +53,7 @@ class Robot extends React.Component {
             (this.props.configuration[robotGridLocation.row][robotGridLocation.col].car === null ||
                 this.props.configuration[robotGridLocation.row][robotGridLocation.col].car === undefined ||
                 this.props.carriedCar === null ||
-                robotLeavingHubAsCarEnters)) {
+                robotLeavingHubAsCarEnters === true)) {
             this.props.changeRobotGridLocation({ col: robotGridLocation.col, row: robotGridLocation.row });
             var canvasLocation = this.props.fromGridToCanvas({ col: robotGridLocation.col, row: robotGridLocation.row });
         } else {
@@ -216,7 +216,8 @@ class Robot extends React.Component {
                     onDragStart={() => { this.setScale(1.2, 1.2) }}
                     onDragEnd={() => {
                         this.setScale(1, 1);
-                        this.propToGrid(this.simulatorRobotImageRef.current._lastPos);
+                        this.propToGrid(this.simulatorRobotImageRef.current._lastPos,
+                            { robotLeavingHubAsCarEnters: false });
                     }}
                 />
                 <Image

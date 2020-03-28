@@ -45,7 +45,7 @@ class Robot extends React.Component {
         });
     };
 
-    propToGrid = (robotCanvasLocation, { carEnteringHubAsRobotLeavesException }) => {
+    propToGrid = (robotCanvasLocation, { robotLeavingHubAsCarEnters }) => {
         var robotGridLocation = this.props.fromCanvasToGrid(robotCanvasLocation);
 
         if ((robotGridLocation.col >= 0 && robotGridLocation.col < this.props.configuration[0].length) &&
@@ -53,7 +53,7 @@ class Robot extends React.Component {
             (this.props.configuration[robotGridLocation.row][robotGridLocation.col].car === null ||
                 this.props.configuration[robotGridLocation.row][robotGridLocation.col].car === undefined ||
                 this.props.carriedCar === null ||
-                carEnteringHubAsRobotLeavesException)) {
+                robotLeavingHubAsCarEnters)) {
             this.props.changeRobotGridLocation({ col: robotGridLocation.col, row: robotGridLocation.row });
             var canvasLocation = this.props.fromGridToCanvas({ col: robotGridLocation.col, row: robotGridLocation.row });
         } else {

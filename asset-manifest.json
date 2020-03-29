@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/operations-monitor/static/js/main.56944328.chunk.js",
-    "runtime-main.js": "/operations-monitor/static/js/runtime-main.ea1b8e5b.js",
-    "static/css/2.8ced67b3.chunk.css": "/operations-monitor/static/css/2.8ced67b3.chunk.css",
-    "static/js/2.b6cff0b0.chunk.js": "/operations-monitor/static/js/2.b6cff0b0.chunk.js",
-    "index.html": "/operations-monitor/index.html",
-    "precache-manifest.5ac84ff83c06f4e0c1304e097710587e.js": "/operations-monitor/precache-manifest.5ac84ff83c06f4e0c1304e097710587e.js",
-    "service-worker.js": "/operations-monitor/service-worker.js",
-    "static/js/2.b6cff0b0.chunk.js.LICENSE.txt": "/operations-monitor/static/js/2.b6cff0b0.chunk.js.LICENSE.txt",
-    "static/media/racecar.png": "/operations-monitor/static/media/racecar.32c01eca.png"
+    "main.js": "/Finitech-SDP/autonomous-parking-environment/static/js/main.9bbe58db.chunk.js",
+    "runtime-main.js": "/Finitech-SDP/autonomous-parking-environment/static/js/runtime-main.42589579.js",
+    "static/css/2.8ced67b3.chunk.css": "/Finitech-SDP/autonomous-parking-environment/static/css/2.8ced67b3.chunk.css",
+    "static/js/2.b6cff0b0.chunk.js": "/Finitech-SDP/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js",
+    "index.html": "/Finitech-SDP/autonomous-parking-environment/index.html",
+    "precache-manifest.5c21741ac447746099b2de37419e4582.js": "/Finitech-SDP/autonomous-parking-environment/precache-manifest.5c21741ac447746099b2de37419e4582.js",
+    "service-worker.js": "/Finitech-SDP/autonomous-parking-environment/service-worker.js",
+    "static/js/2.b6cff0b0.chunk.js.LICENSE.txt": "/Finitech-SDP/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js.LICENSE.txt",
+    "static/media/racecar.png": "/Finitech-SDP/autonomous-parking-environment/static/media/racecar.32c01eca.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.ea1b8e5b.js",
+    "static/js/runtime-main.42589579.js",
     "static/css/2.8ced67b3.chunk.css",
     "static/js/2.b6cff0b0.chunk.js",
-    "static/js/main.56944328.chunk.js"
+    "static/js/main.9bbe58db.chunk.js"
   ]
 }

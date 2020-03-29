@@ -1,6 +1,6 @@
 import React from "react";
 import { Rect } from "react-konva";
-import GridImage from '../../../../assets/monitor_icons_components/GridImage';
+import KonvaImage from '../../../KonvaImage';
 import InaccessibleTileImage from '../../../../assets/monitor_icons/blocked-sign.png';
 
 function InaccessibleTile({ visualGridOffset, row, col, gridCellSize }) {
@@ -15,10 +15,8 @@ function InaccessibleTile({ visualGridOffset, row, col, gridCellSize }) {
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                 fillRadialGradientColorStops={[0, "rgb(161, 39, 39)", 1, "rgb(197, 56, 56)"]}
-                stroke={"black"}
-                strokeWidth={0.5}
             />
-            <GridImage
+            <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}
                 y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
                 width={gridCellSize.width}

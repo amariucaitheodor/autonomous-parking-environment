@@ -2,7 +2,7 @@ import React from 'react';
 import { Image } from "react-konva";
 import PropTypes from 'prop-types';
 
-export default class GridImage extends React.Component {
+export default class KonvaImage extends React.Component {
   
 // https://codesandbox.io/s/github/konvajs/site/tree/master/react-demos/images
   state = {
@@ -10,6 +10,7 @@ export default class GridImage extends React.Component {
   };
 
   componentDidMount() {
+    console.log("LOADED IMAGE")
     this.loadImage();
   }
 
@@ -57,7 +58,7 @@ export default class GridImage extends React.Component {
   }
 }
 
-GridImage.propTypes = {
+KonvaImage.propTypes = {
   src: PropTypes.string.isRequired,
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,

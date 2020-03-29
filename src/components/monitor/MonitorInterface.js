@@ -124,7 +124,6 @@ class MonitorInterface extends React.Component {
                         carriedCar={this.props.carriedCar}
                         gridCellSize={this.state.gridCellSize}
                         simulationOn={this.props.simulationOn}
-                        alreadyActivated={this.props.alreadyActivated}
                         robotCommands={this.props.robotCommands}
                         liftCarFromTile={this.props.liftCarFromTile}
                         dropCarOnTile={this.props.dropCarOnTile}
@@ -132,7 +131,7 @@ class MonitorInterface extends React.Component {
                         changeRobotGridLocation={this.props.changeRobotGridLocation}
                     />
                     <EditMap
-                        simulationButtonsDisabled={this.props.simulationButtonsDisabled}
+                        simulationAboutToStartOrStarted={this.props.simulationAboutToStartOrStarted}
                         fromCanvasToGrid={this.fromCanvasToGrid}
                         visualGridOffset={this.state.visualGridOffset}
                         simulatorInterface={this.props.simulatorInterface}

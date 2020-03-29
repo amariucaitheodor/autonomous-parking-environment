@@ -1,7 +1,7 @@
 import React from "react";
 import { Rect } from "react-konva";
 import { tileCarStatus } from '../../../Configuration';
-import GridImage from '../../../../assets/monitor_icons_components/GridImage';
+import KonvaImage from '../../../KonvaImage';
 import HubImage from '../../../../assets/monitor_icons/hub.png';
 import CarImage from '../../../../assets/monitor_icons/racecar.png';
 
@@ -25,10 +25,8 @@ function HubTile({ visualGridOffset, row, col, configuration, gridCellSize }) {
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                 fillRadialGradientColorStops={hubTileColor}
-                stroke={"black"}
-                strokeWidth={0.5}
             />
-            <GridImage
+            <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}
                 y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 4}
                 width={gridCellSize.width}
@@ -36,7 +34,7 @@ function HubTile({ visualGridOffset, row, col, configuration, gridCellSize }) {
                 src={HubImage}
                 shadowBlur={5}
             />
-            <GridImage
+            <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}
                 y={visualGridOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}

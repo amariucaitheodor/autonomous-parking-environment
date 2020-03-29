@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationButtonsDisabled, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationAboutToStartOrStarted, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
 
@@ -205,14 +205,14 @@ export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, si
             className={"m-auto"}>
             <Button
               startIcon={<Save />}
-              disabled={simulationButtonsDisabled}
+              disabled={simulationAboutToStartOrStarted}
               onClick={() => { saveConfiguration() }}
             >
               Save
           </Button >
             <Button
               startIcon={<Replay />}
-              disabled={simulationButtonsDisabled}
+              disabled={simulationAboutToStartOrStarted}
               onClick={() => { resetConfiguration() }}
             >
               Reset
@@ -225,13 +225,13 @@ export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, si
             className={"m-auto"}>
             <Button
               startIcon={<Build />}
-              disabled={simulationButtonsDisabled}
+              disabled={simulationAboutToStartOrStarted}
               onClick={() => { runTest(testToRun) }}
             >
               Run test
         </Button >
             <Button
-              disabled={simulationButtonsDisabled}
+              disabled={simulationAboutToStartOrStarted}
               onClick={() => { setTestToRun((testToRun + 1) % noOfTests) }}
             >
               {testToRun}

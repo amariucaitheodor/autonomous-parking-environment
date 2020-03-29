@@ -42,37 +42,37 @@ function generateProblem(robotGridStaticLocation, configuration, carriedCar) {
 
     if (carriedCar !== null) {
         carIndex++;
-        carsString = carsString.concat(`        Car${carIndex} - car\n`);
-        carsLocationsString = carsLocationsString.concat(`        (IsCarrying Robot Car${carIndex})\n`);
+        carsString = carsString + `        Car${carIndex} - car\n`;
+        carsLocationsString = carsLocationsString + `        (IsCarrying Robot Car${carIndex})\n`;
 
         if (carriedCar.status === tileCarStatus.AWAITING_DELIVERY && carsInProblem.carsToBeDelivered > 0) {
-            carsStatusesString = carsStatusesString.concat(`        (${carriedCar.status} Car${carIndex})\n`);
+            carsStatusesString = carsStatusesString + `        (${carriedCar.status} Car${carIndex})\n`;
             carsInProblem.carsToBeDelivered--;
         } else if (carriedCar.status === tileCarStatus.AWAITING_PARKING && carsInProblem.carsToBeParked > 0) {
-            carsStatusesString = carsStatusesString.concat(`        (${carriedCar.status} Car${carIndex})\n`);
+            carsStatusesString = carsStatusesString + `        (${carriedCar.status} Car${carIndex})\n`;
             carsInProblem.carsToBeParked--;
         }
     }
 
     configuration.forEach((tileRow, rowIndex) => {
         tileRow.forEach((tile, colIndex) => {
-            tilesString = tilesString.concat(`        R${rowIndex}C${colIndex} - ${tile.type}\n`);
+            tilesString = tilesString + `        R${rowIndex}C${colIndex} - ${tile.type}\n`;
 
             if (colIndex > 0)
-                tilesSetupString = tilesSetupString.concat(`        (IsToTheLeftOf R${rowIndex}C${colIndex - 1} R${rowIndex}C${colIndex})\n`);
+                tilesSetupString = tilesSetupString + `        (IsToTheLeftOf R${rowIndex}C${colIndex - 1} R${rowIndex}C${colIndex})\n`;
             if (rowIndex > 0)
-                tilesSetupString = tilesSetupString.concat(`        (IsAbove R${rowIndex - 1}C${colIndex} R${rowIndex}C${colIndex})\n`);
+                tilesSetupString = tilesSetupString + `        (IsAbove R${rowIndex - 1}C${colIndex} R${rowIndex}C${colIndex})\n`;
 
             if (tile.car !== undefined) {
                 carIndex++;
-                carsString = carsString.concat(`        Car${carIndex} - car\n`);
-                carsLocationsString = carsLocationsString.concat(`        (IsAt Car${carIndex} R${rowIndex}C${colIndex})\n`);
+                carsString = carsString + `        Car${carIndex} - car\n`;
+                carsLocationsString = carsLocationsString + `        (IsAt Car${carIndex} R${rowIndex}C${colIndex})\n`;
 
                 if (tile.car.status === tileCarStatus.AWAITING_DELIVERY && carsInProblem.carsToBeDelivered > 0) {
-                    carsStatusesString = carsStatusesString.concat(`        (${tile.car.status} Car${carIndex})\n`);
+                    carsStatusesString = carsStatusesString + `        (${tile.car.status} Car${carIndex})\n`;
                     carsInProblem.carsToBeDelivered--;
                 } else if (tile.car.status === tileCarStatus.AWAITING_PARKING && carsInProblem.carsToBeParked > 0) {
-                    carsStatusesString = carsStatusesString.concat(`        (${tile.car.status} Car${carIndex})\n`);
+                    carsStatusesString = carsStatusesString + `        (${tile.car.status} Car${carIndex})\n`;
                     carsInProblem.carsToBeParked--;
                 }
             }

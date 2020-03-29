@@ -1,7 +1,7 @@
 import React from "react";
 import { Rect } from "react-konva";
 import { tileCarStatus } from '../../../Configuration';
-import GridImage from '../../../../assets/monitor_icons_components/GridImage';
+import KonvaImage from '../../../KonvaImage';
 import ParkingTileImage from '../../../../assets/monitor_icons/parking-sign.png';
 import CarImage from '../../../../assets/monitor_icons/racecar.png';
 
@@ -25,10 +25,8 @@ function ParkingLotTile({ visualGridOffset, row, col, configuration, gridCellSiz
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                 fillRadialGradientColorStops={parkingLotTileColor}
-                stroke={"black"}
-                strokeWidth={0.5}
             />
-            <GridImage
+            <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}
                 y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
                 width={gridCellSize.width}
@@ -36,7 +34,7 @@ function ParkingLotTile({ visualGridOffset, row, col, configuration, gridCellSiz
                 src={ParkingTileImage}
                 shadowBlur={5}
             />
-            <GridImage
+            <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}
                 y={visualGridOffset.y + row * gridCellSize.height}
                 width={gridCellSize.width}

@@ -110,14 +110,14 @@ class Robot extends React.Component {
                 row: givenCommmands[index - 1].row,
                 col: givenCommmands[index - 1].col
             },
-                this.props.simulatorInterface
+                { fromSimulator: true }
             );
         else if (givenCommmands[index - 1].dropCar !== undefined)
             this.props.dropCarOnTile({
                 row: givenCommmands[index - 1].row,
                 col: givenCommmands[index - 1].col
             },
-                this.props.simulatorInterface
+                { toSimulator: true }
             );
 
         if (index !== givenCommmands.length) {
@@ -197,9 +197,13 @@ class Robot extends React.Component {
                 {/* Robot path */}
                 < Arrow
                     points={this.state.activePath}
-                    shadowBlur={0.5}
+                    shadowBlur={1}
                     stroke={"black"}
-                    strokeWidth={0.7}
+                    strokeWidth={1.25}
+                    pointerLength={20}
+                    pointerWidth={20}
+                    fill={"black"}
+                    lineJoin={"round"}
                 />
                 {/* Simulator robot is asynchronous, hence two robot images! */}
                 <Image

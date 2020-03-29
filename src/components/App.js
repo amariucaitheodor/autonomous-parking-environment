@@ -11,19 +11,9 @@ import plan from '../actions/generatePlan';
 import processCommands from '../actions/processPlan';
 import generateProblem from '../actions/generateProblem.js';
 import { ThemeProvider } from '@material-ui/core/styles';
-import { lightTheme, darkTheme, tileType, tileCarStatus } from './Configuration';
+import { lightTheme, darkTheme, tileType, tileCarStatus, randomLicensePlate } from './Configuration';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import plannerTests from '../assets/planner/tests';
-
-function randomLicensePlate() {
-  const list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  var res = "";
-  for (var i = 0; i < 6; i++) {
-    var rnd = Math.floor(Math.random() * list.length);
-    res = res + list.charAt(rnd);
-  }
-  return res;
-}
 
 class App extends React.Component {
   constructor() {
@@ -67,8 +57,7 @@ class App extends React.Component {
       // Simulator specific configuration
       robotTargetSimulator: null,
       simulationOn: false,
-      alreadyActivated: false,
-      simulationButtonsDisabled: false,
+      simulationAboutToStartOrStarted: false,
       simulatorLocalPathsProgress: null
     };
 
@@ -183,7 +172,7 @@ class App extends React.Component {
 
   changeRobotIsCarrying() {
     if (this.state.simulatorConfiguration[this.state.robotLocationSimulator.row][this.state.robotLocationSimulator.col].car !== undefined ||
-      this.state.simulationOn)
+      this.state.simulationAboutToStartOrStarted)
       return;
 
     let newCar = null;
@@ -222,11 +211,12 @@ class App extends React.Component {
     this.updateConfiguration(newConfiguration, { forSimulator: true });
   }
 
-  liftCarFromTile(tilePosition, fromSimulator) {
+  liftCarFromTile(tilePosition, { fromSimulator }) {
     let newConfiguration = [...fromSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
     let carriedCar = newConfiguration[tilePosition.row][tilePosition.col].car;
+
     newConfiguration[tilePosition.row][tilePosition.col] = { type: newConfiguration[tilePosition.row][tilePosition.col].type };
-    this.updateConfiguration(newConfiguration, fromSimulator);
+    this.updateConfiguration(newConfiguration, { forSimulator: fromSimulator });
     if (fromSimulator)
       this.setState({
         carriedCarSimulator: carriedCar,
@@ -244,8 +234,8 @@ class App extends React.Component {
     }, { toSimulatorPanel: fromSimulator });
   }
 
-  dropCarOnTile(tilePosition, toSimulator) {
-    let carriedCar = toSimulator ? this.state.carriedCarSimulator : this.state.carriedCcarriedCarParkingarSimulator;
+  dropCarOnTile(tilePosition, { toSimulator }) {
+    let carriedCar = toSimulator ? this.state.carriedCarSimulator : this.state.carriedCarParking;
     let newConfiguration = [...toSimulator ? this.state.simulatorConfiguration : this.state.parkingLotConfiguration];
 
     switch (carriedCar.status) {
@@ -285,7 +275,7 @@ class App extends React.Component {
           (carriedCar.status === tileCarStatus.AWAITING_DELIVERY ? tileCarStatus.AWAITING_DELIVERY : tileCarStatus.IDLE)
       }
     }
-    this.updateConfiguration(newConfiguration, toSimulator);
+    this.updateConfiguration(newConfiguration, { forSimulator: toSimulator });
     if (toSimulator)
       this.setState({
         carriedCarSimulator: null,
@@ -322,12 +312,11 @@ class App extends React.Component {
   }
 
   async toggleSimulation(stopStatus) {
-    this.setState({ simulationButtonsDisabled: true }, async () => {
+    this.setState({ simulationAboutToStartOrStarted: true }, async () => {
       if (this.state.simulationOn) {
         this.setState({
           simulationOn: false,
-          simulationButtonsDisabled: false,
-          alreadyActivated: false,
+          simulationAboutToStartOrStarted: false,
           robotCommandsSimulator: [],
         });
         this.addLog({
@@ -364,11 +353,9 @@ class App extends React.Component {
           this.setState({
             robotCommandsSimulator: processedCommands,
             simulationOn: true,
-            simulationButtonsDisabled: true,
-            alreadyActivated: false,
+            simulationAboutToStartOrStarted: true,
             simulatorLocalPathsProgress: 0
           }, () => {
-            this.setState({ alreadyActivated: true })
             this.addLog({
               title: "Planning succeeded",
               type: "success",
@@ -407,7 +394,7 @@ class App extends React.Component {
               time: new Date()
             }, { toSimulatorPanel: true });
           this.setState({
-            simulationButtonsDisabled: false,
+            simulationAboutToStartOrStarted: false,
           });
         }
         this.setState({ showLoader: false });
@@ -574,7 +561,6 @@ class App extends React.Component {
                 changeRobotIsCarrying={this.changeRobotIsCarrying}
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
-                alreadyActivated={this.state.alreadyActivated}
                 changeTileType={this.changeTileType}
                 changeCarStatusOnTile={this.changeCarStatusOnTile}
                 globalPlanView={this.state.globalPlanView}
@@ -582,7 +568,7 @@ class App extends React.Component {
                 carRetrievedReplan={this.carRetrievedReplan}
                 carRequestedReplan={this.carRequestedReplan}
                 carArrivedReplan={this.carArrivedReplan}
-                simulationButtonsDisabled={this.state.simulationButtonsDisabled}
+                simulationAboutToStartOrStarted={this.state.simulationAboutToStartOrStarted}
                 robotTargetSimulator={this.state.robotTargetSimulator}
               />
               <MonitorPanel
@@ -597,7 +583,7 @@ class App extends React.Component {
                 showLoader={this.state.showLoader}
                 simulationOn={this.state.simulationOn}
                 toggleSimulation={this.toggleSimulation}
-                simulationButtonsDisabled={this.state.simulationButtonsDisabled}
+                simulationAboutToStartOrStarted={this.state.simulationAboutToStartOrStarted}
                 resetConfiguration={this.resetConfiguration}
                 saveConfiguration={this.saveConfiguration}
                 runTest={this.runTest}

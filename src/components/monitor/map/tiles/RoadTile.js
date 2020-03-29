@@ -6,11 +6,9 @@ function RoadTile({ visualGridOffset, row, col, gridCellSize, }) {
         <Rect
             x={visualGridOffset.x + col * gridCellSize.width}
             y={visualGridOffset.y + row * gridCellSize.height}
-            width={gridCellSize.width}
-            height={gridCellSize.height}
+            width={gridCellSize.width + 0.7}
+            height={gridCellSize.height + 0.7}
             fill={"rgb(240, 240, 240)"}
-            stroke={"black"}
-            strokeWidth={0.5}
         />
     );
 }

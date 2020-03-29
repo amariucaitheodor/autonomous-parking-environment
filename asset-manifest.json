@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/Finitech-SDP/autonomous-parking-environment/static/js/main.9bbe58db.chunk.js",
-    "runtime-main.js": "/Finitech-SDP/autonomous-parking-environment/static/js/runtime-main.42589579.js",
-    "static/css/2.8ced67b3.chunk.css": "/Finitech-SDP/autonomous-parking-environment/static/css/2.8ced67b3.chunk.css",
-    "static/js/2.b6cff0b0.chunk.js": "/Finitech-SDP/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js",
-    "index.html": "/Finitech-SDP/autonomous-parking-environment/index.html",
-    "precache-manifest.5c21741ac447746099b2de37419e4582.js": "/Finitech-SDP/autonomous-parking-environment/precache-manifest.5c21741ac447746099b2de37419e4582.js",
-    "service-worker.js": "/Finitech-SDP/autonomous-parking-environment/service-worker.js",
-    "static/js/2.b6cff0b0.chunk.js.LICENSE.txt": "/Finitech-SDP/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js.LICENSE.txt",
-    "static/media/racecar.png": "/Finitech-SDP/autonomous-parking-environment/static/media/racecar.32c01eca.png"
+    "main.js": "/autonomous-parking-environment/static/js/main.3af4eca8.chunk.js",
+    "runtime-main.js": "/autonomous-parking-environment/static/js/runtime-main.b07f9d46.js",
+    "static/css/2.8ced67b3.chunk.css": "/autonomous-parking-environment/static/css/2.8ced67b3.chunk.css",
+    "static/js/2.b6cff0b0.chunk.js": "/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js",
+    "index.html": "/autonomous-parking-environment/index.html",
+    "precache-manifest.b562fe4e639c98589af62b45dcd49b78.js": "/autonomous-parking-environment/precache-manifest.b562fe4e639c98589af62b45dcd49b78.js",
+    "service-worker.js": "/autonomous-parking-environment/service-worker.js",
+    "static/js/2.b6cff0b0.chunk.js.LICENSE.txt": "/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js.LICENSE.txt",
+    "static/media/racecar.png": "/autonomous-parking-environment/static/media/racecar.32c01eca.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.42589579.js",
+    "static/js/runtime-main.b07f9d46.js",
     "static/css/2.8ced67b3.chunk.css",
     "static/js/2.b6cff0b0.chunk.js",
-    "static/js/main.9bbe58db.chunk.js"
+    "static/js/main.3af4eca8.chunk.js"
   ]
 }

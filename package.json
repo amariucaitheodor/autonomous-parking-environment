@@ -20,7 +20,7 @@
     "react-scripts": "3.3.1",
     "react-time-ago": "^5.0.7"
   },
-  "homepage": "https://Finitech-SDP.github.io/operations-monitor",
+  "homepage": "https://github.com/Finitech-SDP/autonomous-parking-environment",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",

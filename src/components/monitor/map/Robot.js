@@ -214,7 +214,7 @@ class Robot extends React.Component {
                     height={this.props.gridCellSize.height}
                     image={this.props.carriedCar !== null ? this.state.carImage : this.state.robotImage}
                     shadowBlur={5}
-                    draggable={!this.props.simulationOn}
+                    draggable={!this.props.simulationAboutToStartOrStarted}
                     visible={this.props.simulatorInterface}
                     onClick={() => { this.props.changeRobotIsCarrying() }}
                     onDragStart={() => { this.setScale(1.2, 1.2) }}

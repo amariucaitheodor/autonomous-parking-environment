@@ -123,6 +123,7 @@ class MonitorInterface extends React.Component {
                         cavasRobotLocation={this.fromGridToCanvas(this.props.robotLocation)}
                         carriedCar={this.props.carriedCar}
                         gridCellSize={this.state.gridCellSize}
+                        simulationAboutToStartOrStarted={this.props.simulationAboutToStartOrStarted}
                         simulationOn={this.props.simulationOn}
                         robotCommands={this.props.robotCommands}
                         liftCarFromTile={this.props.liftCarFromTile}

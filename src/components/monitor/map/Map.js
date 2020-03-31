@@ -6,8 +6,7 @@ import RoadTile from "./tiles/RoadTile";
 import InaccessibleTile from './tiles/InaccessibleTile';
 import { tileType } from '../../Configuration';
 
-function Map({ configuration, gridCellSize, visualGridOffset }) {
-
+const Map = React.memo(function Map({ configuration, gridCellSize, visualGridOffset }) {
     let tiles = [];
     configuration.forEach((tileRow, rowIndex) => {
         tileRow.forEach((tile, colIndex) => {
@@ -70,6 +69,7 @@ function Map({ configuration, gridCellSize, visualGridOffset }) {
             {tiles}
         </FastLayer>
     );
-}
+})
 
 export default Map;
+Map.whyDidYouRender = true

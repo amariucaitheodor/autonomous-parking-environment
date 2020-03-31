@@ -25,6 +25,8 @@ function HubTile({ visualGridOffset, row, col, configuration, gridCellSize }) {
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                 fillRadialGradientColorStops={hubTileColor}
+                stroke={"black"}
+                strokeWidth={2.5}
             />
             <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}

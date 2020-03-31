@@ -8,7 +8,7 @@ function RoadTile({ visualGridOffset, row, col, gridCellSize, }) {
             y={visualGridOffset.y + row * gridCellSize.height}
             width={gridCellSize.width + 0.7}
             height={gridCellSize.height + 0.7}
-            fill={"rgb(240, 240, 240)"}
+            fill={"rgb(235, 235, 235)"}
         />
     );
 }

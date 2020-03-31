@@ -9,12 +9,11 @@ import RequestCarImage from '../../../assets/monitor_icons/request-car.png';
 import ArriveCarImage from '../../../assets/monitor_icons/enter-car.png';
 import LeaveCarImage from '../../../assets/monitor_icons/exit-car.png';
 
-function EditMap({ robotTargetSimulator, simulationAboutToStartOrStarted, carRetrievedReplan, carRequestedReplan, carArrivedReplan, simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, visualGridOffset, simulationOn }) {
+const EditMap = React.memo(function EditMap({ tinyMap, horizontalPaddingInGridCells, robotTargetSimulator, simulationAboutToStartOrStarted, carRetrievedReplan, carRequestedReplan, carArrivedReplan, simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, visualGridOffset, simulationOn }) {
 
     function changeTileClicked(e) {
-        // Not entirely sure why this works
         var tilePosition = fromCanvasToGrid({
-            x: e.target.parent.attrs.x + gridCellSize.width / 2,
+            x: e.target.parent.attrs.x + (horizontalPaddingInGridCells === 2 ? gridCellSize.width / 2 : 0),
             y: e.target.parent.attrs.y
         });
 
@@ -22,9 +21,8 @@ function EditMap({ robotTargetSimulator, simulationAboutToStartOrStarted, carRet
     }
 
     function changeCarStatusClicked(e) {
-        // Not entirely sure why this works
         var tilePosition = fromCanvasToGrid({
-            x: e.target.parent.attrs.x + gridCellSize.width / 2,
+            x: e.target.parent.attrs.x + (horizontalPaddingInGridCells === 2 ? gridCellSize.width / 2 : 0),
             y: e.target.parent.attrs.y
         });
 
@@ -59,6 +57,7 @@ function EditMap({ robotTargetSimulator, simulationAboutToStartOrStarted, carRet
                             }
 
                             return (<DebugTile
+                                tinyMap={tinyMap}
                                 visualGridOffset={visualGridOffset}
                                 key={rowIndex + colIndex + rowIndex * configuration[0].length}
                                 tile={tile}
@@ -191,6 +190,7 @@ function EditMap({ robotTargetSimulator, simulationAboutToStartOrStarted, carRet
             </Layer>
         </>
     );
-}
+})
 
 export default EditMap;
+EditMap.whyDidYouRender = true

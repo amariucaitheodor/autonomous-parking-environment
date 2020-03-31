@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationAboutToStartOrStarted, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+const MonitorPanel = React.memo(function MonitorPanel({ robotTargetSimulator, totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationAboutToStartOrStarted, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
 
@@ -191,7 +191,7 @@ export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, si
           {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Live" : "Edit") : "Debug"} mode
         </Button >
         <Button
-          onClick={() => { toggleGlobalPlanView() }}
+          onClick={() => { toggleGlobalPlanView(simulatorPanel) }}
         >
           {globalPlanView ? <LanguageIcon /> : <TrendingUpIcon />}
         </Button>
@@ -253,4 +253,7 @@ export default function MonitorPanel({ robotTargetSimulator, totalLocalPaths, si
       }
     </Drawer >
   );
-}
+})
+
+export default MonitorPanel;
+MonitorPanel.whyDidYouRender = true

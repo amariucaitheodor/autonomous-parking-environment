@@ -2,7 +2,7 @@ import React from 'react';
 import { Image } from "react-konva";
 import PropTypes from 'prop-types';
 
-export default class KonvaImage extends React.Component {
+export default class KonvaImage extends React.PureComponent {
   
 // https://codesandbox.io/s/github/konvajs/site/tree/master/react-demos/images
   state = {
@@ -10,7 +10,6 @@ export default class KonvaImage extends React.Component {
   };
 
   componentDidMount() {
-    console.log("LOADED IMAGE")
     this.loadImage();
   }
 
@@ -42,6 +41,7 @@ export default class KonvaImage extends React.Component {
     // this.imageNode.getLayer().batchDraw();
   };
 
+  static whyDidYouRender = true
   render() {
     return (
       <Image

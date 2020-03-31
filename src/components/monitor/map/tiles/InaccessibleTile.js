@@ -15,6 +15,8 @@ function InaccessibleTile({ visualGridOffset, row, col, gridCellSize }) {
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                 fillRadialGradientColorStops={[0, "rgb(161, 39, 39)", 1, "rgb(197, 56, 56)"]}
+                stroke={"black"}
+                strokeWidth={2.5}
             />
             <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}

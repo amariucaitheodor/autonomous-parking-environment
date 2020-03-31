@@ -7,37 +7,14 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import indigo from '@material-ui/core/colors/indigo';
 import { drawerWidth, MATERIAL_UI_APP_BAR_HEIGHT } from '../Configuration';
 
-class MonitorInterface extends React.Component {
-    calculateNewParameters() {
-        let stageHeight = Math.max(window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT, 1);
-        let stageWidth = Math.max(window.innerWidth - drawerWidth, 1);
-        let horizontalPadding = (stageWidth / stageHeight > 16 / 9) ? 2 : 1;
-        let gridCellSize = {
-            height: stageHeight / (this.props.configuration.length + 1), // vertical padding is always 1 grid cell high
-            width: stageWidth / (this.props.configuration[0].length + horizontalPadding)
-        };
-        let visualGridOffset = {
-            x: gridCellSize.width * horizontalPadding / 2, // divide padding into left and right padding
-            y: gridCellSize.height / 2
-        };
-
-        return {
-            stageHeight: stageHeight,
-            stageWidth: stageWidth,
-            horizontalPadding: horizontalPadding,
-            gridCellSize: gridCellSize,
-            visualGridOffset: visualGridOffset,
-        }
-    }
-
+class MonitorInterface extends React.PureComponent {
     constructor(props) {
         super(props);
-
         let newParameters = this.calculateNewParameters();
         this.state = {
             stageHeight: newParameters.stageHeight,
             stageWidth: newParameters.stageWidth,
-            horizontalPaddingInGridCells: newParameters.horizontalPadding,
+            horizontalPaddingInGridCells: newParameters.horizontalPaddingInGridCells,
             gridCellSize: newParameters.gridCellSize,
             visualGridOffset: newParameters.visualGridOffset,
         };
@@ -46,12 +23,39 @@ class MonitorInterface extends React.Component {
         this.fromCanvasToGrid = this.fromCanvasToGrid.bind(this);
     }
 
+    calculateNewParameters() {
+        let stageHeight = Math.max(window.innerHeight - MATERIAL_UI_APP_BAR_HEIGHT, 1);
+        let stageWidth = Math.max(window.innerWidth - drawerWidth, 1);
+        let horizontalPaddingInGridCells = (stageWidth / stageHeight > 16 / 9) ? 2 : 1;
+        let gridCellSize = {
+            height: stageHeight / (this.props.configuration.length + 1), // vertical padding is always 1 grid cell high
+            width: stageWidth / (this.props.configuration[0].length + horizontalPaddingInGridCells)
+        };
+        let visualGridOffset = {
+            x: gridCellSize.width * horizontalPaddingInGridCells / 2, // divide padding into left and right padding
+            y: gridCellSize.height / 2
+        };
+
+        if (gridCellSize.height < 80 || gridCellSize.width < 160)
+            this.tinyMap = true;
+        else
+            this.tinyMap = false;
+
+        return {
+            stageHeight: stageHeight,
+            stageWidth: stageWidth,
+            horizontalPaddingInGridCells: horizontalPaddingInGridCells,
+            gridCellSize: gridCellSize,
+            visualGridOffset: visualGridOffset,
+        }
+    }
+
     checkForResize() {
         let newParameters = this.calculateNewParameters();
         this.setState({
             stageHeight: newParameters.stageHeight,
             stageWidth: newParameters.stageWidth,
-            horizontalPaddingInGridCells: newParameters.horizontalPadding,
+            horizontalPaddingInGridCells: newParameters.horizontalPaddingInGridCells,
             gridCellSize: newParameters.gridCellSize,
             visualGridOffset: newParameters.visualGridOffset
         });
@@ -62,7 +66,8 @@ class MonitorInterface extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.configuration !== prevProps.configuration)
+        // Moving from simulator to parking lot or the other way around:
+        if (this.props.simulatorInterface !== prevProps.simulatorInterface)
             this.checkForResize();
     }
 
@@ -95,7 +100,10 @@ class MonitorInterface extends React.Component {
         return { row: cellRow, col: cellColumn };
     }
 
+    static whyDidYouRender = true
     render() {
+        var canvasRobotLocation = this.fromGridToCanvas(this.props.robotLocation);
+
         return (
             <main
                 style={{ marginRight: drawerWidth, background: indigo }}
@@ -120,7 +128,9 @@ class MonitorInterface extends React.Component {
                         visualGridOffset={this.state.visualGridOffset}
                         simulatorInterface={this.props.simulatorInterface}
                         configuration={this.props.configuration}
-                        cavasRobotLocation={this.fromGridToCanvas(this.props.robotLocation)}
+                        // Prevents re-render because of different object with same values
+                        cavasRobotLocationX={canvasRobotLocation.x}
+                        cavasRobotLocationY={canvasRobotLocation.y}
                         carriedCar={this.props.carriedCar}
                         gridCellSize={this.state.gridCellSize}
                         simulationAboutToStartOrStarted={this.props.simulationAboutToStartOrStarted}
@@ -132,6 +142,8 @@ class MonitorInterface extends React.Component {
                         changeRobotGridLocation={this.props.changeRobotGridLocation}
                     />
                     <EditMap
+                        horizontalPaddingInGridCells={this.horizontalPaddingInGridCells}
+                        tinyMap={this.tinyMap}
                         simulationAboutToStartOrStarted={this.props.simulationAboutToStartOrStarted}
                         fromCanvasToGrid={this.fromCanvasToGrid}
                         visualGridOffset={this.state.visualGridOffset}

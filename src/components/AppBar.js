@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function Bar({ simulationOn }) {
+const Bar = React.memo(function Bar({ simulationOn }) {
     const classes = useStyles();
 
     return (
@@ -77,4 +77,7 @@ export default function Bar({ simulationOn }) {
             </Toolbar>
         </AppBar>
     )
-}
+})
+
+export default Bar;
+Bar.whyDidYouRender = true

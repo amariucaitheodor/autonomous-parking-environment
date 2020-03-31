@@ -1,7 +1,7 @@
 import React from "react";
 import { Rect, Text } from "react-konva";
 
-function DebugTile({ visualGridOffset, tile, row, col, gridCellSize, debugName }) {
+function DebugTile({ tinyMap, visualGridOffset, tile, row, col, gridCellSize, debugName }) {
     // We pass visualGridOffset to the tiles to eliminate nesting and thus be able to run in FastLayer
     return (
         <>
@@ -26,9 +26,9 @@ function DebugTile({ visualGridOffset, tile, row, col, gridCellSize, debugName }
             />
             <Text
                 x={visualGridOffset.x + col * gridCellSize.width + gridCellSize.width / 16}
-                y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 3.5}
+                y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / (tinyMap ? 3 : 3.5)}
                 text={`(${debugName})`}
-                fontSize={18}
+                fontSize={tinyMap ? 14 : 18}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fontStyle={"bold"}
@@ -36,17 +36,17 @@ function DebugTile({ visualGridOffset, tile, row, col, gridCellSize, debugName }
             <Text
                 x={visualGridOffset.x + col * gridCellSize.width + gridCellSize.width / 15}
                 y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 1.25}
-                text={tile.car === undefined? null : `License: ${tile.car.license}`}
-                fontSize={18}
+                text={tile.car === undefined ? null : `License: ${tile.car.license}`}
+                fontSize={tinyMap ? 14 : 18}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fontStyle={"bold"}
             />
             <Text
                 x={visualGridOffset.x + col * gridCellSize.width + gridCellSize.width / 15}
-                y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 1.55}
-                text={tile.car === undefined? null : tile.car.status.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
-                fontSize={18}
+                y={visualGridOffset.y + row * gridCellSize.height + gridCellSize.height / 1.6}
+                text={tile.car === undefined ? null : tile.car.status.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+                fontSize={tinyMap ? 14 : 18}
                 width={gridCellSize.width}
                 height={gridCellSize.height}
                 fontStyle={"bold"}

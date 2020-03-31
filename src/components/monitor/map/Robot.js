@@ -4,7 +4,7 @@ import RobotImage from '../../../assets/monitor_icons/robot.png';
 import CarImage from '../../../assets/monitor_icons/racecar.png';
 import Konva from "konva";
 
-class Robot extends React.Component {
+class Robot extends React.PureComponent {
     constructor() {
         super()
         this.simulatorRobotImageRef = createRef();
@@ -57,7 +57,7 @@ class Robot extends React.Component {
             this.props.changeRobotGridLocation({ col: robotGridLocation.col, row: robotGridLocation.row });
             var canvasLocation = this.props.fromGridToCanvas({ col: robotGridLocation.col, row: robotGridLocation.row });
         } else {
-            canvasLocation = this.props.cavasRobotLocation;
+            canvasLocation = { x: this.props.cavasRobotLocationX, y: this.props.canvasRobotLocationY };
         }
 
         this.simulatorRobotImageRef.current.to({
@@ -110,14 +110,14 @@ class Robot extends React.Component {
                 row: givenCommmands[index - 1].row,
                 col: givenCommmands[index - 1].col
             },
-                { fromSimulator: true }
+                true
             );
         else if (givenCommmands[index - 1].dropCar !== undefined)
             this.props.dropCarOnTile({
                 row: givenCommmands[index - 1].row,
                 col: givenCommmands[index - 1].col
             },
-                { toSimulator: true }
+                true
             );
 
         if (index !== givenCommmands.length) {
@@ -191,6 +191,7 @@ class Robot extends React.Component {
         }
     }
 
+    static whyDidYouRender = true
     render() {
         return (
             <Layer>
@@ -208,8 +209,8 @@ class Robot extends React.Component {
                 {/* Simulator robot is asynchronous, hence two robot images! */}
                 <Image
                     ref={this.simulatorRobotImageRef}
-                    x={this.props.cavasRobotLocation.x}
-                    y={this.props.cavasRobotLocation.y}
+                    x={this.props.cavasRobotLocationX}
+                    y={this.props.cavasRobotLocationY}
                     width={this.props.gridCellSize.width}
                     height={this.props.gridCellSize.height}
                     image={this.props.carriedCar !== null ? this.state.carImage : this.state.robotImage}
@@ -226,8 +227,8 @@ class Robot extends React.Component {
                 />
                 <Image
                     ref={this.parkingRobotImageRef}
-                    x={this.props.cavasRobotLocation.x}
-                    y={this.props.cavasRobotLocation.y}
+                    x={this.props.cavasRobotLocationX}
+                    y={this.props.cavasRobotLocationY}
                     width={this.props.gridCellSize.width}
                     height={this.props.gridCellSize.height}
                     visible={!this.props.simulatorInterface}

@@ -25,6 +25,8 @@ function ParkingLotTile({ visualGridOffset, row, col, configuration, gridCellSiz
                 fillRadialGradientEndPoint={{ x: gridCellSize.width / 2, y: gridCellSize.height / 2 }}
                 fillRadialGradientStartRadius={gridCellSize.width > gridCellSize.height ? gridCellSize.height : gridCellSize.width}
                 fillRadialGradientColorStops={parkingLotTileColor}
+                stroke={"black"}
+                strokeWidth={2.5}
             />
             <KonvaImage
                 x={visualGridOffset.x + col * gridCellSize.width}

@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/autonomous-parking-environment/precache-manifest.b562fe4e639c98589af62b45dcd49b78.js"
+  "/autonomous-parking-environment/precache-manifest.768cf3c4351118eca3451a5d27120173.js"
 );
 
 self.addEventListener('message', (event) => {

@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/autonomous-parking-environment/static/js/main.3af4eca8.chunk.js",
+    "main.js": "/autonomous-parking-environment/static/js/main.84ccdf57.chunk.js",
     "runtime-main.js": "/autonomous-parking-environment/static/js/runtime-main.b07f9d46.js",
     "static/css/2.8ced67b3.chunk.css": "/autonomous-parking-environment/static/css/2.8ced67b3.chunk.css",
-    "static/js/2.b6cff0b0.chunk.js": "/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js",
+    "static/js/2.882a9a85.chunk.js": "/autonomous-parking-environment/static/js/2.882a9a85.chunk.js",
     "index.html": "/autonomous-parking-environment/index.html",
-    "precache-manifest.b562fe4e639c98589af62b45dcd49b78.js": "/autonomous-parking-environment/precache-manifest.b562fe4e639c98589af62b45dcd49b78.js",
+    "precache-manifest.768cf3c4351118eca3451a5d27120173.js": "/autonomous-parking-environment/precache-manifest.768cf3c4351118eca3451a5d27120173.js",
     "service-worker.js": "/autonomous-parking-environment/service-worker.js",
-    "static/js/2.b6cff0b0.chunk.js.LICENSE.txt": "/autonomous-parking-environment/static/js/2.b6cff0b0.chunk.js.LICENSE.txt",
+    "static/js/2.882a9a85.chunk.js.LICENSE.txt": "/autonomous-parking-environment/static/js/2.882a9a85.chunk.js.LICENSE.txt",
     "static/media/racecar.png": "/autonomous-parking-environment/static/media/racecar.32c01eca.png"
   },
   "entrypoints": [
     "static/js/runtime-main.b07f9d46.js",
     "static/css/2.8ced67b3.chunk.css",
-    "static/js/2.b6cff0b0.chunk.js",
-    "static/js/main.3af4eca8.chunk.js"
+    "static/js/2.882a9a85.chunk.js",
+    "static/js/main.84ccdf57.chunk.js"
   ]
 }

@@ -130,7 +130,7 @@ class Robot extends React.PureComponent {
         }
 
         index += 1;
-        if (index > givenCommmands.length || !this.props.simulationOn) {
+        if (index > givenCommmands.length || !this.props.simulationStarted) {
             this.props.toggleSimulation("Executed plan, entering standby");
             return;
         }
@@ -150,8 +150,8 @@ class Robot extends React.PureComponent {
             return;
         }
 
-        if (prevProps.simulationOn !== this.props.simulationOn) {
-            if (this.props.simulationOn) {
+        if (prevProps.simulationStarted !== this.props.simulationStarted) {
+            if (this.props.simulationStarted) {
                 this.updatePaths();
                 this.executeSimulation(1, this.props.robotCommands);
             } else {
@@ -169,7 +169,7 @@ class Robot extends React.PureComponent {
                     y: this.simulatorRobotImageRef.current.attrs.y
                 }, { robotLeavingHubAsCarEnters: true });
             }
-        } else if (this.props.simulationOn && this.props.simulatorLocalPathsProgress !== this.state.localPaths.length) {
+        } else if (this.props.simulationStarted && this.props.simulatorLocalPathsProgress !== this.state.localPaths.length) {
             if (prevProps.gridCellSize !== this.props.gridCellSize) {
                 this.updatePaths();
             }

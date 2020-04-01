@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Bar = React.memo(function Bar({ simulationOn }) {
+const Bar = React.memo(function Bar({ simulationAboutToStartOrStarted }) {
     const classes = useStyles();
 
     return (
@@ -53,7 +53,7 @@ const Bar = React.memo(function Bar({ simulationOn }) {
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
                     href={"#/parking"}
-                    disabled={simulationOn}
+                    disabled={simulationAboutToStartOrStarted}
                     aria-label="go to parking lot"
                 >
                     <LocalParking />
@@ -61,7 +61,7 @@ const Bar = React.memo(function Bar({ simulationOn }) {
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
                     href={"#/surveillance"}
-                    disabled={simulationOn}
+                    disabled={simulationAboutToStartOrStarted}
                     aria-label="go to cctv cameras"
                 >
                     <Visibility />
@@ -69,7 +69,7 @@ const Bar = React.memo(function Bar({ simulationOn }) {
                 <IconButton
                     className={clsx(classes.menuButtonRight)}
                     href={"#/public-interface/pricing"}
-                    disabled={simulationOn}
+                    disabled={simulationAboutToStartOrStarted}
                     aria-label="go to public interface"
                 >
                     <AccountCircle />

@@ -9,7 +9,7 @@ import RequestCarImage from '../../../assets/monitor_icons/request-car.png';
 import ArriveCarImage from '../../../assets/monitor_icons/enter-car.png';
 import LeaveCarImage from '../../../assets/monitor_icons/exit-car.png';
 
-const EditMap = React.memo(function EditMap({ tinyMap, horizontalPaddingInGridCells, robotTargetSimulator, simulationAboutToStartOrStarted, carRetrievedReplan, carRequestedReplan, carArrivedReplan, simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, visualGridOffset, simulationOn }) {
+const EditMap = React.memo(function EditMap({ tinyMap, horizontalPaddingInGridCells, robotTargetSimulator, simulationAboutToStartOrStarted, carRetrievedReplan, carRequestedReplan, carArrivedReplan, simulatorInterface, fromCanvasToGrid, changeTileType, changeCarStatusOnTile, configuration, gridCellSize, debugMode, visualGridOffset, simulationStarted }) {
 
     function changeTileClicked(e) {
         var tilePosition = fromCanvasToGrid({
@@ -41,7 +41,7 @@ const EditMap = React.memo(function EditMap({ tinyMap, horizontalPaddingInGridCe
 
                             switch (tile.type) {
                                 case tileType.PARKING:
-                                    debugName = "Parking space";
+                                    debugName = "Parking";
                                     break;
                                 case tileType.HUB:
                                     debugName = "Hub";
@@ -133,7 +133,7 @@ const EditMap = React.memo(function EditMap({ tinyMap, horizontalPaddingInGridCe
             </Layer>
             {/* Interactable buttons to trigger mid-simulation events */}
             <Layer
-                visible={debugMode && simulatorInterface && simulationOn}>
+                visible={debugMode && simulatorInterface && simulationStarted}>
                 <Group
                     x={visualGridOffset.x}
                     y={visualGridOffset.y}>

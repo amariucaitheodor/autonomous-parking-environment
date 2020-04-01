@@ -64,7 +64,7 @@ class App extends React.PureComponent {
       spacesTotalSimulator: 10,
       // Simulator specific configuration
       robotTargetSimulator: null,
-      simulationOn: false,
+      simulationStarted: false,
       simulationAboutToStartOrStarted: false,
       simulatorLocalPathsProgress: null
     };
@@ -320,9 +320,9 @@ class App extends React.PureComponent {
 
   async toggleSimulation(stopStatus) {
     this.setState({ simulationAboutToStartOrStarted: true }, async () => {
-      if (this.state.simulationOn) {
+      if (this.state.simulationStarted) {
         this.setState({
-          simulationOn: false,
+          simulationStarted: false,
           simulationAboutToStartOrStarted: false,
           robotCommandsSimulator: [],
         });
@@ -359,7 +359,7 @@ class App extends React.PureComponent {
 
           this.setState({
             robotCommandsSimulator: processedCommands,
-            simulationOn: true,
+            simulationStarted: true,
             simulationAboutToStartOrStarted: true,
             simulatorLocalPathsProgress: 0
           }, () => {
@@ -514,7 +514,7 @@ class App extends React.PureComponent {
         >
           <CssBaseline />
           <AppBar
-            simulationOn={this.state.simulationOn}
+            simulationAboutToStartOrStarted={this.state.simulationAboutToStartOrStarted}
           />
           <Switch>
             <Route path="/public-interface">
@@ -569,7 +569,7 @@ class App extends React.PureComponent {
                 // Simulator specific configuration
                 changeRobotTarget={this.changeRobotTarget}
                 changeRobotIsCarrying={this.changeRobotIsCarrying}
-                simulationOn={this.state.simulationOn}
+                simulationStarted={this.state.simulationStarted}
                 toggleSimulation={this.toggleSimulation}
                 changeTileType={this.changeTileType}
                 changeCarStatusOnTile={this.changeCarStatusOnTile}
@@ -591,7 +591,7 @@ class App extends React.PureComponent {
                 logs={this.state.logsSimulator}
                 // Simulator specific configuration
                 showLoader={this.state.showLoader}
-                simulationOn={this.state.simulationOn}
+                simulationStarted={this.state.simulationStarted}
                 toggleSimulation={this.toggleSimulation}
                 simulationAboutToStartOrStarted={this.state.simulationAboutToStartOrStarted}
                 resetConfiguration={this.resetConfiguration}

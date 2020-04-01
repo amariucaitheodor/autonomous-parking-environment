@@ -61,13 +61,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const MonitorPanel = React.memo(function MonitorPanel({ robotTargetSimulator, totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationAboutToStartOrStarted, carriedCar, logs, simulationOn, debugMode, toggleDebugMode, toggleSimulation }) {
+const MonitorPanel = React.memo(function MonitorPanel({ robotTargetSimulator, totalLocalPaths, simulatorLocalPathsProgress, showLoader, simulatorPanel, toggleGlobalPlanView, globalPlanView, runTest, saveConfiguration, resetConfiguration, spacesTotal, spacesAvailable, simulationAboutToStartOrStarted, carriedCar, logs, simulationStarted, debugMode, toggleDebugMode, toggleSimulation }) {
   const classes = useStyles();
   const [testToRun, setTestToRun] = useState(0);
 
   let robotStatus = null;
   if (carriedCar === null)
-    robotStatus = simulationOn ?
+    robotStatus = simulationStarted ?
       (robotTargetSimulator === null ? '' : `Advancing to R${robotTargetSimulator.row}C${robotTargetSimulator.col}`) :
       "On Standby";
   else switch (carriedCar.status) {
@@ -171,7 +171,7 @@ const MonitorPanel = React.memo(function MonitorPanel({ robotTargetSimulator, to
         {"Available Parking Spaces: " + spacesAvailable}
       </Typography>
       <Typography variant='h6' className={"m-auto "} >
-        {robotStatus + (simulatorPanel && simulationOn ? ` (${simulatorLocalPathsProgress + 1}/${totalLocalPaths})` : "")}
+        {robotStatus + (simulatorPanel && simulationStarted ? ` (${simulatorLocalPathsProgress + 1}/${totalLocalPaths})` : "")}
       </Typography>
       {!simulatorPanel ?
         <Typography color='error' variant='h6' className={"m-auto "} >
@@ -185,10 +185,10 @@ const MonitorPanel = React.memo(function MonitorPanel({ robotTargetSimulator, to
         aria-label="edit grid button group"
         className={"m-auto"}>
         <Button
-          startIcon={simulationOn ? <ZoomIn /> : <Edit />}
+          startIcon={simulationStarted ? <ZoomIn /> : <Edit />}
           onClick={() => { toggleDebugMode(simulatorPanel); }}
         >
-          {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationOn ? "Live" : "Edit") : "Debug"} mode
+          {debugMode ? "Disable" : "Enable"} {simulatorPanel ? (simulationStarted ? "Live" : "Edit") : "Debug"} mode
         </Button >
         <Button
           onClick={() => { toggleGlobalPlanView(simulatorPanel) }}
@@ -243,10 +243,10 @@ const MonitorPanel = React.memo(function MonitorPanel({ robotTargetSimulator, to
             aria-label="run simulation button group"
             className={"mx-auto mb-3 mt-auto"}
             disabled={showLoader}
-            startIcon={simulationOn ? <PauseCircleFilled /> : <PlayCircleFilled />}
-            onClick={() => { simulationOn ? toggleSimulation("Manual interruption triggered") : toggleSimulation() }}
+            startIcon={simulationStarted ? <PauseCircleFilled /> : <PlayCircleFilled />}
+            onClick={() => { simulationStarted ? toggleSimulation("Manual interruption triggered") : toggleSimulation() }}
           >
-            {simulationOn ? "Pause simulation" : "Start simulation"}
+            {simulationStarted ? "Pause simulation" : "Start simulation"}
           </Button>
         </> :
         null

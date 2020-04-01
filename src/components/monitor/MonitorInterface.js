@@ -134,7 +134,7 @@ class MonitorInterface extends React.PureComponent {
                         carriedCar={this.props.carriedCar}
                         gridCellSize={this.state.gridCellSize}
                         simulationAboutToStartOrStarted={this.props.simulationAboutToStartOrStarted}
-                        simulationOn={this.props.simulationOn}
+                        simulationStarted={this.props.simulationStarted}
                         robotCommands={this.props.robotCommands}
                         liftCarFromTile={this.props.liftCarFromTile}
                         dropCarOnTile={this.props.dropCarOnTile}
@@ -153,7 +153,7 @@ class MonitorInterface extends React.PureComponent {
                         changeTileType={this.props.changeTileType}
                         changeCarStatusOnTile={this.props.changeCarStatusOnTile}
                         debugMode={this.props.debugMode}
-                        simulationOn={this.props.simulationOn}
+                        simulationStarted={this.props.simulationStarted}
                         carRetrievedReplan={this.props.carRetrievedReplan}
                         carRequestedReplan={this.props.carRequestedReplan}
                         carArrivedReplan={this.props.carArrivedReplan}

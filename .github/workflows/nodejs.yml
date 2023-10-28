@@ -22,4 +22,6 @@ jobs:
     - run: npm test
       env:
         CI: true
+    - run: git config --global user.email "amariucaitheodor@protonmail.com"
+    - run: git config --global user.name "Theodor Amariucai"
     - run: npm run deploy

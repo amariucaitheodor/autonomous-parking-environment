@@ -9,7 +9,7 @@
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "@welldone-software/why-did-you-render": "^6.2.1",
-    "axios": "^0.23.0",
+    "axios": "^1.6.0",
     "bootstrap-css-only": "4.4.1",
     "gh-pages": "^3.2.3",
     "konva": "^8.2.2",
